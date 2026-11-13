@@ -712,8 +712,7 @@
                 completedDiv.innerHTML = completedList.map(m => {
                     const costVal = parseFloat(m.cost) || 0;
                     grandTotalSpent += costVal;
-                    const formattedDetails = (m.details || '').replace(/
-/g, '<br>');
+                    const formattedDetails = (m.details || '').replace(/\n/g, '<br>');
 
                     return `
                         <details class="group bg-[#050913] border border-slate-800/60 rounded-xl text-xs font-mono overflow-hidden">
