@@ -80,13 +80,26 @@
                 <!-- Remaining to Oil Service Row + Progress Bar -->
                 <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-300 font-bold">Remaining to Oil Service <span class="text-[10px] text-slate-400 font-normal">(7500km interval)</span></span>
-                        <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">3,440 km</span>
+                        <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
+                        <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">3,440/7,500 km</span>
                     </div>
                     <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
                         <div id="kpi-oil-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 54%"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- NEW CARD: INCOMING MAINTENANCE (Closest 5 by Date - Realistic) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance (Closest 5 Realistic)
+                </h2>
+                <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-incoming" class="p-4 space-y-2 font-mono">
+                <!-- Populated dynamically -->
             </div>
         </div>
 
@@ -317,7 +330,7 @@
 
         // Restore collapse states on load
         window.addEventListener('DOMContentLoaded', () => {
-            ['card-oil-real', 'card-oil-95', 'card-maint-real', 'card-maint-95', 'card-time-maint', 'card-pace'].forEach(id => {
+            ['card-incoming', 'card-oil-real', 'card-oil-95', 'card-maint-real', 'card-maint-95', 'card-time-maint', 'card-pace'].forEach(id => {
                 if (localStorage.getItem('s70_collapse_' + id) === 'true') {
                     const content = document.getElementById('content-' + id);
                     const icon = document.getElementById('icon-' + id);
@@ -385,6 +398,14 @@
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
+        function parseDateGB(dateStr) {
+            const parts = dateStr.split(' ');
+            if (parts.length === 3) {
+                return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+            }
+            return new Date(dateStr);
+        }
+
         function daysBetween(date1Str, date2Str) {
             const d1 = new Date(date1Str + 'T00:00:00');
             const d2 = new Date(date2Str + 'T00:00:00');
@@ -430,10 +451,10 @@
                 document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
                 document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
                 document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
-                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()} km`;
+                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${OIL_INTERVAL.toLocaleString()} km`;
                 document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
 
-                // Update Card 7 UI
+                // Update Card 7 UI (Pace)
                 document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
                 document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
                 document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
@@ -441,10 +462,18 @@
 
                 // Card 2: Engine Oil Realistic Table
                 let oilRealHtml = '';
+                let oilRealItems = [];
                 for (let i = 1; i <= 5; i++) {
                     const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
+
+                    oilRealItems.push({
+                        title: `Engine Oil Service (${targetOdo.toLocaleString()} km)`,
+                        dateStr: realDate,
+                        dateObj: parseDateGB(realDate),
+                        category: 'Engine Oil Service'
+                    });
 
                     const isNext = (i === 1);
                     const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
@@ -481,9 +510,18 @@
 
                 // Card 4: Other Maintenance Realistic Table
                 const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
+                let maintRealItems = [];
                 document.getElementById('milestones-realistic-body').innerHTML = activeMilestones.map(m => {
                     const kmLeft = m.targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
+
+                    maintRealItems.push({
+                        title: `${m.notes} (${m.targetOdo.toLocaleString()} km)`,
+                        dateStr: realDate,
+                        dateObj: parseDateGB(realDate),
+                        category: 'Other Maintenance'
+                    });
+
                     return `
                         <tr class="hover:bg-slate-900/45 transition-colors">
                             <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
@@ -511,6 +549,36 @@
                         </tr>
                     `;
                 }).join('');
+
+                // BUILD INCOMING MAINTENANCE CARD (Closest 5 by Date across Oil Realistic, Maint Realistic, Time-Based)
+                let allIncoming = [...oilRealItems, ...maintRealItems];
+                
+                const timeItems = [
+                    { title: 'Coolant flushing', dateStr: '1 Jul 2027', dateObj: new Date('2027-07-01'), category: 'Time-Based' },
+                    { title: 'Cabin filter', dateStr: '1 May 2027', dateObj: new Date('2027-05-01'), category: 'Time-Based' }
+                ];
+                timeItems.forEach(t => {
+                    if (t.dateObj >= new Date(latest.date)) {
+                        allIncoming.push(t);
+                    }
+                });
+
+                allIncoming.sort((a, b) => a.dateObj - b.dateObj);
+                const closest5 = allIncoming.slice(0, 5);
+
+                const incomingHtml = closest5.map(item => `
+                    <div class="flex items-center justify-between py-1.5 border-b border-slate-800/40 last:border-0 text-xs">
+                        <div>
+                            <div class="font-sans font-bold text-slate-200">${item.title}</div>
+                            <div class="text-[10px] text-slate-400">${item.category}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-emerald-400 font-bold font-mono">${item.dateStr}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 text-xs">No upcoming maintenance.</div>';
 
             } catch (err) {
                 console.error("Error in recalculateAll:", err);
