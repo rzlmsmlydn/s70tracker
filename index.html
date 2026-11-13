@@ -706,20 +706,23 @@
                     const formattedDetails = (m.details || '').replace(/\n/g, '<br>');
 
                     return `
-                        <div class="bg-[#050913] border border-slate-800/60 p-3 rounded-xl text-xs font-mono space-y-2">
-                            <div class="flex items-center justify-between border-b border-slate-800/60 pb-1.5">
+                        <details class="group bg-[#050913] border border-slate-800/60 rounded-xl text-xs font-mono overflow-hidden">
+                            <summary class="flex items-center justify-between p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
                                 <div class="flex items-center gap-2">
                                     <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
                                     <span class="text-white font-bold font-sans">${m.notes}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                    <button onclick="uncompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase">Undo</button>
+                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
+                                    <button onclick="event.stopPropagation(); uncompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase ml-1">Undo</button>
                                 </div>
+                            </summary>
+                            <div class="p-3 pt-0 space-y-2 border-t border-slate-800/40 mt-1">
+                                ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-2"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
+                                ${formattedDetails ? `<div class="text-[11px] text-slate-300 bg-[#080d1a] p-2 rounded border border-slate-900 whitespace-pre-line">${formattedDetails}</div>` : '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
                             </div>
-                            ${m.serviceDate ? `<div class="text-[10px] text-slate-400"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
-                            ${formattedDetails ? `<div class="text-[11px] text-slate-300 bg-[#080d1a] p-2 rounded border border-slate-900 whitespace-pre-line">${formattedDetails}</div>` : ''}
-                        </div>
+                        </details>
                     `;
                 }).join('');
             }
