@@ -90,11 +90,11 @@
             </div>
         </div>
 
-        <!-- NEW CARD: INCOMING MAINTENANCE (Closest 5 by Date - Realistic) -->
+        <!-- NEW CARD: INCOMING MAINTENANCE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance (Closest 5 Realistic)
+                    <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
                 </h2>
                 <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
             </button>
@@ -124,15 +124,15 @@
             </div>
         </div>
 
-        <!-- CARD 3: ENGINE OIL 95KM/DAY (Collapsable) -->
+        <!-- CARD 3: ENGINE OIL 95KM/DAY (Collapsable - Default Collapsed) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-oil-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (95 km/day Pace)
                 </h2>
-                <i id="icon-card-oil-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                <i id="icon-card-oil-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
             </button>
-            <div id="content-card-oil-95" class="overflow-x-auto">
+            <div id="content-card-oil-95" class="overflow-x-auto hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
@@ -168,15 +168,15 @@
             </div>
         </div>
 
-        <!-- CARD 5: OTHER MAINTENANCE 95KM/DAY (Collapsable) -->
+        <!-- CARD 5: OTHER MAINTENANCE 95KM/DAY (Collapsable - Default Collapsed) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-maint-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (95 km/day Pace)
                 </h2>
-                <i id="icon-card-maint-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                <i id="icon-card-maint-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
             </button>
-            <div id="content-card-maint-95" class="overflow-x-auto">
+            <div id="content-card-maint-95" class="overflow-x-auto hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
@@ -191,15 +191,15 @@
             </div>
         </div>
 
-        <!-- CARD 6: TIME-BASED MAINTENANCE (Collapsable) -->
+        <!-- CARD 6: TIME-BASED MAINTENANCE (Collapsable - Default Collapsed) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
                 </h2>
-                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
             </button>
-            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono">
+            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono hidden">
                 <div class="flex justify-between items-center py-1 border-b border-slate-800/40">
                     <div>
                         <div class="font-sans font-bold text-slate-200">Coolant flushing</div>
@@ -223,15 +223,15 @@
             </div>
         </div>
 
-        <!-- CARD 7: PACE DETAILS (Collapsable) -->
+        <!-- CARD 7: PACE DETAILS (Collapsable - Default Collapsed) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
                 </h2>
-                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
             </button>
-            <div id="content-card-pace" class="p-4 space-y-2 text-xs">
+            <div id="content-card-pace" class="p-4 space-y-2 text-xs hidden">
                 <div class="flex justify-between py-1 border-b border-slate-800/40">
                     <span class="text-slate-400">Recent Pace</span>
                     <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
@@ -320,17 +320,21 @@
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
                 icon.style.transform = 'rotate(0deg)';
-                localStorage.setItem('s70_collapse_' + cardId, 'false');
+                if (cardId === 'card-incoming' || cardId === 'card-oil-real' || cardId === 'card-maint-real') {
+                    localStorage.setItem('s70_collapse_' + cardId, 'false');
+                }
             } else {
                 content.classList.add('hidden');
                 icon.style.transform = 'rotate(-90deg)';
-                localStorage.setItem('s70_collapse_' + cardId, 'true');
+                if (cardId === 'card-incoming' || cardId === 'card-oil-real' || cardId === 'card-maint-real') {
+                    localStorage.setItem('s70_collapse_' + cardId, 'true');
+                }
             }
         }
 
         // Restore collapse states on load
         window.addEventListener('DOMContentLoaded', () => {
-            ['card-incoming', 'card-oil-real', 'card-oil-95', 'card-maint-real', 'card-maint-95', 'card-time-maint', 'card-pace'].forEach(id => {
+            ['card-incoming', 'card-oil-real', 'card-maint-real'].forEach(id => {
                 if (localStorage.getItem('s70_collapse_' + id) === 'true') {
                     const content = document.getElementById('content-' + id);
                     const icon = document.getElementById('icon-' + id);
