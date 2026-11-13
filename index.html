@@ -33,6 +33,9 @@
         </div>
 
         <div class="flex items-center gap-2">
+            <button onclick="openSettingsModal()" title="Settings & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all">
+                <i class="fa-solid fa-gear text-amber-400"></i>
+            </button>
             <button onclick="openSheetSetupModal()" title="Sync" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all">
                 <i class="fa-solid fa-cloud-arrow-up text-sky-400"></i>
             </button>
@@ -253,6 +256,70 @@
 
     </main>
 
+    <!-- SETTINGS & HISTORY MODAL -->
+    <div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-amber-400"></i> Maintenance Settings & History
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <!-- Global Settings Section -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Parameters</h4>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Engine Oil Interval (km)</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="input-oil-interval" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono font-bold">
+                        <button onclick="saveOilInterval()" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Milestone Section -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Milestone</h4>
+                <form onsubmit="handleAddMilestone(event)" class="space-y-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
+                            <input type="number" id="input-new-odo" required placeholder="e.g. 200000" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Notes / Description</label>
+                            <input type="text" id="input-new-notes" required placeholder="e.g. Major service items" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Milestone</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Manage Active Milestones -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-list-check text-sky-400"></i> Active Other Maintenance Milestones</h4>
+                <div id="settings-active-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Completed Maintenance Ledger (Archive) -->
+            <div class="space-y-3 pt-2 border-t border-slate-800">
+                <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-box-archive"></i> Completed Maintenance Ledger (Archive)</h4>
+                <div id="settings-completed-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- LOG MILEAGE MODAL -->
     <div id="log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
@@ -313,7 +380,7 @@
     </div>
 
     <script>
-        // Collapsable card state manager (No persistence across refreshes — opens/collapses purely by default initial state)
+        // Collapsable card state manager
         function toggleCard(cardId) {
             const content = document.getElementById('content-' + cardId);
             const icon = document.getElementById('icon-' + cardId);
@@ -347,6 +414,7 @@
 
         let logs = DEFAULT_LOGS;
         let milestones = DEFAULT_MILESTONES;
+        let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
         let sheetApiUrl = localStorage.getItem('s70_sheet_url') || '';
 
         try {
@@ -358,13 +426,15 @@
             console.warn("Resetting local storage due to parse error");
         }
 
-        const OIL_INTERVAL = 7500;
         const BENCHMARK_PACE = 95;
 
         window.onload = () => {
             const dateInput = document.getElementById('input-log-date');
             if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
             
+            const intervalInput = document.getElementById('input-oil-interval');
+            if (intervalInput) intervalInput.value = oilInterval;
+
             if (sheetApiUrl) {
                 const sheetUrlInput = document.getElementById('input-sheet-url');
                 if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
@@ -404,8 +474,10 @@
         function recalculateAll() {
             try {
                 logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
+                milestones.sort((a, b) => a.targetOdo - b.targetOdo);
                 localStorage.setItem('s70_logs', JSON.stringify(logs));
                 localStorage.setItem('s70_milestones', JSON.stringify(milestones));
+                localStorage.setItem('s70_oil_interval', oilInterval);
 
                 const latest = logs[logs.length - 1];
                 const prev = logs.length > 1 ? logs[logs.length - 2] : latest;
@@ -415,8 +487,8 @@
                 const lastOil = oilServices.length > 0 ? oilServices[oilServices.length - 1] : logs[0];
 
                 const oilUsed = latest.odo - lastOil.odo;
-                const oilRemaining = Math.max(0, OIL_INTERVAL - oilUsed);
-                const oilPct = Math.min(100, Math.round((oilUsed / OIL_INTERVAL) * 100));
+                const oilRemaining = Math.max(0, oilInterval - oilUsed);
+                const oilPct = Math.min(100, Math.round((oilUsed / oilInterval) * 100));
 
                 const longTermDays = daysBetween(lastOil.date, latest.date);
                 const longTermPace = oilUsed / longTermDays;
@@ -440,7 +512,7 @@
                 document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
                 document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
                 document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
-                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${OIL_INTERVAL.toLocaleString()} km`;
+                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${oilInterval.toLocaleString()} km`;
                 document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
 
                 // Update Pace Details UI
@@ -453,7 +525,7 @@
                 let oilRealHtml = '';
                 let oilRealItems = [];
                 for (let i = 1; i <= 5; i++) {
-                    const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
+                    const targetOdo = lastOil.odo + (oilInterval * i);
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
 
@@ -480,7 +552,7 @@
                 // Engine Oil 95km/day Table
                 let oil95Html = '';
                 for (let i = 1; i <= 5; i++) {
-                    const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
+                    const targetOdo = lastOil.odo + (oilInterval * i);
                     const kmLeft = targetOdo - latest.odo;
                     const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
 
@@ -521,10 +593,10 @@
                             </td>
                         </tr>
                     `;
-                }).join('');
+                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
 
                 // Other Maintenance 95km/day Table
-                document.getElementById('milestones-95-body').innerHTML = activeMilestones.map(m => {
+                document.getElementById('milestones-95-body').innerHTML = milestones.filter(m => !m.done).slice(0, 5).map(m => {
                     const kmLeft = m.targetOdo - latest.odo;
                     const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
                     return `
@@ -537,7 +609,7 @@
                             </td>
                         </tr>
                     `;
-                }).join('');
+                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
 
                 // Incoming Maintenance Card
                 let allIncoming = [...oilRealItems, ...maintRealItems];
@@ -569,15 +641,120 @@
 
                 document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 text-xs">No upcoming maintenance.</div>';
 
+                // Render Settings Modal Lists
+                renderSettingsLists();
+
             } catch (err) {
                 console.error("Error in recalculateAll:", err);
             }
         }
 
+        function renderSettingsLists() {
+            // Active Milestones List in Settings
+            const activeDiv = document.getElementById('settings-active-milestones');
+            const activeList = milestones.filter(m => !m.done);
+            if (activeList.length === 0) {
+                activeDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No active milestones.</div>';
+            } else {
+                activeDiv.innerHTML = activeList.map(m => `
+                    <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/60 p-2.5 rounded-xl text-xs font-mono">
+                        <div class="flex items-center gap-2 flex-1 overflow-hidden">
+                            <span class="text-amber-400 font-bold whitespace-nowrap">${m.targetOdo.toLocaleString()} km</span>
+                            <span class="text-slate-300 truncate font-sans">${m.notes}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <button onclick="editMilestone(${m.targetOdo})" class="px-2 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteMilestone(${m.targetOdo})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Completed Milestones Ledger (Archive)
+            const completedDiv = document.getElementById('settings-completed-milestones');
+            const completedList = milestones.filter(m => m.done);
+            if (completedList.length === 0) {
+                completedDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No completed maintenance items yet.</div>';
+            } else {
+                completedDiv.innerHTML = completedList.map(m => `
+                    <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/60 p-2.5 rounded-xl text-xs font-mono">
+                        <div class="flex items-center gap-2 flex-1 overflow-hidden">
+                            <span class="text-emerald-400 font-bold whitespace-nowrap"><i class="fa-solid fa-check"></i> ${m.targetOdo.toLocaleString()} km</span>
+                            <span class="text-slate-300 truncate font-sans">${m.notes}</span>
+                        </div>
+                        <div>
+                            <button onclick="uncompleteMilestone(${m.targetOdo})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase">Undo</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
         function completeMilestone(targetOdo) {
             const m = milestones.find(item => item.targetOdo === targetOdo);
-            if (m) { m.done = true; recalculateAll(); }
+            if (m) { m.done = true; recalculateAll(); if (sheetApiUrl) pushConfigToGoogleSheet(); }
         }
+
+        function uncompleteMilestone(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (m) { m.done = false; recalculateAll(); if (sheetApiUrl) pushConfigToGoogleSheet(); }
+        }
+
+        function deleteMilestone(targetOdo) {
+            if (confirm(`Are you sure you want to delete the milestone at ${targetOdo.toLocaleString()} km?`)) {
+                milestones = milestones.filter(item => item.targetOdo !== targetOdo);
+                recalculateAll();
+                if (sheetApiUrl) pushConfigToGoogleSheet();
+            }
+        }
+
+        function editMilestone(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+            const newOdoStr = prompt("Edit Target Odometer (km):", m.targetOdo);
+            if (newOdoStr === null) return;
+            const newOdo = parseInt(newOdoStr, 10);
+            const newNotes = prompt("Edit Notes / Description:", m.notes);
+            if (newNotes === null) return;
+
+            if (isNaN(newOdo)) { alert("Invalid odometer value."); return; }
+            m.targetOdo = newOdo;
+            m.notes = newNotes.trim();
+            recalculateAll();
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function handleAddMilestone(e) {
+            e.preventDefault();
+            const odoVal = parseInt(document.getElementById('input-new-odo').value, 10);
+            const notesVal = document.getElementById('input-new-notes').value.trim();
+
+            if (isNaN(odoVal) || !notesVal) return;
+
+            if (milestones.some(m => m.targetOdo === odoVal)) {
+                alert("A milestone at this odometer target already exists!");
+                return;
+            }
+
+            milestones.push({ targetOdo: odoVal, notes: notesVal, done: false });
+            document.getElementById('input-new-odo').value = '';
+            document.getElementById('input-new-notes').value = '';
+            recalculateAll();
+            alert("New milestone added successfully!");
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function saveOilInterval() {
+            const val = parseInt(document.getElementById('input-oil-interval').value, 10);
+            if (isNaN(val) || val <= 0) { alert("Please enter a valid oil interval in km."); return; }
+            oilInterval = val;
+            recalculateAll();
+            alert(`Engine oil interval updated to ${oilInterval.toLocaleString()} km!`);
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
 
         function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
         function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
@@ -614,11 +791,18 @@
         }
         function fetchFromGoogleSheet() {
             fetch(sheetApiUrl).then(res => res.json()).then(data => {
-                if (Array.isArray(data) && data.length > 0) { logs = data; recalculateAll(); }
+                if (data && data.logs && Array.isArray(data.logs)) { logs = data.logs; }
+                else if (Array.isArray(data) && data.length > 0) { logs = data; }
+                if (data && data.milestones && Array.isArray(data.milestones)) { milestones = data.milestones; }
+                if (data && data.oilInterval) { oilInterval = data.oilInterval; document.getElementById('input-oil-interval').value = oilInterval; }
+                recalculateAll();
             }).catch(() => {});
         }
         function pushToGoogleSheet(entry) {
-            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) });
+            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'log', entry }) });
+        }
+        function pushConfigToGoogleSheet() {
+            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, oilInterval }) });
         }
     </script>
 </body>
