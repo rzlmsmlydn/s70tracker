@@ -48,7 +48,7 @@
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- CARD 1: MILEAGE UPDATE (Non-collapsable) -->
+        <!-- CARD 1: MILEAGE UPDATE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
                 <div class="flex items-center gap-2 text-xs font-black tracking-wider text-white uppercase">
@@ -57,12 +57,10 @@
             </div>
 
             <div class="divide-y divide-slate-800/60 text-xs">
-                <!-- Date Row -->
                 <div class="px-4 py-2.5 flex items-center justify-between">
                     <span class="text-slate-400 font-medium">Date</span>
                     <span id="row-date" class="font-mono font-bold text-slate-200">1 Nov 2026</span>
                 </div>
-                <!-- Current Odometer Row -->
                 <div class="px-4 py-2.5 flex items-center justify-between">
                     <span class="text-slate-400 font-medium">Current Odometer</span>
                     <div class="flex items-center gap-2 font-mono">
@@ -70,17 +68,14 @@
                         <span id="row-daily-delta" class="text-[11px] font-bold text-emerald-400">(+511 km)</span>
                     </div>
                 </div>
-                <!-- Latest Oil Service Row -->
                 <div class="px-4 py-2.5 flex items-center justify-between">
                     <span class="text-slate-400 font-medium">Latest Oil Service</span>
                     <span id="row-last-oil" class="font-mono text-slate-300">42,744 km — 23 Sep 2026</span>
                 </div>
-                <!-- Oil Used Row -->
                 <div class="px-4 py-2.5 flex items-center justify-between">
                     <span class="text-slate-400 font-medium">Oil Used</span>
                     <span id="row-oil-used" class="font-mono text-slate-300">2,847 km (39 days ago)</span>
                 </div>
-                <!-- Remaining to Oil Service Row + Progress Bar -->
                 <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
                     <div class="flex items-center justify-between">
                         <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
@@ -93,7 +88,7 @@
             </div>
         </div>
 
-        <!-- INCOMING MAINTENANCE (Default Open) -->
+        <!-- INCOMING MAINTENANCE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -101,12 +96,10 @@
                 </h2>
                 <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
             </button>
-            <div id="content-card-incoming" class="p-4 space-y-2 font-mono">
-                <!-- Populated dynamically -->
-            </div>
+            <div id="content-card-incoming" class="p-4 space-y-2 font-mono"></div>
         </div>
 
-        <!-- ENGINE OIL REALISTIC (Default Open) -->
+        <!-- ENGINE OIL REALISTIC -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -127,7 +120,7 @@
             </div>
         </div>
 
-        <!-- OTHER MAINTENANCE REALISTIC (Default Open) -->
+        <!-- OTHER MAINTENANCE REALISTIC -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-maint-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -150,83 +143,20 @@
             </div>
         </div>
 
-        <!-- ENGINE OIL 95KM/DAY (Default Collapsed) -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-oil-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (95 km/day Pace)
-                </h2>
-                <i id="icon-card-oil-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
-            </button>
-            <div id="content-card-oil-95" class="overflow-x-auto hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
-                            <th class="py-2.5 px-4">Target Mileage</th>
-                            <th class="py-2.5 px-4">95 km/day Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="oil-95-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- OTHER MAINTENANCE 95KM/DAY (Default Collapsed) -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-maint-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (95 km/day Pace)
-                </h2>
-                <i id="icon-card-maint-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
-            </button>
-            <div id="content-card-maint-95" class="overflow-x-auto hidden">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
-                            <th class="py-2.5 px-3">Target Odo</th>
-                            <th class="py-2.5 px-3">95 km/day Date</th>
-                            <th class="py-2.5 px-3">Notes / Purposes</th>
-                            <th class="py-2.5 px-3 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="milestones-95-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TIME-BASED MAINTENANCE (Default Collapsed) -->
+        <!-- TIME-BASED MAINTENANCE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
                 </h2>
-                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
+                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
             </button>
-            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono hidden">
-                <div class="flex justify-between items-center py-1 border-b border-slate-800/40">
-                    <div>
-                        <div class="font-sans font-bold text-slate-200">Coolant flushing</div>
-                        <div class="text-[10px] text-slate-400">Interval: 2 years</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-emerald-400 font-bold">1 Jul 2027</div>
-                        <div class="text-[10px] text-slate-500">Next</div>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center py-1">
-                    <div>
-                        <div class="font-sans font-bold text-slate-200">Cabin filter</div>
-                        <div class="text-[10px] text-slate-400">Interval: 6 months</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-amber-400 font-bold">1 May 2027</div>
-                        <div class="text-[10px] text-slate-500">Next</div>
-                    </div>
-                </div>
+            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono">
+                <div id="time-maint-list" class="space-y-2"></div>
             </div>
         </div>
 
-        <!-- PACE DETAILS (Default Collapsed) -->
+        <!-- PACE DETAILS -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -261,7 +191,7 @@
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-amber-400"></i> Maintenance Settings & Itemized History
+                    <i class="fa-solid fa-gear text-amber-400"></i> Maintenance Settings & History
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
@@ -278,9 +208,9 @@
                 </div>
             </div>
 
-            <!-- Add New Milestone Section -->
+            <!-- Add New Milestone Section (Prices NOT mandatory) -->
             <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
-                <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance & Expense Record</h4>
+                <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Record</h4>
                 <form onsubmit="handleAddMilestone(event)" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
@@ -289,19 +219,43 @@
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Service Title / Category</label>
-                            <input type="text" id="input-new-title" required placeholder="e.g. Tyre Replacement / Brake Service" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                            <input type="text" id="input-new-title" required placeholder="e.g. Brake Service" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Itemized Breakdown (Parts, Labor, Shop, Prices)</label>
-                        <textarea id="input-new-details" rows="2" placeholder="e.g. Dunlop tyres $100x2 = $200 (Tyremart Serusop)" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"></textarea>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Itemized Breakdown (Optional)</label>
+                        <textarea id="input-new-details" rows="2" placeholder="e.g. Parts, labor, shop location" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"></textarea>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total Price ($)</label>
-                        <input type="number" step="0.01" id="input-new-cost" required placeholder="e.g. 200.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total Price ($) (Optional)</label>
+                        <input type="number" step="0.01" id="input-new-cost" placeholder="e.g. 150.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
                     </div>
                     <div class="flex justify-end pt-1">
-                        <button type="submit" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Milestone / Record</button>
+                        <button type="submit" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Milestone</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Add Time-Based Maintenance Section -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-clock"></i> Add Time-Based Maintenance</h4>
+                <form onsubmit="handleAddTimeMaint(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div class="sm:col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Name</label>
+                            <input type="text" id="input-time-title" required placeholder="e.g. Coolant flushing / Cabin filter" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Interval</label>
+                            <input type="text" id="input-time-interval" required placeholder="e.g. 2 years / 6 months" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Next Due Date</label>
+                        <input type="date" id="input-time-duedate" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Time Task</button>
                     </div>
                 </form>
             </div>
@@ -309,25 +263,58 @@
             <!-- Manage Active Milestones -->
             <div class="space-y-3">
                 <h4 class="text-xs font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-list-check text-sky-400"></i> Active Upcoming Maintenance</h4>
-                <div id="settings-active-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                    <!-- Populated dynamically -->
-                </div>
+                <div id="settings-active-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
             </div>
 
-            <!-- Completed Maintenance Ledger (Archive with Itemized Costs) -->
+            <!-- Completed Maintenance Ledger -->
             <div class="space-y-3 pt-2 border-t border-slate-800">
                 <div class="flex items-center justify-between">
                     <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-box-archive"></i> Completed Maintenance Ledger & Expenses</h4>
                     <span id="total-spent-badge" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">Total Spent: $0.00</span>
                 </div>
-                <div id="settings-completed-milestones" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
-                    <!-- Populated dynamically -->
-                </div>
+                <div id="settings-completed-milestones" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
             </div>
 
             <div class="flex items-center justify-end pt-2 border-t border-slate-800">
                 <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
             </div>
+        </div>
+    </div>
+
+    <!-- STRUCTURED POPUP MODAL FOR COMPLETING MAINTENANCE -->
+    <div id="complete-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-md rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record
+                </h3>
+                <button onclick="closeCompleteModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleCompleteSubmit(event)" class="space-y-3">
+                <input type="hidden" id="complete-target-odo">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title / Item</label>
+                    <input type="text" id="complete-title" readonly class="w-full bg-[#050913] border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Date</label>
+                    <input type="date" id="complete-date" required class="w-full bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Itemized Breakdown (Parts, Labor, Shop)</label>
+                    <textarea id="complete-details" rows="3" placeholder="e.g. Dunlop tyres $100x2 = $200 (Otopac Jerudong)" class="w-full bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Total Price ($)</label>
+                    <input type="number" step="0.01" id="complete-cost" placeholder="e.g. 200.00" class="w-full bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono font-bold">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeCompleteModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-slate-400">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider">Save & Archive</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -346,19 +333,16 @@
                     <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Date</label>
                     <input type="date" id="input-log-date" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
                 </div>
-
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Current Odometer (km)</label>
                     <input type="number" id="input-log-odo" required placeholder="e.g. 46880" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono font-bold">
                 </div>
-
                 <div class="flex items-center gap-2.5 bg-[#050913] border border-slate-800/80 p-2.5 rounded-xl">
                     <input type="checkbox" id="input-log-oil" class="w-4 h-4 rounded accent-sky-500 cursor-pointer">
                     <label for="input-log-oil" class="text-[11px] font-bold text-slate-200 cursor-pointer select-none">
                         Engine Oil Changed?
                     </label>
                 </div>
-
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
                     <button type="button" onclick="closeLogModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-slate-400">Cancel</button>
                     <button type="submit" class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-wider">Save</button>
@@ -418,123 +402,57 @@
             { date: '2026-11-01', odo: 45591, oilService: false }
         ];
 
-        // Pre-loaded with user's past service records as completed items with itemized cost breakdowns
         const DEFAULT_MILESTONES = [
-            { 
-                targetOdo: 1111, 
-                notes: 'Engine Service', 
-                details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', 
-                cost: 150.00, 
-                done: true, 
-                serviceDate: '2025-07-10' 
-            },
-            { 
-                targetOdo: 10056, 
-                notes: 'Engine Service', 
-                details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', 
-                cost: 119.00, 
-                done: true, 
-                serviceDate: '2025-09-24' 
-            },
-            { 
-                targetOdo: 19022, 
-                notes: 'Engine Service', 
-                details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', 
-                cost: 94.00, 
-                done: true, 
-                serviceDate: '2026-01-05' 
-            },
-            { 
-                targetOdo: 21150, 
-                notes: 'Tyre Replacement', 
-                details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', 
-                cost: 272.00, 
-                done: true, 
-                serviceDate: '2026-01-22' 
-            },
-            { 
-                targetOdo: 28093, 
-                notes: 'Engine Service', 
-                details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', 
-                cost: 94.00, 
-                done: true, 
-                serviceDate: '2026-04-15' 
-            },
-            { 
-                targetOdo: 28495, 
-                notes: 'Battery Replacement', 
-                details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', 
-                cost: 150.00, 
-                done: true, 
-                serviceDate: '2026-04-20' 
-            },
-            { 
-                targetOdo: 34738, 
-                notes: 'Engine Service', 
-                details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15', 
-                cost: 94.00, 
-                done: true, 
-                serviceDate: '2026-07-03' 
-            },
-            { 
-                targetOdo: 36560, 
-                notes: 'Tyre Replacement', 
-                details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', 
-                cost: 200.00, 
-                done: true, 
-                serviceDate: '2026-07-20' 
-            },
-            { 
-                targetOdo: 40045, 
-                notes: 'DCT Service', 
-                details: '- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20', 
-                cost: 119.00, 
-                done: true, 
-                serviceDate: '2026-08-18' 
-            },
-            { 
-                targetOdo: 42744, 
-                notes: 'Engine Service', 
-                details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15', 
-                cost: 93.90, 
-                done: true, 
-                serviceDate: '2026-09-23' 
-            },
-            { 
-                targetOdo: 45080, 
-                notes: 'Other Services (Spark Plugs)', 
-                details: '- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10', 
-                cost: 36.00, 
-                done: true, 
-                serviceDate: '2026-10-19' 
-            },
-            { 
-                targetOdo: 45591, 
-                notes: 'Other Services (Filters)', 
-                details: '- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7', 
-                cost: 14.00, 
-                done: true, 
-                serviceDate: '2026-11-01' 
-            },
-            { targetOdo: 60000, notes: 'Brake fluid', details: 'Scheduled maintenance', cost: 0, done: false },
-            { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: 'Major maintenance kit', cost: 0, done: false },
-            { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: 'Full overhaul items', cost: 0, done: false },
-            { targetOdo: 100000, notes: 'Oil & gas separator', details: 'Replacement', cost: 0, done: false },
-            { targetOdo: 120000, notes: 'DCT oil', details: 'Scheduled oil change', cost: 0, done: false },
-            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: 'Scheduled maintenance', cost: 0, done: false },
-            { targetOdo: 200000, notes: 'Major 200k servicing item', details: 'Major checkup', cost: 0, done: false }
+            { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
+            { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
+            { targetOdo: 19022, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-01-05' },
+            { targetOdo: 21150, notes: 'Tyre Replacement', details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', cost: 272.00, done: true, serviceDate: '2026-01-22' },
+            { targetOdo: 28093, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-04-15' },
+            { targetOdo: 28495, notes: 'Battery Replacement', details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', cost: 150.00, done: true, serviceDate: '2026-04-20' },
+            { targetOdo: 34738, notes: 'Engine Service', details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-07-03' },
+            { targetOdo: 36560, notes: 'Tyre Replacement', details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', cost: 200.00, done: true, serviceDate: '2026-07-20' },
+            { targetOdo: 40045, notes: 'DCT Service', details: '- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20', cost: 119.00, done: true, serviceDate: '2026-08-18' },
+            { targetOdo: 42744, notes: 'Engine Service', details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15', cost: 93.90, done: true, serviceDate: '2026-09-23' },
+            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: '- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10', cost: 36.00, done: true, serviceDate: '2026-10-19' },
+            { targetOdo: 45591, notes: 'Other Services (Filters)', details: '- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7', cost: 14.00, done: true, serviceDate: '2026-11-01' },
+            { targetOdo: 60000, notes: 'Brake fluid', details: '', cost: 0, done: false },
+            { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: '', cost: 0, done: false },
+            { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 100000, notes: 'Oil & gas separator', details: '', cost: 0, done: false },
+            { targetOdo: 120000, notes: 'DCT oil', details: '', cost: 0, done: false },
+            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', cost: 0, done: false }
+        ];
+
+        const DEFAULT_TIME_MAINT = [
+            { id: '1', title: 'Coolant flushing', interval: '2 years', dueDate: '2027-07-01' },
+            { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
         ];
 
         let logs = DEFAULT_LOGS;
         let milestones = DEFAULT_MILESTONES;
+        let timeMaint = DEFAULT_TIME_MAINT;
         let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
         let sheetApiUrl = localStorage.getItem('s70_sheet_url') || '';
 
         try {
             const savedLogs = localStorage.getItem('s70_logs');
             if (savedLogs) logs = JSON.parse(savedLogs);
+            
+            // Force-load preloaded milestones if localStorage didn't have them correctly initialized
             const savedMilestones = localStorage.getItem('s70_milestones');
-            if (savedMilestones) milestones = JSON.parse(savedMilestones);
+            if (savedMilestones) {
+                const parsed = JSON.parse(savedMilestones);
+                // If stored milestones are fewer than default or missing past data, merge or use default
+                if (parsed.length >= 12) {
+                    milestones = parsed;
+                } else {
+                    milestones = DEFAULT_MILESTONES;
+                }
+            }
+
+            const savedTime = localStorage.getItem('s70_time_maint');
+            if (savedTime) timeMaint = JSON.parse(savedTime);
         } catch (e) {
             console.warn("Resetting local storage due to parse error");
         }
@@ -547,6 +465,9 @@
             
             const intervalInput = document.getElementById('input-oil-interval');
             if (intervalInput) intervalInput.value = oilInterval;
+
+            const completeDateInput = document.getElementById('complete-date');
+            if (completeDateInput) completeDateInput.value = new Date().toISOString().split('T')[0];
 
             if (sheetApiUrl) {
                 const sheetUrlInput = document.getElementById('input-sheet-url');
@@ -591,6 +512,7 @@
                 milestones.sort((a, b) => a.targetOdo - b.targetOdo);
                 localStorage.setItem('s70_logs', JSON.stringify(logs));
                 localStorage.setItem('s70_milestones', JSON.stringify(milestones));
+                localStorage.setItem('s70_time_maint', JSON.stringify(timeMaint));
                 localStorage.setItem('s70_oil_interval', oilInterval);
 
                 const latest = logs[logs.length - 1];
@@ -663,26 +585,6 @@
                 }
                 document.getElementById('oil-realistic-body').innerHTML = oilRealHtml;
 
-                // Engine Oil 95km/day Table
-                let oil95Html = '';
-                for (let i = 1; i <= 5; i++) {
-                    const targetOdo = lastOil.odo + (oilInterval * i);
-                    const kmLeft = targetOdo - latest.odo;
-                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
-
-                    const isNext = (i === 1);
-                    const odoColor = isNext ? 'text-sky-400 font-black' : 'text-slate-200 font-bold';
-                    const dateColor = isNext ? 'text-sky-300 font-bold' : 'text-slate-200';
-
-                    oil95Html += `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-4 ${dateColor}">${benchDate}</td>
-                        </tr>
-                    `;
-                }
-                document.getElementById('oil-95-body').innerHTML = oil95Html;
-
                 // Other Maintenance Realistic Table
                 const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
                 let maintRealItems = [];
@@ -703,39 +605,24 @@
                             <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
                             <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
                             <td class="py-2.5 px-3 text-right">
-                                <button onclick="promptCompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                                <button onclick="openCompleteModal(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
                             </td>
                         </tr>
                     `;
                 }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
 
-                // Other Maintenance 95km/day Table
-                document.getElementById('milestones-95-body').innerHTML = milestones.filter(m => !m.done).slice(0, 5).map(m => {
-                    const kmLeft = m.targetOdo - latest.odo;
-                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
-                    return `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${benchDate}</td>
-                            <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
-                            <td class="py-2.5 px-3 text-right">
-                                <button onclick="promptCompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+                // Time-Based Maintenance Dashboard Card & Settings
+                renderTimeMaintCard();
 
                 // Incoming Maintenance Card
                 let allIncoming = [...oilRealItems, ...maintRealItems];
-                
-                const timeItems = [
-                    { title: 'Coolant flushing', dateStr: '1 Jul 2027', dateObj: new Date('2027-07-01T00:00:00'), category: 'Time-Based' },
-                    { title: 'Cabin filter', dateStr: '1 May 2027', dateObj: new Date('2027-05-01T00:00:00'), category: 'Time-Based' }
-                ];
-                timeItems.forEach(t => {
-                    if (t.dateObj >= new Date(latest.date + 'T00:00:00')) {
-                        allIncoming.push(t);
-                    }
+                timeMaint.forEach(t => {
+                    allIncoming.push({
+                        title: t.title,
+                        dateStr: formatDateDisplay(t.dueDate),
+                        dateObj: new Date(t.dueDate + 'T00:00:00'),
+                        category: 'Time-Based'
+                    });
                 });
 
                 allIncoming.sort((a, b) => a.dateObj - b.dateObj);
@@ -755,7 +642,6 @@
 
                 document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 text-xs">No upcoming maintenance.</div>';
 
-                // Render Settings Modal Lists & Total Spent
                 renderSettingsLists();
 
             } catch (err) {
@@ -763,8 +649,30 @@
             }
         }
 
+        function renderTimeMaintCard() {
+            const timeListDiv = document.getElementById('time-maint-list');
+            if (timeMaint.length === 0) {
+                timeListDiv.innerHTML = '<div class="text-slate-500 text-xs">No time-based tasks.</div>';
+                return;
+            }
+            timeListDiv.innerHTML = timeMaint.map(t => `
+                <div class="flex justify-between items-center py-1 border-b border-slate-800/40 last:border-0">
+                    <div>
+                        <div class="font-sans font-bold text-slate-200">${t.title}</div>
+                        <div class="text-[10px] text-slate-400">Interval: ${t.interval}</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="text-emerald-400 font-bold">${formatDateDisplay(t.dueDate)}</div>
+                        </div>
+                        <button onclick="deleteTimeMaint('${t.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function renderSettingsLists() {
-            // Active Milestones List in Settings
+            // Active Milestones List
             const activeDiv = document.getElementById('settings-active-milestones');
             const activeList = milestones.filter(m => !m.done);
             if (activeList.length === 0) {
@@ -784,7 +692,7 @@
                 `).join('');
             }
 
-            // Completed Milestones Ledger (Archive with Itemized Costs & Total)
+            // Completed Milestones Ledger
             const completedDiv = document.getElementById('settings-completed-milestones');
             const completedList = milestones.filter(m => m.done);
             let grandTotalSpent = 0;
@@ -819,21 +727,34 @@
             document.getElementById('total-spent-badge').textContent = `Total Spent: $${grandTotalSpent.toFixed(2)}`;
         }
 
-        function promptCompleteMilestone(targetOdo) {
+        // Structured Popup Modal for Completion
+        function openCompleteModal(targetOdo) {
             const m = milestones.find(item => item.targetOdo === targetOdo);
             if (!m) return;
-            const costStr = prompt(`Enter total price spent for "${m.notes}" at ${targetOdo.toLocaleString()} km ($):`, m.cost || '0');
-            if (costStr === null) return;
-            const detailsStr = prompt(`Enter itemized details (parts, labor, shop):`, m.details || '');
-            if (detailsStr === null) return;
-            const dateStr = prompt(`Enter service date (YYYY-MM-DD):`, new Date().toISOString().split('T')[0]);
-            if (dateStr === null) return;
+            document.getElementById('complete-target-odo').value = m.targetOdo;
+            document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
+            document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('complete-details').value = m.details || '';
+            document.getElementById('complete-cost').value = m.cost || '';
+            document.getElementById('complete-modal').classList.remove('hidden');
+        }
 
-            m.cost = parseFloat(costStr) || 0;
-            m.details = detailsStr.trim();
-            m.serviceDate = dateStr.trim();
+        function closeCompleteModal() {
+            document.getElementById('complete-modal').classList.add('hidden');
+        }
+
+        function handleCompleteSubmit(e) {
+            e.preventDefault();
+            const targetOdo = parseInt(document.getElementById('complete-target-odo').value, 10);
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+
+            m.serviceDate = document.getElementById('complete-date').value;
+            m.details = document.getElementById('complete-details').value.trim();
+            m.cost = parseFloat(document.getElementById('complete-cost').value) || 0;
             m.done = true;
 
+            closeCompleteModal();
             recalculateAll();
             if (sheetApiUrl) pushConfigToGoogleSheet();
         }
@@ -898,6 +819,34 @@
             recalculateAll();
             alert("New maintenance record added successfully!");
             if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function handleAddTimeMaint(e) {
+            e.preventDefault();
+            const title = document.getElementById('input-time-title').value.trim();
+            const interval = document.getElementById('input-time-interval').value.trim();
+            const dueDate = document.getElementById('input-time-duedate').value;
+
+            if (!title || !interval || !dueDate) return;
+
+            timeMaint.push({
+                id: Date.now().toString(),
+                title: title,
+                interval: interval,
+                dueDate: dueDate
+            });
+
+            document.getElementById('input-time-title').value = '';
+            document.getElementById('input-time-interval').value = '';
+            document.getElementById('input-time-duedate').value = '';
+
+            recalculateAll();
+            alert("Time-based maintenance task added!");
+        }
+
+        function deleteTimeMaint(id) {
+            timeMaint = timeMaint.filter(t => t.id !== id);
+            recalculateAll();
         }
 
         function saveOilInterval() {
