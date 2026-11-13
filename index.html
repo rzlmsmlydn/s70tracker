@@ -45,7 +45,7 @@
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- COMPACT MOBILE-FIRST STATUS CARD (Clean ChatGPT style list layout) -->
+        <!-- COMPACT MOBILE-FIRST STATUS CARD -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
                 <div class="flex items-center gap-2 text-xs font-black tracking-wider text-white uppercase">
@@ -273,17 +273,29 @@
             { targetOdo: 140000, notes: 'Brake fluid + spark plugs', done: false }
         ];
 
-        let logs = JSON.parse(localStorage.getItem('s70_logs')) || DEFAULT_LOGS;
-        let milestones = JSON.parse(localStorage.getItem('s70_milestones')) || DEFAULT_MILESTONES;
+        let logs = DEFAULT_LOGS;
+        let milestones = DEFAULT_MILESTONES;
         let sheetApiUrl = localStorage.getItem('s70_sheet_url') || '';
+
+        try {
+            const savedLogs = localStorage.getItem('s70_logs');
+            if (savedLogs) logs = JSON.parse(savedLogs);
+            const savedMilestones = localStorage.getItem('s70_milestones');
+            if (savedMilestones) milestones = JSON.parse(savedMilestones);
+        } catch (e) {
+            console.warn("Resetting local storage due to parse error");
+        }
 
         const OIL_INTERVAL = 7500;
         const BENCHMARK_PACE = 95;
 
         window.onload = () => {
-            document.getElementById('input-log-date').value = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('input-log-date');
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            
             if (sheetApiUrl) {
-                document.getElementById('input-sheet-url').value = sheetApiUrl;
+                const sheetUrlInput = document.getElementById('input-sheet-url');
+                if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
                 fetchFromGoogleSheet();
             }
             recalculateAll();
@@ -308,93 +320,95 @@
         }
 
         function recalculateAll() {
-            logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
-            localStorage.setItem('s70_logs', JSON.stringify(logs));
-            localStorage.setItem('s70_milestones', JSON.stringify(milestones));
+            try {
+                logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
+                localStorage.setItem('s70_logs', JSON.stringify(logs));
+                localStorage.setItem('s70_milestones', JSON.stringify(milestones));
 
-            const latest = logs[logs.length - 1];
-            const prev = logs.length > 1 ? logs[logs.length - 2] : latest;
-            const dailyDelta = latest.odo - prev.odo;
+                const latest = logs[logs.length - 1];
+                const prev = logs.length > 1 ? logs[logs.length - 2] : latest;
+                const dailyDelta = latest.odo - prev.odo;
 
-            const oilServices = logs.filter(l => l.oilService);
-            const lastOil = oilServices.length > 0 ? oilServices[oilServices.length - 1] : logs[0];
+                const oilServices = logs.filter(l => l.oilService);
+                const lastOil = oilServices.length > 0 ? oilServices[oilServices.length - 1] : logs[0];
 
-            const oilUsed = latest.odo - lastOil.odo;
-            const oilRemaining = Math.max(0, OIL_INTERVAL - oilUsed);
-            const oilPct = Math.min(100, Math.round((oilUsed / OIL_INTERVAL) * 100));
+                const oilUsed = latest.odo - lastOil.odo;
+                const oilRemaining = Math.max(0, OIL_INTERVAL - oilUsed);
+                const oilPct = Math.min(100, Math.round((oilUsed / OIL_INTERVAL) * 100));
 
-            const longTermDays = daysBetween(lastOil.date, latest.date);
-            const longTermPace = oilUsed / longTermDays;
+                const longTermDays = daysBetween(lastOil.date, latest.date);
+                const longTermPace = oilUsed / longTermDays;
 
-            let recentAnchor = logs[0];
-            for (let i = logs.length - 2; i >= 0; i--) {
-                if (daysBetween(logs[i].date, latest.date) >= 10) {
-                    recentAnchor = logs[i];
-                    break;
+                let recentAnchor = logs[0];
+                for (let i = logs.length - 2; i >= 0; i--) {
+                    if (daysBetween(logs[i].date, latest.date) >= 10) {
+                        recentAnchor = logs[i];
+                        break;
+                    }
                 }
+                const recentDays = daysBetween(recentAnchor.date, latest.date);
+                const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
+
+                const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
+                const effectivePace = weightedPace > 0 ? weightedPace : BENCHMARK_PACE;
+
+                // Update UI elements safely
+                document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
+                document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
+                document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
+                document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
+                document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
+                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()} km`;
+                document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
+
+                document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
+                document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
+                document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
+                document.getElementById('pace-weighted').textContent = `${effectivePace.toFixed(2)} km/day`;
+
+                // Build Engine Oil Targets Table
+                let oilHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
+                    const kmLeft = targetOdo - latest.odo;
+                    const realDate = addDays(latest.date, kmLeft / effectivePace);
+                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
+
+                    const isNext = (i === 1);
+                    const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
+                    const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
+
+                    oilHtml += `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km ${isNext ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded ml-1">NEXT</span>' : ''}</td>
+                            <td class="py-2.5 px-4 ${dateColor}">${realDate}</td>
+                            <td class="py-2.5 px-4 text-slate-400">${benchDate}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById('oil-targets-body').innerHTML = oilHtml;
+
+                // Build Milestones Table
+                const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
+                document.getElementById('milestones-body').innerHTML = activeMilestones.map(m => {
+                    const kmLeft = m.targetOdo - latest.odo;
+                    const realDate = addDays(latest.date, kmLeft / effectivePace);
+                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
+                    return `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-400 whitespace-nowrap">${benchDate}</td>
+                            <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <button onclick="completeMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error("Error in recalculateAll:", err);
             }
-            const recentDays = daysBetween(recentAnchor.date, latest.date);
-            const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
-
-            const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
-            const effectivePace = weightedPace > 0 ? weightedPace : BENCHMARK_PACE;
-
-            // Populate ChatGPT-style list layout rows
-            document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
-            document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
-            document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
-            document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
-            document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
-            document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()} km`;
-            document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
-
-            document.getElementById('kpi-weighted-pace').textContent = effectivePace.toFixed(2);
-            document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
-            document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
-            document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
-            document.getElementById('pace-weighted').textContent = `${effectivePace.toFixed(2)} km/day`;
-
-            // Next 5 Engine Oil Targets (Highlighting the first/next one with emerald/cyan color)
-            let oilHtml = '';
-            for (let i = 1; i <= 5; i++) {
-                const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
-                const kmLeft = targetOdo - latest.odo;
-                const realDate = addDays(latest.date, kmLeft / effectivePace);
-                const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
-
-                // Highlight the next upcoming target differently
-                const isNext = (i === 1);
-                const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
-                const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
-
-                oilHtml += `
-                    <tr class="hover:bg-slate-900/45 transition-colors">
-                        <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km ${isNext ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded ml-1">NEXT</span>' : ''}</td>
-                        <td class="py-2.5 px-4 ${dateColor}">${realDate}</td>
-                        <td class="py-2.5 px-4 text-slate-400">${benchDate}</td>
-                    </tr>
-                `;
-            }
-            document.getElementById('oil-targets-body').innerHTML = oilHtml;
-
-            // Milestones
-            const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
-            document.getElementById('milestones-body').innerHTML = activeMilestones.map(m => {
-                const kmLeft = m.targetOdo - latest.odo;
-                const realDate = addDays(latest.date, kmLeft / effectivePace);
-                const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
-                return `
-                    <tr class="hover:bg-slate-900/45 transition-colors">
-                        <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
-                        <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
-                        <td class="py-2.5 px-3 font-mono text-slate-400 whitespace-nowrap">${benchDate}</td>
-                        <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
-                        <td class="py-2.5 px-3 text-right">
-                            <button onclick="completeMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
         }
 
         function completeMilestone(targetOdo) {
