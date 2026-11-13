@@ -23,6 +23,25 @@
 </head>
 <body class="min-h-full bg-slate-950 text-slate-100 flex flex-col">
 
+    <!-- PASSWORD LOCK SCREEN OVERLAY -->
+    <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
+            <div class="w-12 h-12 bg-sky-500/15 border border-sky-500/30 rounded-2xl flex items-center justify-center mx-auto text-sky-400 text-xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <h2 class="text-sm font-black text-white uppercase tracking-wider">Proton S70 Tracker Locked</h2>
+                <p class="text-[11px] text-slate-400 mt-1">Please enter your password to access</p>
+            </div>
+            <form onsubmit="handleUnlock(event)" class="space-y-3 text-left">
+                <div>
+                    <input type="password" id="input-password" required placeholder="Enter password" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                </div>
+                <button type="submit" class="w-full py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all shadow-md">Unlock Dashboard</button>
+            </form>
+        </div>
+    </div>
+
     <!-- APP HEADER -->
     <header class="h-14 border-b border-slate-900 bg-[#090d16] px-4 flex items-center justify-between sticky top-0 z-30">
         <div>
@@ -165,4 +184,923 @@
                 <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
             </button>
             <div id="content-card-pace" class="p-4 space-y-2 text-xs hidden">
-                <div class="flex justify-between
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="text-slate-400">Recent Pace</span>
+                    <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
+                    <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="font-bold text-purple-300">Weighted Realistic</span>
+                    <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-slate-400">Comparison Pace</span>
+                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SETTINGS & HISTORY MODAL -->
+    <div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-gear text-amber-400"></i> Maintenance Settings & History
+                </h3>
+                <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <!-- Global Settings Section -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Parameters</h4>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Engine Oil Interval (km)</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="input-oil-interval" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono font-bold">
+                        <button onclick="saveOilInterval()" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Update</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add New Milestone Section (Prices NOT mandatory) -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Record</h4>
+                <form onsubmit="handleAddMilestone(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
+                            <input type="number" id="input-new-odo" required placeholder="e.g. 60000" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Service Title / Category</label>
+                            <input type="text" id="input-new-title" required placeholder="e.g. Brake Service" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Itemized Breakdown (Optional)</label>
+                        <textarea id="input-new-details" rows="2" placeholder="e.g. Parts, labor, shop location" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total Price ($) (Optional)</label>
+                        <input type="number" step="0.01" id="input-new-cost" placeholder="e.g. 150.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Milestone</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Add Time-Based Maintenance Section -->
+            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
+                <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-clock"></i> Add Time-Based Maintenance</h4>
+                <form onsubmit="handleAddTimeMaint(event)" class="space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div class="sm:col-span-2">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Name</label>
+                            <input type="text" id="input-time-title" required placeholder="e.g. Coolant flushing / Cabin filter" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Interval</label>
+                            <input type="text" id="input-time-interval" required placeholder="e.g. 2 years / 6 months" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Next Due Date</label>
+                        <input type="date" id="input-time-duedate" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button type="submit" class="px-4 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Time Task</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Manage Active Milestones -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-list-check text-sky-400"></i> Active Upcoming Maintenance</h4>
+                <div id="settings-active-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+            </div>
+
+            <!-- Completed Maintenance Ledger -->
+            <div class="space-y-3 pt-2 border-t border-slate-800">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-box-archive"></i> Completed Maintenance Ledger & Expenses</h4>
+                    <span id="total-spent-badge" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">Total Spent: $0.00</span>
+                </div>
+                <div id="settings-completed-milestones" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STRUCTURED POPUP MODAL FOR COMPLETING MAINTENANCE (DYNAMIC ROWS) -->
+    <div id="complete-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-lg rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record
+                </h3>
+                <button onclick="closeCompleteModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleCompleteSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="complete-target-odo">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title / Item</label>
+                    <input type="text" id="complete-title" readonly class="w-full bg-[#050913] border border-slate-800 rounded-xl px-3 py-2 text-slate-300 font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Date</label>
+                    <input type="date" id="complete-date" required class="w-full bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+
+                <!-- DYNAMIC ITEMIZED ROWS -->
+                <div class="space-y-2 pt-1">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-[11px] font-bold text-slate-300 uppercase">Itemized Breakdown & Prices</label>
+                        <button type="button" onclick="addCompleteRow()" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold rounded-lg border border-emerald-500/30 text-[10px]">
+                            <i class="fa-solid fa-plus"></i> Add Item Row
+                        </button>
+                    </div>
+                    <div id="complete-rows-container" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Dynamic rows injected here -->
+                    </div>
+                </div>
+
+                <!-- AUTO CALCULATED TOTAL -->
+                <div class="flex items-center justify-between bg-[#050913] border border-slate-800 p-3 rounded-xl font-mono">
+                    <span class="text-slate-300 font-bold uppercase">Calculated Total Price ($)</span>
+                    <span id="complete-total-display" class="text-amber-400 font-black text-sm">$0.00</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeCompleteModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 font-bold text-slate-400">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black uppercase tracking-wider">Save & Archive</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- STRUCTURED POPUP MODAL FOR EDITING MILESTONE -->
+    <div id="edit-milestone-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-md rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl my-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-pen text-sky-400"></i> Edit Maintenance Record
+                </h3>
+                <button onclick="closeEditMilestoneModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleEditMilestoneSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="edit-original-odo">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Target Odometer (km)</label>
+                    <input type="number" id="edit-milestone-odo" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title / Notes</label>
+                    <input type="text" id="edit-milestone-title" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Total Price ($)</label>
+                    <input type="number" step="0.01" id="edit-milestone-cost" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Itemized Breakdown / Details</label>
+                    <textarea id="edit-milestone-details" rows="3" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeEditMilestoneModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 font-bold text-slate-400">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black uppercase tracking-wider">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LOG MILEAGE MODAL -->
+    <div id="log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-gauge text-sky-400"></i> Log Odometer
+                </h3>
+                <button onclick="closeLogModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleLogSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Date</label>
+                    <input type="date" id="input-log-date" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Current Odometer (km)</label>
+                    <input type="number" id="input-log-odo" required placeholder="e.g. 46880" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-sm text-white focus:outline-none font-mono font-bold">
+                </div>
+                <div class="flex items-center gap-2.5 bg-[#050913] border border-slate-800/80 p-2.5 rounded-xl">
+                    <input type="checkbox" id="input-log-oil" class="w-4 h-4 rounded accent-sky-500 cursor-pointer">
+                    <label for="input-log-oil" class="text-[11px] font-bold text-slate-200 cursor-pointer select-none">
+                        Engine Oil Changed?
+                    </label>
+                </div>
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeLogModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-slate-400">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-wider">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- GOOGLE SHEET SYNC MODAL -->
+    <div id="sheet-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-table text-emerald-400"></i> Sheet Sync
+                </h3>
+                <button onclick="closeSheetSetupModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div>
+                <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Apps Script Web App URL</label>
+                <input type="url" id="input-sheet-url" placeholder="https://script.google.com/macros/s/..." class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                <button type="button" onclick="clearSheetUrl()" class="font-bold text-rose-400">Disconnect</button>
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeSheetSetupModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 text-slate-400">Close</button>
+                    <button type="button" onclick="saveSheetUrl()" class="px-4 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black uppercase">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(cardId) {
+            const content = document.getElementById('content-' + cardId);
+            const icon = document.getElementById('icon-' + cardId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+
+        const DEFAULT_LOGS = [
+            { date: '2025-07-10', odo: 1111, oilService: true },
+            { date: '2025-09-24', odo: 10056, oilService: true },
+            { date: '2026-01-05', odo: 19022, oilService: true },
+            { date: '2026-01-22', odo: 21150, oilService: false },
+            { date: '2026-04-15', odo: 28093, oilService: true },
+            { date: '2026-04-20', odo: 28495, oilService: false },
+            { date: '2026-07-03', odo: 34738, oilService: true },
+            { date: '2026-07-20', odo: 36560, oilService: false },
+            { date: '2026-08-18', odo: 40045, oilService: false },
+            { date: '2026-09-23', odo: 42744, oilService: true },
+            { date: '2026-10-19', odo: 45080, oilService: false },
+            { date: '2026-11-01', odo: 45591, oilService: false }
+        ];
+
+        const DEFAULT_MILESTONES = [
+            { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
+            { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
+            { targetOdo: 19022, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-01-05' },
+            { targetOdo: 21150, notes: 'Tyre Replacement', details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', cost: 272.00, done: true, serviceDate: '2026-01-22' },
+            { targetOdo: 28093, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-04-15' },
+            { targetOdo: 28495, notes: 'Battery Replacement', details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', cost: 150.00, done: true, serviceDate: '2026-04-20' },
+            { targetOdo: 34738, notes: 'Engine Service', details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-07-03' },
+            { targetOdo: 36560, notes: 'Tyre Replacement', details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', cost: 200.00, done: true, serviceDate: '2026-07-20' },
+            { targetOdo: 40045, notes: 'DCT Service', details: '- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20', cost: 119.00, done: true, serviceDate: '2026-08-18' },
+            { targetOdo: 42744, notes: 'Engine Service', details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15', cost: 93.90, done: true, serviceDate: '2026-09-23' },
+            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: '- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10', cost: 36.00, done: true, serviceDate: '2026-10-19' },
+            { targetOdo: 45591, notes: 'Other Services (Filters)', details: '- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7', cost: 14.00, done: true, serviceDate: '2026-11-01' },
+            { targetOdo: 60000, notes: 'Brake fluid', details: '', cost: 0, done: false },
+            { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: '', cost: 0, done: false },
+            { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 100000, notes: 'Oil & gas separator', details: '', cost: 0, done: false },
+            { targetOdo: 120000, notes: 'DCT oil', details: '', cost: 0, done: false },
+            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', cost: 0, done: false }
+        ];
+
+        const DEFAULT_TIME_MAINT = [
+            { id: '1', title: 'Coolant flushing', interval: '2 years', dueDate: '2027-07-01' },
+            { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
+        ];
+
+        let logs = DEFAULT_LOGS;
+        let milestones = DEFAULT_MILESTONES;
+        let timeMaint = DEFAULT_TIME_MAINT;
+        let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
+        let sheetApiUrl = localStorage.getItem('s70_sheet_url') || '';
+
+        try {
+            const savedLogs = localStorage.getItem('s70_logs');
+            if (savedLogs) logs = JSON.parse(savedLogs);
+            
+            const savedMilestones = localStorage.getItem('s70_milestones');
+            if (savedMilestones) {
+                const parsed = JSON.parse(savedMilestones);
+                if (parsed.length >= 12) {
+                    milestones = parsed;
+                } else {
+                    milestones = DEFAULT_MILESTONES;
+                }
+            }
+
+            const savedTime = localStorage.getItem('s70_time_maint');
+            if (savedTime) timeMaint = JSON.parse(savedTime);
+        } catch (e) {
+            console.warn("Resetting local storage due to parse error");
+        }
+
+        const BENCHMARK_PACE = 95;
+
+        function formatDateDisplay(isoStr) {
+            if (!isoStr) return '';
+            const d = new Date(isoStr + 'T00:00:00');
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function addDays(baseDateStr, daysToAdd) {
+            if (!isFinite(daysToAdd) || daysToAdd < 0) return 'Due Now';
+            const d = new Date(baseDateStr + 'T00:00:00');
+            d.setDate(d.getDate() + Math.round(daysToAdd));
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function parseDateGB(dateStr) {
+            const parts = dateStr.split(' ');
+            if (parts.length === 3) {
+                const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'};
+                const m = months[parts[1]] || '01';
+                return new Date(`${parts[2]}-${m}-${parts[0].padStart(2, '0')}T00:00:00`);
+            }
+            return new Date(dateStr + 'T00:00:00');
+        }
+
+        function daysBetween(date1Str, date2Str) {
+            const d1 = new Date(date1Str + 'T00:00:00');
+            const d2 = new Date(date2Str + 'T00:00:00');
+            return Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
+        }
+
+        function recalculateAll() {
+            try {
+                logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
+                milestones.sort((a, b) => a.targetOdo - b.targetOdo);
+                localStorage.setItem('s70_logs', JSON.stringify(logs));
+                localStorage.setItem('s70_milestones', JSON.stringify(milestones));
+                localStorage.setItem('s70_time_maint', JSON.stringify(timeMaint));
+                localStorage.setItem('s70_oil_interval', oilInterval);
+
+                const latest = logs[logs.length - 1];
+                const prev = logs.length > 1 ? logs[logs.length - 2] : latest;
+                const dailyDelta = latest.odo - prev.odo;
+
+                const oilServices = logs.filter(l => l.oilService);
+                const lastOil = oilServices.length > 0 ? oilServices[oilServices.length - 1] : logs[0];
+
+                const oilUsed = latest.odo - lastOil.odo;
+                const oilRemaining = Math.max(0, oilInterval - oilUsed);
+                const oilPct = Math.min(100, Math.round((oilUsed / oilInterval) * 100));
+
+                const longTermDays = daysBetween(lastOil.date, latest.date);
+                const longTermPace = oilUsed / longTermDays;
+
+                let recentAnchor = logs[0];
+                for (let i = logs.length - 2; i >= 0; i--) {
+                    if (daysBetween(logs[i].date, latest.date) >= 10) {
+                        recentAnchor = logs[i];
+                        break;
+                    }
+                }
+                const recentDays = daysBetween(recentAnchor.date, latest.date);
+                const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
+
+                const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
+                const effectivePace = weightedPace > 0 ? weightedPace : BENCHMARK_PACE;
+
+                // Update Card 1 UI
+                document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
+                document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
+                document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
+                document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
+                document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
+                document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${oilInterval.toLocaleString()} km`;
+                document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
+
+                // Update Pace Details UI
+                document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
+                document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
+                document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
+                document.getElementById('pace-weighted').textContent = `${effectivePace.toFixed(2)} km/day`;
+
+                // Engine Oil Realistic Table (10 Items)
+                let oilRealHtml = '';
+                let oilRealItems = [];
+                for (let i = 1; i <= 10; i++) {
+                    const targetOdo = lastOil.odo + (oilInterval * i);
+                    const kmLeft = targetOdo - latest.odo;
+                    const realDate = addDays(latest.date, kmLeft / effectivePace);
+
+                    oilRealItems.push({
+                        title: `Engine Oil Service (${targetOdo.toLocaleString()} km)`,
+                        dateStr: realDate,
+                        dateObj: parseDateGB(realDate),
+                        category: 'Engine Oil Service'
+                    });
+
+                    const isNext = (i === 1);
+                    const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
+                    const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
+
+                    oilRealHtml += `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-4 ${dateColor}">${realDate}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById('oil-realistic-body').innerHTML = oilRealHtml;
+
+                // Other Maintenance Realistic Table
+                const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
+                let maintRealItems = [];
+                document.getElementById('milestones-realistic-body').innerHTML = activeMilestones.map(m => {
+                    const kmLeft = m.targetOdo - latest.odo;
+                    const realDate = addDays(latest.date, kmLeft / effectivePace);
+
+                    maintRealItems.push({
+                        title: `${m.notes} (${m.targetOdo.toLocaleString()} km)`,
+                        dateStr: realDate,
+                        dateObj: parseDateGB(realDate),
+                        category: 'Other Maintenance'
+                    });
+
+                    return `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
+                            <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <button onclick="openCompleteModal(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+
+                // Time-Based Maintenance Dashboard Card & Settings
+                renderTimeMaintCard();
+
+                // Incoming Maintenance Card
+                let allIncoming = [...oilRealItems, ...maintRealItems];
+                timeMaint.forEach(t => {
+                    allIncoming.push({
+                        title: t.title,
+                        dateStr: formatDateDisplay(t.dueDate),
+                        dateObj: new Date(t.dueDate + 'T00:00:00'),
+                        category: 'Time-Based'
+                    });
+                });
+
+                allIncoming.sort((a, b) => a.dateObj - b.dateObj);
+                const closest10 = allIncoming.slice(0, 10);
+
+                const incomingHtml = closest10.map(item => `
+                    <div class="flex items-center justify-between py-1 border-b border-slate-800/40 last:border-0 text-xs">
+                        <div class="font-sans font-semibold text-slate-200 truncate pr-2">${item.title}</div>
+                        <div class="text-emerald-400 font-bold font-mono whitespace-nowrap">${item.dateStr}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 text-xs">No upcoming maintenance.</div>';
+
+                renderSettingsLists();
+
+            } catch (err) {
+                console.error("Error in recalculateAll:", err);
+            }
+        }
+
+        function renderTimeMaintCard() {
+            const timeListDiv = document.getElementById('time-maint-list');
+            if (timeMaint.length === 0) {
+                timeListDiv.innerHTML = '<div class="text-slate-500 text-xs">No time-based tasks.</div>';
+                return;
+            }
+            timeListDiv.innerHTML = timeMaint.map(t => `
+                <div class="flex justify-between items-center py-1 border-b border-slate-800/40 last:border-0">
+                    <div>
+                        <div class="font-sans font-bold text-slate-200">${t.title}</div>
+                        <div class="text-[10px] text-slate-400">Interval: ${t.interval}</div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="text-emerald-400 font-bold">${formatDateDisplay(t.dueDate)}</div>
+                        </div>
+                        <button onclick="deleteTimeMaint('${t.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSettingsLists() {
+            const activeDiv = document.getElementById('settings-active-milestones');
+            const activeList = milestones.filter(m => !m.done);
+            if (activeList.length === 0) {
+                activeDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No active milestones.</div>';
+            } else {
+                activeDiv.innerHTML = activeList.map(m => `
+                    <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/60 p-2.5 rounded-xl text-xs font-mono">
+                        <div class="flex items-center gap-2 flex-1 overflow-hidden">
+                            <span class="text-amber-400 font-bold whitespace-nowrap">${m.targetOdo.toLocaleString()} km</span>
+                            <span class="text-slate-300 truncate font-sans">${m.notes}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <button onclick="openEditMilestoneModal(${m.targetOdo})" class="px-2 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteMilestone(${m.targetOdo})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const completedDiv = document.getElementById('settings-completed-milestones');
+            const completedList = milestones.filter(m => m.done);
+            let grandTotalSpent = 0;
+
+            if (completedList.length === 0) {
+                completedDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No completed maintenance items yet.</div>';
+            } else {
+                completedDiv.innerHTML = completedList.map(m => {
+                    const costVal = parseFloat(m.cost) || 0;
+                    grandTotalSpent += costVal;
+                    const formattedDetails = (m.details || '').replace(/\n/g, '<br>');
+
+                    return `
+                        <details class="group bg-[#050913] border border-slate-800/60 rounded-xl text-xs font-mono overflow-hidden">
+                            <summary class="flex items-center justify-between p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
+                                    <span class="text-white font-bold font-sans">${m.notes}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
+                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
+                                    <button onclick="event.stopPropagation(); uncompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase ml-1">Undo</button>
+                                </div>
+                            </summary>
+                            <div class="p-3 pt-0 space-y-2 border-t border-slate-800/40 mt-1">
+                                ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-2"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
+                                ${formattedDetails ? `<div class="text-[11px] text-slate-300 bg-[#080d1a] p-2 rounded border border-slate-900 whitespace-pre-line">${formattedDetails}</div>` : '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
+                            </div>
+                        </details>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('total-spent-badge').textContent = `Total Spent: $${grandTotalSpent.toFixed(2)}`;
+        }
+
+        // Edit Milestone Modal Functions
+        function openEditMilestoneModal(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+            document.getElementById('edit-original-odo').value = m.targetOdo;
+            document.getElementById('edit-milestone-odo').value = m.targetOdo;
+            document.getElementById('edit-milestone-title').value = m.notes;
+            document.getElementById('edit-milestone-cost').value = m.cost || 0;
+            document.getElementById('edit-milestone-details').value = m.details || '';
+            document.getElementById('edit-milestone-modal').classList.remove('hidden');
+        }
+
+        function closeEditMilestoneModal() {
+            document.getElementById('edit-milestone-modal').classList.add('hidden');
+        }
+
+        function handleEditMilestoneSubmit(e) {
+            e.preventDefault();
+            const originalOdo = parseInt(document.getElementById('edit-original-odo').value, 10);
+            const m = milestones.find(item => item.targetOdo === originalOdo);
+            if (!m) return;
+
+            const newOdo = parseInt(document.getElementById('edit-milestone-odo').value, 10);
+            const newTitle = document.getElementById('edit-milestone-title').value.trim();
+            const newCost = parseFloat(document.getElementById('edit-milestone-cost').value) || 0;
+            const newDetails = document.getElementById('edit-milestone-details').value.trim();
+
+            if (isNaN(newOdo) || !newTitle) {
+                alert("Please enter a valid odometer and title.");
+                return;
+            }
+
+            m.targetOdo = newOdo;
+            m.notes = newTitle;
+            m.cost = newCost;
+            m.details = newDetails;
+
+            closeEditMilestoneModal();
+            recalculateAll();
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        // Dynamic Rows for Complete Service Popup
+        function openCompleteModal(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+            document.getElementById('complete-target-odo').value = m.targetOdo;
+            document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
+            document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
+
+            const container = document.getElementById('complete-rows-container');
+            container.innerHTML = '';
+
+            let itemsToLoad = [];
+            if (m.details) {
+                const lines = m.details.split('\n');
+                lines.forEach(line => {
+                    const cleanLine = line.replace(/^- /, '').trim();
+                    const lastDashIdx = cleanLine.lastIndexOf(' - $');
+                    if (lastDashIdx !== -1) {
+                        const name = cleanLine.substring(0, lastDashIdx).trim();
+                        const price = parseFloat(cleanLine.substring(lastDashIdx + 4)) || 0;
+                        itemsToLoad.push({ name, price });
+                    } else if (cleanLine) {
+                        itemsToLoad.push({ name: cleanLine, price: 0 });
+                    }
+                });
+            }
+
+            if (itemsToLoad.length === 0) {
+                itemsToLoad.push({ name: '', price: '' });
+            }
+
+            itemsToLoad.forEach(item => addCompleteRow(item.name, item.price));
+            updateCompleteTotal();
+            document.getElementById('complete-modal').classList.remove('hidden');
+        }
+
+        function addCompleteRow(name = '', price = '') {
+            const container = document.getElementById('complete-rows-container');
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'flex items-center gap-2';
+            rowDiv.innerHTML = `
+                <input type="text" placeholder="e.g. Motul 8100 X-Cess 5L (Capital Auto)" value="${name}" class="flex-1 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono text-xs item-name-input" oninput="updateCompleteTotal()">
+                <input type="number" step="0.01" placeholder="Price ($)" value="${price}" class="w-28 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono text-xs item-price-input" oninput="updateCompleteTotal()">
+                <button type="button" onclick="this.parentElement.remove(); updateCompleteTotal();" class="text-rose-400 hover:text-rose-300 px-2 py-2 text-xs"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(rowDiv);
+            updateCompleteTotal();
+        }
+
+        function updateCompleteTotal() {
+            const priceInputs = document.querySelectorAll('.item-price-input');
+            let total = 0;
+            priceInputs.forEach(input => {
+                const val = parseFloat(input.value) || 0;
+                total += val;
+            });
+            document.getElementById('complete-total-display').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function closeCompleteModal() {
+            document.getElementById('complete-modal').classList.add('hidden');
+        }
+
+        function handleCompleteSubmit(e) {
+            e.preventDefault();
+            const targetOdo = parseInt(document.getElementById('complete-target-odo').value, 10);
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+
+            const nameInputs = document.querySelectorAll('.item-name-input');
+            const priceInputs = document.querySelectorAll('.item-price-input');
+            
+            let detailsLines = [];
+            let totalCost = 0;
+
+            for (let i = 0; i < nameInputs.length; i++) {
+                const name = nameInputs[i].value.trim();
+                const price = parseFloat(priceInputs[i].value) || 0;
+                if (name) {
+                    detailsLines.push(`- ${name} - $${price.toFixed(2)}`);
+                    totalCost += price;
+                }
+            }
+
+            m.serviceDate = document.getElementById('complete-date').value;
+            m.details = detailsLines.join('\n');
+            m.cost = totalCost;
+            m.done = true;
+
+            closeCompleteModal();
+            recalculateAll();
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function uncompleteMilestone(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (m) { m.done = false; recalculateAll(); if (sheetApiUrl) pushConfigToGoogleSheet(); }
+        }
+
+        function deleteMilestone(targetOdo) {
+            if (confirm(`Are you sure you want to delete this maintenance record?`)) {
+                milestones = milestones.filter(item => item.targetOdo !== targetOdo);
+                recalculateAll();
+                if (sheetApiUrl) pushConfigToGoogleSheet();
+            }
+        }
+
+        function handleAddMilestone(e) {
+            e.preventDefault();
+            const odoVal = parseInt(document.getElementById('input-new-odo').value, 10);
+            const titleVal = document.getElementById('input-new-title').value.trim();
+            const detailsVal = document.getElementById('input-new-details').value.trim();
+            const costVal = parseFloat(document.getElementById('input-new-cost').value) || 0;
+
+            if (isNaN(odoVal) || !titleVal) return;
+
+            milestones.push({ 
+                targetOdo: odoVal, 
+                notes: titleVal, 
+                details: detailsVal, 
+                cost: costVal, 
+                done: false 
+            });
+
+            document.getElementById('input-new-odo').value = '';
+            document.getElementById('input-new-title').value = '';
+            document.getElementById('input-new-details').value = '';
+            document.getElementById('input-new-cost').value = '';
+
+            recalculateAll();
+            alert("New maintenance record added successfully!");
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function handleAddTimeMaint(e) {
+            e.preventDefault();
+            const title = document.getElementById('input-time-title').value.trim();
+            const interval = document.getElementById('input-time-interval').value.trim();
+            const dueDate = document.getElementById('input-time-duedate').value;
+
+            if (!title || !interval || !dueDate) return;
+
+            timeMaint.push({
+                id: Date.now().toString(),
+                title: title,
+                interval: interval,
+                dueDate: dueDate
+            });
+
+            document.getElementById('input-time-title').value = '';
+            document.getElementById('input-time-interval').value = '';
+            document.getElementById('input-time-duedate').value = '';
+
+            recalculateAll();
+            alert("Time-based maintenance task added!");
+        }
+
+        function deleteTimeMaint(id) {
+            timeMaint = timeMaint.filter(t => t.id !== id);
+            recalculateAll();
+        }
+
+        function saveOilInterval() {
+            const val = parseInt(document.getElementById('input-oil-interval').value, 10);
+            if (isNaN(val) || val <= 0) { alert("Please enter a valid oil interval in km."); return; }
+            oilInterval = val;
+            recalculateAll();
+            alert(`Engine oil interval updated to ${oilInterval.toLocaleString()} km!`);
+            if (sheetApiUrl) pushConfigToGoogleSheet();
+        }
+
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
+        function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
+
+        function handleLogSubmit(e) {
+            e.preventDefault();
+            const dateVal = document.getElementById('input-log-date').value;
+            const odoVal = parseInt(document.getElementById('input-log-odo').value, 10);
+            const oilVal = document.getElementById('input-log-oil').checked;
+
+            const newEntry = { date: dateVal, odo: odoVal, oilService: oilVal };
+            logs.push(newEntry);
+            recalculateAll();
+            closeLogModal();
+            document.getElementById('input-log-odo').value = '';
+            document.getElementById('input-log-oil').checked = false;
+
+            if (sheetApiUrl) pushToGoogleSheet(newEntry);
+        }
+
+        function openSheetSetupModal() { document.getElementById('sheet-modal').classList.remove('hidden'); }
+        function closeSheetSetupModal() { document.getElementById('sheet-modal').classList.add('hidden'); }
+        function saveSheetUrl() {
+            sheetApiUrl = document.getElementById('input-sheet-url').value.trim();
+            localStorage.setItem('s70_sheet_url', sheetApiUrl);
+            closeSheetSetupModal();
+            fetchFromGoogleSheet();
+        }
+        function clearSheetUrl() {
+            sheetApiUrl = '';
+            localStorage.removeItem('s70_sheet_url');
+            document.getElementById('input-sheet-url').value = '';
+            closeSheetSetupModal();
+        }
+        function fetchFromGoogleSheet() {
+            fetch(sheetApiUrl).then(res => res.json()).then(data => {
+                if (data && data.logs && Array.isArray(data.logs)) { logs = data.logs; }
+                else if (Array.isArray(data) && data.length > 0) { logs = data; }
+                if (data && data.milestones && Array.isArray(data.milestones)) { milestones = data.milestones; }
+                if (data && data.oilInterval) { oilInterval = data.oilInterval; document.getElementById('input-oil-interval').value = oilInterval; }
+                recalculateAll();
+            }).catch(() => {});
+        }
+        function pushToGoogleSheet(entry) {
+            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'log', entry }) });
+        }
+        function pushConfigToGoogleSheet() {
+            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, oilInterval }) });
+        }
+
+        // SECURITY & AUTHENTICATION LOGIC
+        let inactivityTimer;
+        const TIMEOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+        function checkAuth() {
+            const isUnlocked = sessionStorage.getItem('s70_unlocked');
+            const overlay = document.getElementById('auth-overlay');
+            if (isUnlocked === 'true') {
+                overlay.classList.add('hidden');
+                resetInactivityTimer();
+            } else {
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function handleUnlock(e) {
+            e.preventDefault();
+            const pass = document.getElementById('input-password').value;
+            if (pass === 'musroy1509') {
+                sessionStorage.setItem('s70_unlocked', 'true');
+                document.getElementById('input-password').value = '';
+                checkAuth();
+            } else {
+                alert('Incorrect password!');
+                document.getElementById('input-password').value = '';
+            }
+        }
+
+        function lockApp() {
+            sessionStorage.removeItem('s70_unlocked');
+            checkAuth();
+        }
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(lockApp, TIMEOUT_DURATION);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(eventType => {
+            window.addEventListener(eventType, () => {
+                if (sessionStorage.getItem('s70_unlocked') === 'true') {
+                    resetInactivityTimer();
+                }
+            });
+        });
+
+        const originalWindowOnload = window.onload;
+        window.onload = () => {
+            checkAuth();
+            const dateInput = document.getElementById('input-log-date');
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            
+            const intervalInput = document.getElementById('input-oil-interval');
+            if (intervalInput) intervalInput.value = oilInterval;
+
+            const completeDateInput = document.getElementById('complete-date');
+            if (completeDateInput) completeDateInput.value = new Date().toISOString().split('T')[0];
+
+            if (sheetApiUrl) {
+                const sheetUrlInput = document.getElementById('input-sheet-url');
+                if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
+                fetchFromGoogleSheet();
+            }
+            recalculateAll();
+            if (originalWindowOnload) originalWindowOnload();
+        };
+    </script>
+</body>
+</html>
