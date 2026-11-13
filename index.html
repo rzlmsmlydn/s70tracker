@@ -329,6 +329,43 @@
         </div>
     </div>
 
+    <!-- STRUCTURED POPUP MODAL FOR EDITING MILESTONE -->
+    <div id="edit-milestone-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-md rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl my-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-pen text-sky-400"></i> Edit Maintenance Record
+                </h3>
+                <button onclick="closeEditMilestoneModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <form onsubmit="handleEditMilestoneSubmit(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="edit-original-odo">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Target Odometer (km)</label>
+                    <input type="number" id="edit-milestone-odo" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title / Notes</label>
+                    <input type="text" id="edit-milestone-title" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Total Price ($)</label>
+                    <input type="number" step="0.01" id="edit-milestone-cost" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Itemized Breakdown / Details</label>
+                    <textarea id="edit-milestone-details" rows="3" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                    <button type="button" onclick="closeEditMilestoneModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 font-bold text-slate-400">Cancel</button>
+                    <button type="submit" class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black uppercase tracking-wider">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- LOG MILEAGE MODAL -->
     <div id="log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
@@ -450,11 +487,9 @@
             const savedLogs = localStorage.getItem('s70_logs');
             if (savedLogs) logs = JSON.parse(savedLogs);
             
-            // Force-load preloaded milestones if localStorage didn't have them correctly initialized
             const savedMilestones = localStorage.getItem('s70_milestones');
             if (savedMilestones) {
                 const parsed = JSON.parse(savedMilestones);
-                // If stored milestones are fewer than default or missing past data, merge or use default
                 if (parsed.length >= 12) {
                     milestones = parsed;
                 } else {
@@ -678,7 +713,6 @@
         }
 
         function renderSettingsLists() {
-            // Active Milestones List
             const activeDiv = document.getElementById('settings-active-milestones');
             const activeList = milestones.filter(m => !m.done);
             if (activeList.length === 0) {
@@ -691,14 +725,13 @@
                             <span class="text-slate-300 truncate font-sans">${m.notes}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap">
-                            <button onclick="editMilestone(${m.targetOdo})" class="px-2 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="openEditMilestoneModal(${m.targetOdo})" class="px-2 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteMilestone(${m.targetOdo})" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `).join('');
             }
 
-            // Completed Milestones Ledger
             const completedDiv = document.getElementById('settings-completed-milestones');
             const completedList = milestones.filter(m => m.done);
             let grandTotalSpent = 0;
@@ -734,6 +767,48 @@
             }
 
             document.getElementById('total-spent-badge').textContent = `Total Spent: $${grandTotalSpent.toFixed(2)}`;
+        }
+
+        // Edit Milestone Modal Functions
+        function openEditMilestoneModal(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+            document.getElementById('edit-original-odo').value = m.targetOdo;
+            document.getElementById('edit-milestone-odo').value = m.targetOdo;
+            document.getElementById('edit-milestone-title').value = m.notes;
+            document.getElementById('edit-milestone-cost').value = m.cost || 0;
+            document.getElementById('edit-milestone-details').value = m.details || '';
+            document.getElementById('edit-milestone-modal').classList.remove('hidden');
+        }
+
+        function closeEditMilestoneModal() {
+            document.getElementById('edit-milestone-modal').classList.add('hidden');
+        }
+
+        function handleEditMilestoneSubmit(e) {
+            e.preventDefault();
+            const originalOdo = parseInt(document.getElementById('edit-original-odo').value, 10);
+            const m = milestones.find(item => item.targetOdo === originalOdo);
+            if (!m) return;
+
+            const newOdo = parseInt(document.getElementById('edit-milestone-odo').value, 10);
+            const newTitle = document.getElementById('edit-milestone-title').value.trim();
+            const newCost = parseFloat(document.getElementById('edit-milestone-cost').value) || 0;
+            const newDetails = document.getElementById('edit-milestone-details').value.trim();
+
+            if (isNaN(newOdo) || !newTitle) {
+                alert("Please enter a valid odometer and title.");
+                return;
+            }
+
+            m.targetOdo = newOdo;
+            m.notes = newTitle;
+            m.cost = newCost;
+            m.details = newDetails;
+
+            closeEditMilestoneModal();
+            recalculateAll();
+            if (sheetApiUrl) pushConfigToGoogleSheet();
         }
 
         // Dynamic Rows for Complete Service Popup
@@ -841,28 +916,6 @@
                 recalculateAll();
                 if (sheetApiUrl) pushConfigToGoogleSheet();
             }
-        }
-
-        function editMilestone(targetOdo) {
-            const m = milestones.find(item => item.targetOdo === targetOdo);
-            if (!m) return;
-            const newOdoStr = prompt("Edit Target Odometer (km):", m.targetOdo);
-            if (newOdoStr === null) return;
-            const newOdo = parseInt(newOdoStr, 10);
-            const newNotes = prompt("Edit Service Title / Notes:", m.notes);
-            if (newNotes === null) return;
-            const newCost = prompt("Edit Total Price ($):", m.cost || 0);
-            if (newCost === null) return;
-            const newDetails = prompt("Edit Itemized Breakdown:", m.details || '');
-            if (newDetails === null) return;
-
-            if (isNaN(newOdo)) { alert("Invalid odometer value."); return; }
-            m.targetOdo = newOdo;
-            m.notes = newNotes.trim();
-            m.cost = parseFloat(newCost) || 0;
-            m.details = newDetails.trim();
-            recalculateAll();
-            if (sheetApiUrl) pushConfigToGoogleSheet();
         }
 
         function handleAddMilestone(e) {
