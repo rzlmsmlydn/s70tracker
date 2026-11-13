@@ -45,7 +45,7 @@
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- COMPACT MOBILE-FIRST STATUS CARD -->
+        <!-- CARD 1: MILEAGE UPDATE (Non-collapsable) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
             <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
                 <div class="flex items-center gap-2 text-xs font-black tracking-wider text-white uppercase">
@@ -80,7 +80,7 @@
                 <!-- Remaining to Oil Service Row + Progress Bar -->
                 <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
                     <div class="flex items-center justify-between">
-                        <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
+                        <span class="text-slate-300 font-bold">Remaining to Oil Service <span class="text-[10px] text-slate-400 font-normal">(7500km interval)</span></span>
                         <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">3,440 km</span>
                     </div>
                     <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
@@ -90,105 +90,150 @@
             </div>
         </div>
 
-        <!-- ENGINE OIL SERVICE TABLE -->
+        <!-- CARD 2: ENGINE OIL REALISTIC (Collapsable) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <div class="px-4 py-3 border-b border-slate-800/80">
+            <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service — 7,500 km Interval
+                    <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (Realistic Pace)
                 </h2>
-                <p class="text-[10px] text-slate-500 mt-0.5">Next 5 service targets only (Next target highlighted)</p>
-            </div>
-            <div class="overflow-x-auto">
+                <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-oil-real" class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]">
+                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
                             <th class="py-2.5 px-4">Target Mileage</th>
-                            <th class="py-2.5 px-4">Realistic</th>
-                            <th class="py-2.5 px-4">95 km/day</th>
+                            <th class="py-2.5 px-4">Realistic Date</th>
                         </tr>
                     </thead>
-                    <tbody id="oil-targets-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
+                    <tbody id="oil-realistic-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- OTHER MAINTENANCE MILESTONES -->
+        <!-- CARD 3: ENGINE OIL 95KM/DAY (Collapsable) -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <div class="px-4 py-3 border-b border-slate-800/80">
+            <button onclick="toggleCard('card-oil-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance
+                    <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (95 km/day Pace)
                 </h2>
-                <p class="text-[10px] text-slate-500 mt-0.5">Showing closest mileage milestones</p>
-            </div>
-            <div class="overflow-x-auto">
+                <i id="icon-card-oil-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-oil-95" class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]">
+                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                            <th class="py-2.5 px-4">Target Mileage</th>
+                            <th class="py-2.5 px-4">95 km/day Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="oil-95-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CARD 4: OTHER MAINTENANCE REALISTIC (Collapsable) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-maint-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (Realistic Pace)
+                </h2>
+                <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-maint-real" class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
                             <th class="py-2.5 px-3">Target Odo</th>
                             <th class="py-2.5 px-3">Realistic Date</th>
+                            <th class="py-2.5 px-3">Notes / Purposes</th>
+                            <th class="py-2.5 px-3 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CARD 5: OTHER MAINTENANCE 95KM/DAY (Collapsable) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-maint-95')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (95 km/day Pace)
+                </h2>
+                <i id="icon-card-maint-95" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-maint-95" class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                            <th class="py-2.5 px-3">Target Odo</th>
                             <th class="py-2.5 px-3">95 km/day Date</th>
                             <th class="py-2.5 px-3">Notes / Purposes</th>
                             <th class="py-2.5 px-3 text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="milestones-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
+                    <tbody id="milestones-95-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- PACE ENGINE & TIME-BASED GRID -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Pace Details -->
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl p-4 space-y-3">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
+        <!-- CARD 6: TIME-BASED MAINTENANCE (Collapsable) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
                 </h2>
-                <div class="space-y-2 text-xs">
-                    <div class="flex justify-between py-1 border-b border-slate-800/40">
-                        <span class="text-slate-400">Recent Pace</span>
-                        <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono">
+                <div class="flex justify-between items-center py-1 border-b border-slate-800/40">
+                    <div>
+                        <div class="font-sans font-bold text-slate-200">Coolant flushing</div>
+                        <div class="text-[10px] text-slate-400">Interval: 2 years</div>
                     </div>
-                    <div class="flex justify-between py-1 border-b border-slate-800/40">
-                        <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
-                        <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                    <div class="text-right">
+                        <div class="text-emerald-400 font-bold">1 Jul 2027</div>
+                        <div class="text-[10px] text-slate-500">Next</div>
                     </div>
-                    <div class="flex justify-between py-1 border-b border-slate-800/40">
-                        <span class="font-bold text-purple-300">Weighted Realistic</span>
-                        <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                </div>
+                <div class="flex justify-between items-center py-1">
+                    <div>
+                        <div class="font-sans font-bold text-slate-200">Cabin filter</div>
+                        <div class="text-[10px] text-slate-400">Interval: 6 months</div>
                     </div>
-                    <div class="flex justify-between py-1">
-                        <span class="text-slate-400">Comparison Pace</span>
-                        <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                    <div class="text-right">
+                        <div class="text-amber-400 font-bold">1 May 2027</div>
+                        <div class="text-[10px] text-slate-500">Next</div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Time-Based Maintenance -->
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl p-4 space-y-3">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2 border-b border-slate-800 pb-2">
-                    <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
+        <!-- CARD 7: PACE DETAILS (Collapsable) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
                 </h2>
-                <div class="space-y-2.5 text-xs font-mono">
-                    <div class="flex justify-between items-center py-1 border-b border-slate-800/40">
-                        <div>
-                            <div class="font-sans font-bold text-slate-200">Coolant flushing</div>
-                            <div class="text-[10px] text-slate-400">Interval: 2 years</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-emerald-400 font-bold">1 Jul 2027</div>
-                            <div class="text-[10px] text-slate-500">Next</div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between items-center py-1">
-                        <div>
-                            <div class="font-sans font-bold text-slate-200">Cabin filter</div>
-                            <div class="text-[10px] text-slate-400">Interval: 6 months</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-amber-400 font-bold">1 May 2027</div>
-                            <div class="text-[10px] text-slate-500">Next</div>
-                        </div>
-                    </div>
+                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-pace" class="p-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="text-slate-400">Recent Pace</span>
+                    <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
+                    <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="font-bold text-purple-300">Weighted Realistic</span>
+                    <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-slate-400">Comparison Pace</span>
+                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
                 </div>
             </div>
         </div>
@@ -255,6 +300,33 @@
     </div>
 
     <script>
+        // Collapsable card state manager
+        function toggleCard(cardId) {
+            const content = document.getElementById('content-' + cardId);
+            const icon = document.getElementById('icon-' + cardId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(0deg)';
+                localStorage.setItem('s70_collapse_' + cardId, 'false');
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(-90deg)';
+                localStorage.setItem('s70_collapse_' + cardId, 'true');
+            }
+        }
+
+        // Restore collapse states on load
+        window.addEventListener('DOMContentLoaded', () => {
+            ['card-oil-real', 'card-oil-95', 'card-maint-real', 'card-maint-95', 'card-time-maint', 'card-pace'].forEach(id => {
+                if (localStorage.getItem('s70_collapse_' + id) === 'true') {
+                    const content = document.getElementById('content-' + id);
+                    const icon = document.getElementById('icon-' + id);
+                    if (content) content.classList.add('hidden');
+                    if (icon) icon.style.transform = 'rotate(-90deg)';
+                }
+            });
+        });
+
         const DEFAULT_LOGS = [
             { date: '2026-09-23', odo: 42744, oilService: true },
             { date: '2026-11-01', odo: 45951, oilService: false },
@@ -352,7 +424,7 @@
                 const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
                 const effectivePace = weightedPace > 0 ? weightedPace : BENCHMARK_PACE;
 
-                // Update UI elements safely
+                // Update Card 1 UI
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
                 document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
@@ -361,44 +433,61 @@
                 document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()} km`;
                 document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
 
+                // Update Card 7 UI
                 document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
                 document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
                 document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
                 document.getElementById('pace-weighted').textContent = `${effectivePace.toFixed(2)} km/day`;
 
-                // Build Engine Oil Targets Table
-                let oilHtml = '';
+                // Card 2: Engine Oil Realistic Table
+                let oilRealHtml = '';
                 for (let i = 1; i <= 5; i++) {
                     const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
-                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
 
                     const isNext = (i === 1);
                     const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
                     const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
 
-                    oilHtml += `
+                    oilRealHtml += `
                         <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km ${isNext ? '<span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded ml-1">NEXT</span>' : ''}</td>
+                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km</td>
                             <td class="py-2.5 px-4 ${dateColor}">${realDate}</td>
-                            <td class="py-2.5 px-4 text-slate-400">${benchDate}</td>
                         </tr>
                     `;
                 }
-                document.getElementById('oil-targets-body').innerHTML = oilHtml;
+                document.getElementById('oil-realistic-body').innerHTML = oilRealHtml;
 
-                // Build Milestones Table
+                // Card 3: Engine Oil 95km/day Table
+                let oil95Html = '';
+                for (let i = 1; i <= 5; i++) {
+                    const targetOdo = lastOil.odo + (OIL_INTERVAL * i);
+                    const kmLeft = targetOdo - latest.odo;
+                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
+
+                    const isNext = (i === 1);
+                    const odoColor = isNext ? 'text-sky-400 font-black' : 'text-slate-200 font-bold';
+                    const dateColor = isNext ? 'text-sky-300 font-bold' : 'text-slate-200';
+
+                    oil95Html += `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-4 ${odoColor}">${targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-4 ${dateColor}">${benchDate}</td>
+                        </tr>
+                    `;
+                }
+                document.getElementById('oil-95-body').innerHTML = oil95Html;
+
+                // Card 4: Other Maintenance Realistic Table
                 const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
-                document.getElementById('milestones-body').innerHTML = activeMilestones.map(m => {
+                document.getElementById('milestones-realistic-body').innerHTML = activeMilestones.map(m => {
                     const kmLeft = m.targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
-                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
                     return `
                         <tr class="hover:bg-slate-900/45 transition-colors">
                             <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
                             <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
-                            <td class="py-2.5 px-3 font-mono text-slate-400 whitespace-nowrap">${benchDate}</td>
                             <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
                             <td class="py-2.5 px-3 text-right">
                                 <button onclick="completeMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
@@ -406,6 +495,23 @@
                         </tr>
                     `;
                 }).join('');
+
+                // Card 5: Other Maintenance 95km/day Table
+                document.getElementById('milestones-95-body').innerHTML = activeMilestones.map(m => {
+                    const kmLeft = m.targetOdo - latest.odo;
+                    const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
+                    return `
+                        <tr class="hover:bg-slate-900/45 transition-colors">
+                            <td class="py-2.5 px-3 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${benchDate}</td>
+                            <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
+                            <td class="py-2.5 px-3 text-right">
+                                <button onclick="completeMilestone(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
             } catch (err) {
                 console.error("Error in recalculateAll:", err);
             }
