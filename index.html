@@ -332,7 +332,6 @@
             }
         }
 
-        // Restore collapse states on load
         window.addEventListener('DOMContentLoaded', () => {
             ['card-incoming', 'card-oil-real', 'card-maint-real'].forEach(id => {
                 if (localStorage.getItem('s70_collapse_' + id) === 'true') {
@@ -359,7 +358,8 @@
             { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + Works Engineering intercooler + oil & gas separator + spark plugs', done: false },
             { targetOdo: 100000, notes: 'Oil & gas separator', done: false },
             { targetOdo: 120000, notes: 'DCT oil', done: false },
-            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', done: false }
+            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', done: false },
+            { targetOdo: 200000, notes: 'Major 200k servicing item here', done: false } // Added example 200k item
         ];
 
         let logs = DEFAULT_LOGS;
@@ -405,9 +405,11 @@
         function parseDateGB(dateStr) {
             const parts = dateStr.split(' ');
             if (parts.length === 3) {
-                return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+                const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'};
+                const m = months[parts[1]] || '01';
+                return new Date(`${parts[2]}-${m}-${parts[0].padStart(2, '0')}T00:00:00`);
             }
-            return new Date(dateStr);
+            return new Date(dateStr + 'T00:00:00');
         }
 
         function daysBetween(date1Str, date2Str) {
@@ -554,15 +556,15 @@
                     `;
                 }).join('');
 
-                // BUILD INCOMING MAINTENANCE CARD (Closest 5 by Date across Oil Realistic, Maint Realistic, Time-Based)
+                // BUILD INCOMING MAINTENANCE CARD (Closest 5 by Date)
                 let allIncoming = [...oilRealItems, ...maintRealItems];
                 
                 const timeItems = [
-                    { title: 'Coolant flushing', dateStr: '1 Jul 2027', dateObj: new Date('2027-07-01'), category: 'Time-Based' },
-                    { title: 'Cabin filter', dateStr: '1 May 2027', dateObj: new Date('2027-05-01'), category: 'Time-Based' }
+                    { title: 'Coolant flushing', dateStr: '1 Jul 2027', dateObj: new Date('2027-07-01T00:00:00'), category: 'Time-Based' },
+                    { title: 'Cabin filter', dateStr: '1 May 2027', dateObj: new Date('2027-05-01T00:00:00'), category: 'Time-Based' }
                 ];
                 timeItems.forEach(t => {
-                    if (t.dateObj >= new Date(latest.date)) {
+                    if (t.dateObj >= new Date(latest.date + 'T00:00:00')) {
                         allIncoming.push(t);
                     }
                 });
