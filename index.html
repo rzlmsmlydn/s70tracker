@@ -753,8 +753,7 @@
             // Parse existing details if any
             let itemsToLoad = [];
             if (m.details) {
-                const lines = m.details.split('
-');
+                const lines = m.details.split('\n');
                 lines.forEach(line => {
                     // Try parsing format like "- Item name - $price" or similar
                     const cleanLine = line.replace(/^- /, '').trim();
@@ -942,13 +941,7 @@
         function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
         function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
 
-                        function handleLogSubmit(e) {
-            e.preventDefault();
-            const dateVal = document.getElementById('input-log-date').value;
-            const odoVal = parseInt(document.getElementById('input-log-odo').value, 10);
-            const oilVal = document.getElementById('input-log-oil').checked;
-
-            const newEntry = { date: dateVal, odo: odoVal, oilService: oilVal };
+                        ;
             logs.push(newEntry);
             recalculateAll();
             closeLogModal();
@@ -993,6 +986,32 @@
             document.getElementById('input-log-oil').checked = false;
 
             if (sheetApiUrl) pushToGoogleSheet(newEntry);
+        }
+
+                function handleLogSubmit(e) {
+            e.preventDefault();
+            const dateVal = document.getElementById('input-log-date').value;
+            const odoVal = parseInt(document.getElementById('input-log-odo').value, 10);
+            const oilVal = document.getElementById('input-log-oil').checked;
+
+            const newEntry = { date: dateVal, odo: odoVal, oilService: oilVal };
+            logs.push(newEntry);
+            recalculateAll();
+            closeLogModal();
+            document.getElementById('input-log-odo').value = '';
+            document.getElementById('input-log-oil').checked = false;
+
+            if (sheetApiUrl) pushToGoogleSheet(newEntry);
+
+            if (oilVal) {
+                let oilM = milestones.find(m => Math.abs(m.targetOdo - odoVal) <= 500 && (m.notes.includes('Engine Service') || m.notes.includes('Oil')));
+                if (!oilM) {
+                    oilM = { targetOdo: odoVal, notes: 'Engine Service', details: '', cost: 0, done: false, serviceDate: dateVal };
+                    milestones.push(oilM);
+                    milestones.sort((a, b) => a.targetOdo - b.targetOdo);
+                }
+                openCompleteModal(oilM.targetOdo);
+            }
         }
 
         function openSheetSetupModal() { document.getElementById('sheet-modal').classList.remove('hidden'); }
