@@ -419,35 +419,18 @@
         ];
 
         const DEFAULT_MILESTONES = [
-            { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140
-- Proton Oil Filter - $10
-- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
-            { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79
-- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17
-- Geely Filter (Bungan Trading) - $8
-- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
-            { targetOdo: 19022, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69
-- Geely Filter (Sibana Menglait) - $10
-- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-01-05' },
-            { targetOdo: 21150, notes: 'Tyre Replacement', details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', cost: 272.00, done: true, serviceDate: '2026-01-22' },
-            { targetOdo: 28093, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69
-- Geely Filter (Sibana Menglait) - $10
-- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-04-15' },
-            { targetOdo: 28495, notes: 'Battery Replacement', details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', cost: 150.00, done: true, serviceDate: '2026-04-20' },
-            { targetOdo: 34738, notes: 'Engine Service', details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69
-- Geely Filter (Bungan Trading) - $10
-- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-07-03' },
-            { targetOdo: 36560, notes: 'Tyre Replacement', details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', cost: 200.00, done: true, serviceDate: '2026-07-20' },
-            { targetOdo: 40045, notes: 'DCT Service', details: '- Total DCT MV 1L x 3 (Paintmart) - $69
-- Proton DCT Ground Cable (Shopee) - $30
-- Wong Menglait Labor - $20', cost: 119.00, done: true, serviceDate: '2026-08-18' },
-            { targetOdo: 42744, notes: 'Engine Service', details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90
-- Geely Oil Filter (Shopee) - $5
-- House of Caliper Labor - $15', cost: 93.90, done: true, serviceDate: '2026-09-23' },
-            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: '- Geely Spark Plugs (Shopee) - $26
-- Wong Menglait Labor - $10', cost: 36.00, done: true, serviceDate: '2026-10-19' },
-            { targetOdo: 45591, notes: 'Other Services (Filters)', details: '- Geely Air Filter (Shopee) - $7
-- Carbon Cabin Filter (Shopee) - $7', cost: 14.00, done: true, serviceDate: '2026-11-01' },
+            { targetOdo: 1111, notes: 'Engine Service', details: `- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free`, cost: 150.00, done: true, serviceDate: '2025-07-10' },
+            { targetOdo: 10056, notes: 'Engine Service', details: `- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15`, cost: 119.00, done: true, serviceDate: '2025-09-24' },
+            { targetOdo: 19022, notes: 'Engine Service', details: `- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15`, cost: 94.00, done: true, serviceDate: '2026-01-05' },
+            { targetOdo: 21150, notes: 'Tyre Replacement', details: `- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)`, cost: 272.00, done: true, serviceDate: '2026-01-22' },
+            { targetOdo: 28093, notes: 'Engine Service', details: `- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15`, cost: 94.00, done: true, serviceDate: '2026-04-15' },
+            { targetOdo: 28495, notes: 'Battery Replacement', details: `- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)`, cost: 150.00, done: true, serviceDate: '2026-04-20' },
+            { targetOdo: 34738, notes: 'Engine Service', details: `- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15`, cost: 94.00, done: true, serviceDate: '2026-07-03' },
+            { targetOdo: 36560, notes: 'Tyre Replacement', details: `- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)`, cost: 200.00, done: true, serviceDate: '2026-07-20' },
+            { targetOdo: 40045, notes: 'DCT Service', details: `- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20`, cost: 119.00, done: true, serviceDate: '2026-08-18' },
+            { targetOdo: 42744, notes: 'Engine Service', details: `- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15`, cost: 93.90, done: true, serviceDate: '2026-09-23' },
+            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: `- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10`, cost: 36.00, done: true, serviceDate: '2026-10-19' },
+            { targetOdo: 45591, notes: 'Other Services (Filters)', details: `- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7`, cost: 14.00, done: true, serviceDate: '2026-11-01' },
             { targetOdo: 60000, notes: 'Brake fluid', details: '', cost: 0, done: false },
             { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: '', cost: 0, done: false },
             { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: '', cost: 0, done: false },
@@ -960,13 +943,31 @@
         function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
         function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
 
-                function handleLogSubmit(e) {
+                        function handleLogSubmit(e) {
             e.preventDefault();
             const dateVal = document.getElementById('input-log-date').value;
             const odoVal = parseInt(document.getElementById('input-log-odo').value, 10);
             const oilVal = document.getElementById('input-log-oil').checked;
 
             const newEntry = { date: dateVal, odo: odoVal, oilService: oilVal };
+            logs.push(newEntry);
+            recalculateAll();
+            closeLogModal();
+            document.getElementById('input-log-odo').value = '';
+            document.getElementById('input-log-oil').checked = false;
+
+            if (sheetApiUrl) pushToGoogleSheet(newEntry);
+
+            if (oilVal) {
+                let oilM = milestones.find(m => Math.abs(m.targetOdo - odoVal) <= 500 && (m.notes.includes('Engine Service') || m.notes.includes('Oil')));
+                if (!oilM) {
+                    oilM = { targetOdo: odoVal, notes: 'Engine Service', details: '', cost: 0, done: false, serviceDate: dateVal };
+                    milestones.push(oilM);
+                    milestones.sort((a, b) => a.targetOdo - b.targetOdo);
+                }
+                openCompleteModal(oilM.targetOdo);
+            }
+        };
             logs.push(newEntry);
             recalculateAll();
             closeLogModal();
