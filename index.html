@@ -23,6 +23,25 @@
 </head>
 <body class="min-h-full bg-slate-950 text-slate-100 flex flex-col">
 
+    <!-- PASSWORD LOCK SCREEN OVERLAY -->
+    <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
+            <div class="w-12 h-12 bg-sky-500/15 border border-sky-500/30 rounded-2xl flex items-center justify-center mx-auto text-sky-400 text-xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <div>
+                <h2 class="text-sm font-black text-white uppercase tracking-wider">Proton S70 Tracker Locked</h2>
+                <p class="text-[11px] text-slate-400 mt-1">Please enter your password to access</p>
+            </div>
+            <form onsubmit="handleUnlock(event)" class="space-y-3 text-left">
+                <div>
+                    <input type="password" id="input-password" required placeholder="Enter password" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
+                </div>
+                <button type="submit" class="w-full py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all shadow-md">Unlock Dashboard</button>
+            </form>
+        </div>
+    </div>
+
     <!-- APP HEADER -->
     <header class="h-14 border-b border-slate-900 bg-[#090d16] px-4 flex items-center justify-between sticky top-0 z-30">
         <div>
@@ -505,24 +524,6 @@
 
         const BENCHMARK_PACE = 95;
 
-        window.onload = () => {
-            const dateInput = document.getElementById('input-log-date');
-            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-            
-            const intervalInput = document.getElementById('input-oil-interval');
-            if (intervalInput) intervalInput.value = oilInterval;
-
-            const completeDateInput = document.getElementById('complete-date');
-            if (completeDateInput) completeDateInput.value = new Date().toISOString().split('T')[0];
-
-            if (sheetApiUrl) {
-                const sheetUrlInput = document.getElementById('input-sheet-url');
-                if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
-                fetchFromGoogleSheet();
-            }
-            recalculateAll();
-        };
-
         function formatDateDisplay(isoStr) {
             if (!isoStr) return '';
             const d = new Date(isoStr + 'T00:00:00');
@@ -603,10 +604,10 @@
                 document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
                 document.getElementById('pace-weighted').textContent = `${effectivePace.toFixed(2)} km/day`;
 
-                // Engine Oil Realistic Table
+                // Engine Oil Realistic Table (10 Items)
                 let oilRealHtml = '';
                 let oilRealItems = [];
-                for (let i = 1; i <= 5; i++) {
+                for (let i = 1; i <= 10; i++) {
                     const targetOdo = lastOil.odo + (oilInterval * i);
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
@@ -1033,6 +1034,73 @@
         function pushConfigToGoogleSheet() {
             fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, oilInterval }) });
         }
+
+        // SECURITY & AUTHENTICATION LOGIC
+        let inactivityTimer;
+        const TIMEOUT_DURATION = 15 * 60 * 1000; // 15 minutes
+
+        function checkAuth() {
+            const isUnlocked = sessionStorage.getItem('s70_unlocked');
+            const overlay = document.getElementById('auth-overlay');
+            if (isUnlocked === 'true') {
+                overlay.classList.add('hidden');
+                resetInactivityTimer();
+            } else {
+                overlay.classList.remove('hidden');
+            }
+        }
+
+        function handleUnlock(e) {
+            e.preventDefault();
+            const pass = document.getElementById('input-password').value;
+            if (pass === 'musroy1509') {
+                sessionStorage.setItem('s70_unlocked', 'true');
+                document.getElementById('input-password').value = '';
+                checkAuth();
+            } else {
+                alert('Incorrect password!');
+                document.getElementById('input-password').value = '';
+            }
+        }
+
+        function lockApp() {
+            sessionStorage.removeItem('s70_unlocked');
+            checkAuth();
+        }
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(lockApp, TIMEOUT_DURATION);
+        }
+
+        ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(eventType => {
+            window.addEventListener(eventType, () => {
+                if (sessionStorage.getItem('s70_unlocked') === 'true') {
+                    resetInactivityTimer();
+                }
+            });
+        });
+
+        const originalWindowOnload = window.onload;
+        window.onload = () => {
+            checkAuth();
+            const dateInput = document.getElementById('input-log-date');
+            if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            
+            const intervalInput = document.getElementById('input-oil-interval');
+            if (intervalInput) intervalInput.value = oilInterval;
+
+            const completeDateInput = document.getElementById('complete-date');
+            if (completeDateInput) completeDateInput.value = new Date().toISOString().split('T')[0];
+
+            if (sheetApiUrl) {
+                const sheetUrlInput = document.getElementById('input-sheet-url');
+                if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
+                fetchFromGoogleSheet();
+            }
+            recalculateAll();
+            if (originalWindowOnload) originalWindowOnload();
+        };
     </script>
 </body>
 </html>
