@@ -540,6 +540,9 @@
 
         async function pushDataToCloud() {
             try {
+                // Clear existing sheet data first via DELETE to ensure clean sync without 405 PUT errors
+                await fetch(SHEETDB_URL, { method: 'DELETE' });
+
                 const logsNewestFirst = [...logs].sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
                 
@@ -548,45 +551,29 @@
 
                 for (let i = 0; i < maxLength; i++) {
                     let row = {
-                        date: "",
-                        odo: "",
-                        oilService: "",
-                        targetOdo: "",
-                        notes: "",
-                        details: "",
-                        cost: "",
-                        done: "",
-                        serviceDate: "",
-                        timeTitle: "",
-                        timeInterval: "",
-                        timeDueDate: ""
+                        date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
+                        odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
+                        oilService: logsNewestFirst[i] ? logsNewestFirst[i].oilService : "",
+                        targetOdo: sortedMilestones[i] ? sortedMilestones[i].targetOdo : "",
+                        notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
+                        details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
+                        cost: sortedMilestones[i] ? (sortedMilestones[i].cost || 0) : "",
+                        done: sortedMilestones[i] ? sortedMilestones[i].done : "",
+                        serviceDate: sortedMilestones[i] ? (sortedMilestones[i].serviceDate || '') : "",
+                        timeTitle: timeMaint[i] ? timeMaint[i].title : "",
+                        timeInterval: timeMaint[i] ? timeMaint[i].interval : "",
+                        timeDueDate: timeMaint[i] ? timeMaint[i].dueDate : ""
                     };
-                    if (logsNewestFirst[i]) {
-                        row.date = logsNewestFirst[i].date;
-                        row.odo = logsNewestFirst[i].odo;
-                        row.oilService = logsNewestFirst[i].oilService;
-                    }
-                    if (sortedMilestones[i]) {
-                        row.targetOdo = sortedMilestones[i].targetOdo;
-                        row.notes = sortedMilestones[i].notes;
-                        row.details = sortedMilestones[i].details || '';
-                        row.cost = sortedMilestones[i].cost || 0;
-                        row.done = sortedMilestones[i].done;
-                        row.serviceDate = sortedMilestones[i].serviceDate || '';
-                    }
-                    if (timeMaint[i]) {
-                        row.timeTitle = timeMaint[i].title;
-                        row.timeInterval = timeMaint[i].interval;
-                        row.timeDueDate = timeMaint[i].dueDate;
-                    }
                     payloadData.push(row);
                 }
 
-                await fetch(SHEETDB_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: payloadData })
-                });
+                if (payloadData.length > 0) {
+                    await fetch(SHEETDB_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ data: payloadData })
+                    });
+                }
             } catch (err) {
                 console.error("Failed to push to cloud:", err);
             }
