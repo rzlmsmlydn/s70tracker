@@ -428,7 +428,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzod4DJRCH8oOdrAUmbOFx4d5kv_ncpLgCDngHSvP5SMB1gtb9-OC4fse9t55wmbhMw/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwy6e5zwAk0NkeNRBp1Rqb69wMfJ0cgnv6Zweqf4t7IseWhGD9e0-018HF57pvPoMVm/exec';
         const BENCHMARK_PACE = 95;
 
         let logs = [];
@@ -876,6 +876,7 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
+                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo})" title="Undo / Mark Active" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-[10px] font-bold uppercase">Undo</button>
                                     <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 rounded-lg text-[10px] font-bold uppercase ml-1">Edit</button>
                                     <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
                                 </div>
@@ -893,6 +894,17 @@
             }
 
             document.getElementById('total-spent-badge').textContent = `$${grandTotalSpent.toFixed(2)}`;
+        }
+
+        async function undoComplete(targetOdo) {
+            const m = milestones.find(item => item.targetOdo === targetOdo);
+            if (!m) return;
+            if (confirm(`Are you sure you want to undo/revert "${m.notes}" back to active status?`)) {
+                m.done = false;
+                m.serviceDate = '';
+                recalculateAll();
+                await pushDataToCloud();
+            }
         }
 
         function openEditMilestoneModal(targetOdo) {
