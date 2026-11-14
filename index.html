@@ -463,6 +463,28 @@
         ];
         let oilInterval = 7500;
 
+        const DEFAULT_MILESTONES = [
+            { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
+            { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
+            { targetOdo: 19022, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-01-05' },
+            { targetOdo: 21150, notes: 'Tyre Replacement', details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', cost: 272.00, done: true, serviceDate: '2026-01-22' },
+            { targetOdo: 28093, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-04-15' },
+            { targetOdo: 28495, notes: 'Battery Replacement', details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', cost: 150.00, done: true, serviceDate: '2026-04-20' },
+            { targetOdo: 34738, notes: 'Engine Service', details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-07-03' },
+            { targetOdo: 36560, notes: 'Tyre Replacement', details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', cost: 200.00, done: true, serviceDate: '2026-07-20' },
+            { targetOdo: 40045, notes: 'DCT Service', details: '- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20', cost: 119.00, done: true, serviceDate: '2026-08-18' },
+            { targetOdo: 42744, notes: 'Engine Service', details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15', cost: 93.90, done: true, serviceDate: '2026-09-23' },
+            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: '- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10', cost: 36.00, done: true, serviceDate: '2026-10-19' },
+            { targetOdo: 45591, notes: 'Other Services (Filters)', details: '- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7', cost: 14.00, done: true, serviceDate: '2026-11-01' },
+            { targetOdo: 60000, notes: 'Brake fluid', details: '', cost: 0, done: false },
+            { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: '', cost: 0, done: false },
+            { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 100000, notes: 'Oil & gas separator', details: '', cost: 0, done: false },
+            { targetOdo: 120000, notes: 'DCT oil', details: '', cost: 0, done: false },
+            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: '', cost: 0, done: false },
+            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', done: false }
+        ];
+
         function toggleCard(cardId) {
             const content = document.getElementById('content-' + cardId);
             const icon = document.getElementById('icon-' + cardId);
@@ -475,6 +497,28 @@
             }
         }
 
+        function parseFlexibleDate(dateStr) {
+            if (!dateStr) return new Date().toISOString().split('T')[0];
+            const trimmed = String(dateStr).trim();
+            // If already YYYY-MM-DD
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
+            
+            // Handle "13 November 2026" format
+            const parts = trimmed.split(' ');
+            if (parts.length === 3) {
+                const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12', January: '01', February: '02', March: '03', April: '04', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'};
+                const day = parts[0].padStart(2, '0');
+                const m = months[parts[1]] || '01';
+                const year = parts[2];
+                return `${year}-${m}-${day}`;
+            }
+            const parsed = new Date(trimmed);
+            if (!isNaN(parsed.getTime())) {
+                return parsed.toISOString().split('T')[0];
+            }
+            return new Date().toISOString().split('T')[0];
+        }
+
         async function syncDataFromCloud() {
             const syncIcon = document.getElementById('sync-icon');
             syncIcon.classList.add('fa-spin', 'text-amber-400');
@@ -482,16 +526,16 @@
                 const res = await fetch(SHEETDB_URL);
                 const rows = await res.json();
                 
+                logs = [];
+                milestones = [];
+
                 if (Array.isArray(rows) && rows.length > 0) {
-                    logs = [];
-                    milestones = [];
-                    
                     rows.forEach(r => {
                         if (r.date && r.odo) {
                             logs.push({
-                                date: r.date,
+                                date: parseFlexibleDate(r.date),
                                 odo: parseInt(r.odo, 10),
-                                oilService: String(r.oilService).toLowerCase() === 'true'
+                                oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true
                             });
                         }
                         if (r.targetOdo && r.notes) {
@@ -500,19 +544,22 @@
                                 notes: r.notes,
                                 details: r.details || '',
                                 cost: parseFloat(r.cost) || 0,
-                                done: String(r.done).toLowerCase() === 'true',
-                                serviceDate: r.serviceDate || ''
+                                done: String(r.done).toLowerCase() === 'true' || r.done === true,
+                                serviceDate: r.serviceDate ? parseFlexibleDate(r.serviceDate) : ''
                             });
                         }
                     });
                 }
                 
                 if (logs.length === 0) {
-                    // Fallback initial dataset if sheet is empty
                     logs = [
                         { date: '2025-07-10', odo: 1111, oilService: true },
                         { date: '2026-11-13', odo: 46804, oilService: false }
                     ];
+                }
+
+                if (milestones.length === 0) {
+                    milestones = JSON.parse(JSON.stringify(DEFAULT_MILESTONES));
                 }
 
                 recalculateAll();
@@ -529,7 +576,6 @@
 
         async function pushDataToCloud() {
             try {
-                // Preparing flat payload representation for SheetDB
                 const maxLength = Math.max(logs.length, milestones.length);
                 const payloadData = [];
 
@@ -546,7 +592,7 @@
                         row.details = milestones[i].details;
                         row.cost = milestones[i].cost;
                         row.done = milestones[i].done;
-                        row.serviceDate = milestones[i].serviceDate;
+                        row.serviceDate = milestones[i].serviceDate || '';
                     }
                     payloadData.push(row);
                 }
@@ -566,12 +612,14 @@
         function formatDateDisplay(isoStr) {
             if (!isoStr) return '';
             const d = new Date(isoStr + 'T00:00:00');
+            if (isNaN(d.getTime())) return isoStr;
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
         function addDays(baseDateStr, daysToAdd) {
             if (!isFinite(daysToAdd) || daysToAdd < 0) return 'Due Now';
             const d = new Date(baseDateStr + 'T00:00:00');
+            if (isNaN(d.getTime())) return 'Due Now';
             d.setDate(d.getDate() + Math.round(daysToAdd));
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
