@@ -982,11 +982,13 @@
 
             recalculateAll();
             alert("Time-based maintenance task added!");
+            if (sheetApiUrl) pushConfigToGoogleSheet();
         }
 
         function deleteTimeMaint(id) {
             timeMaint = timeMaint.filter(t => t.id !== id);
             recalculateAll();
+            if (sheetApiUrl) pushConfigToGoogleSheet();
         }
 
         function saveOilInterval() {
@@ -1022,33 +1024,69 @@
 
         function openSheetSetupModal() { document.getElementById('sheet-modal').classList.remove('hidden'); }
         function closeSheetSetupModal() { document.getElementById('sheet-modal').classList.add('hidden'); }
+        
+        function updateSyncStatusBadge(isConnected) {
+            const statusEl = document.getElementById('sync-status');
+            if (!statusEl) return;
+            if (isConnected) {
+                statusEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span> Live Auto-Sync';
+                statusEl.className = 'text-[9px] font-medium text-sky-400 flex items-center gap-1';
+            } else {
+                statusEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Local Mode';
+                statusEl.className = 'text-[9px] font-medium text-emerald-400 flex items-center gap-1';
+            }
+        }
+
         function saveSheetUrl() {
             sheetApiUrl = document.getElementById('input-sheet-url').value.trim();
             localStorage.setItem('s70_sheet_url', sheetApiUrl);
+            updateSyncStatusBadge(Boolean(sheetApiUrl));
             closeSheetSetupModal();
-            fetchFromGoogleSheet();
+            if (sheetApiUrl) fetchFromGoogleSheet();
         }
+        
         function clearSheetUrl() {
             sheetApiUrl = '';
             localStorage.removeItem('s70_sheet_url');
             document.getElementById('input-sheet-url').value = '';
+            updateSyncStatusBadge(false);
             closeSheetSetupModal();
         }
+        
         function fetchFromGoogleSheet() {
+            if (!sheetApiUrl) return;
             fetch(sheetApiUrl).then(res => res.json()).then(data => {
                 if (data && data.logs && Array.isArray(data.logs)) { logs = data.logs; }
                 else if (Array.isArray(data) && data.length > 0) { logs = data; }
                 if (data && data.milestones && Array.isArray(data.milestones)) { milestones = data.milestones; }
+                if (data && data.timeMaint && Array.isArray(data.timeMaint)) { timeMaint = data.timeMaint; }
                 if (data && data.oilInterval) { oilInterval = data.oilInterval; document.getElementById('input-oil-interval').value = oilInterval; }
                 recalculateAll();
             }).catch(() => {});
         }
+        
         function pushToGoogleSheet(entry) {
+            if (!sheetApiUrl) return;
             fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'log', entry }) });
         }
+        
         function pushConfigToGoogleSheet() {
-            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, oilInterval }) });
+            if (!sheetApiUrl) return;
+            fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, timeMaint, oilInterval }) });
         }
+
+        // AUTO-SYNC ENGINE (Polls every 30s & instantly on tab focus)
+        setInterval(() => {
+            if (sheetApiUrl && sessionStorage.getItem('s70_unlocked') === 'true' && !document.hidden) {
+                fetchFromGoogleSheet();
+            }
+        }, 30000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && sheetApiUrl && sessionStorage.getItem('s70_unlocked') === 'true') {
+                fetchFromGoogleSheet();
+            }
+        });
 
         // SECURITY & AUTHENTICATION LOGIC (Password: "musroy")
         let inactivityTimer;
@@ -1060,6 +1098,7 @@
             if (isUnlocked === 'true') {
                 overlay.classList.add('hidden');
                 resetInactivityTimer();
+                if (sheetApiUrl) fetchFromGoogleSheet();
             } else {
                 overlay.classList.remove('hidden');
             }
@@ -1111,7 +1150,10 @@
             if (sheetApiUrl) {
                 const sheetUrlInput = document.getElementById('input-sheet-url');
                 if (sheetUrlInput) sheetUrlInput.value = sheetApiUrl;
+                updateSyncStatusBadge(true);
                 fetchFromGoogleSheet();
+            } else {
+                updateSyncStatusBadge(false);
             }
             recalculateAll();
             if (originalWindowOnload) originalWindowOnload();
