@@ -463,6 +463,22 @@
         ];
         let oilInterval = 7500;
 
+        const DEFAULT_LOGS = [
+            { date: '2025-07-10', odo: 1111, oilService: true },
+            { date: '2025-09-24', odo: 10056, oilService: true },
+            { date: '2026-01-05', odo: 19022, oilService: true },
+            { date: '2026-01-22', odo: 21150, oilService: false },
+            { date: '2026-04-15', odo: 28093, oilService: true },
+            { date: '2026-04-20', odo: 28495, oilService: false },
+            { date: '2026-07-03', odo: 34738, oilService: true },
+            { date: '2026-07-20', odo: 36560, oilService: false },
+            { date: '2026-08-18', odo: 40045, oilService: false },
+            { date: '2026-09-23', odo: 42744, oilService: true },
+            { date: '2026-10-19', odo: 45080, oilService: false },
+            { date: '2026-11-01', odo: 45591, oilService: false },
+            { date: '2026-11-13', odo: 46804, oilService: false }
+        ];
+
         const DEFAULT_MILESTONES = [
             { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
             { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
@@ -529,8 +545,7 @@
 
                 if (Array.isArray(rows) && rows.length > 0) {
                     rows.forEach(r => {
-                        // Only add log if date and valid odometer exist and odometer > 100
-                        if (r.date && r.odo) {
+                        if (r.date && r.odo !== undefined && r.odo !== '') {
                             const odoVal = parseInt(r.odo, 10);
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
@@ -540,7 +555,7 @@
                                 });
                             }
                         }
-                        if (r.targetOdo && r.notes) {
+                        if (r.targetOdo !== undefined && r.targetOdo !== '' && r.notes) {
                             milestones.push({
                                 targetOdo: parseInt(r.targetOdo, 10),
                                 notes: r.notes,
@@ -554,10 +569,7 @@
                 }
                 
                 if (logs.length === 0) {
-                    logs = [
-                        { date: '2025-07-10', odo: 1111, oilService: true },
-                        { date: '2026-11-13', odo: 46804, oilService: false }
-                    ];
+                    logs = JSON.parse(JSON.stringify(DEFAULT_LOGS));
                 }
 
                 if (milestones.length === 0) {
@@ -673,7 +685,7 @@
                 const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
 
                 const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
-                const effectivePace = (weightedPace > 5 && weightedPace < 300) ? weightedPace : BENCHMARK_PACE;
+                const effectivePace = (weightedPace > 5 && weightedPace < 300) ? weightedPace : 72;
 
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
