@@ -67,9 +67,9 @@
             <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
             </button>
-            <!-- BACKUP BUTTON (EMPTY FOR NOW) -->
-            <button onclick="alert('Backup feature coming soon!')" title="Backup Data" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-cloud-arrow-down text-purple-400 text-sm"></i>
+            <!-- SYNC STATUS INDICATOR -->
+            <button onclick="syncDataFromCloud()" title="Sync Cloud Data" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
+                <i id="sync-icon" class="fa-solid fa-cloud text-sky-400 text-sm"></i>
             </button>
             <!-- LOG ODOMETER BUTTON -->
             <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] px-3.5 py-1.5 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1">
@@ -93,30 +93,30 @@
                 <div class="divide-y divide-slate-800/60 text-xs flex-1 flex flex-col justify-between">
                     <div class="px-4 py-2.5 flex items-center justify-between">
                         <span class="text-slate-400 font-medium">Date</span>
-                        <span id="row-date" class="font-mono font-bold text-slate-200">13 Nov 2026</span>
+                        <span id="row-date" class="font-mono font-bold text-slate-200">--</span>
                     </div>
                     <div class="px-4 py-2.5 flex items-center justify-between">
                         <span class="text-slate-400 font-medium">Current Odometer</span>
                         <div class="flex items-center gap-2 font-mono">
-                            <span id="row-current-odo" class="font-black text-white">46,804 km</span>
-                            <span id="row-daily-delta" class="text-[11px] font-bold text-emerald-400">(+18 km)</span>
+                            <span id="row-current-odo" class="font-black text-white">0 km</span>
+                            <span id="row-daily-delta" class="text-[11px] font-bold text-emerald-400">(+0 km)</span>
                         </div>
                     </div>
                     <div class="px-4 py-2.5 flex items-center justify-between">
                         <span class="text-slate-400 font-medium">Latest Oil Service</span>
-                        <span id="row-last-oil" class="font-mono text-slate-300">42,744 km — 23 Sep 2026</span>
+                        <span id="row-last-oil" class="font-mono text-slate-300">--</span>
                     </div>
                     <div class="px-4 py-2.5 flex items-center justify-between">
                         <span class="text-slate-400 font-medium">Oil Used</span>
-                        <span id="row-oil-used" class="font-mono text-slate-300">4,060 km (51 days ago)</span>
+                        <span id="row-oil-used" class="font-mono text-slate-300">--</span>
                     </div>
                     <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
                         <div class="flex items-center justify-between">
                             <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
-                            <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">3,440/7,500 km</span>
+                            <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">--</span>
                         </div>
                         <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-                            <div id="kpi-oil-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 54%"></div>
+                            <div id="kpi-oil-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
@@ -203,15 +203,15 @@
                 <div id="content-card-pace" class="p-4 space-y-2 text-xs flex-1 flex flex-col justify-center">
                     <div class="flex justify-between py-1 border-b border-slate-800/40">
                         <span class="text-slate-400">Recent Pace</span>
-                        <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                        <span id="pace-recent" class="font-mono font-bold text-white">0 km/day</span>
                     </div>
                     <div class="flex justify-between py-1 border-b border-slate-800/40">
                         <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
-                        <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                        <span id="pace-longterm" class="font-mono font-bold text-white">0 km/day</span>
                     </div>
                     <div class="flex justify-between py-1 border-b border-slate-800/40">
                         <span class="font-bold text-purple-300">Weighted Realistic</span>
-                        <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                        <span id="pace-weighted" class="font-mono font-black text-purple-300">0 km/day</span>
                     </div>
                     <div class="flex justify-between py-1">
                         <span class="text-slate-400">Comparison Pace</span>
@@ -453,6 +453,16 @@
     </div>
 
     <script>
+        const SHEETDB_URL = 'https://sheetdb.io/api/v1/gpbidec3qbdkx?sheet=LOGS';
+
+        let logs = [];
+        let milestones = [];
+        let timeMaint = [
+            { id: '1', title: 'Coolant flushing', interval: '2 years', dueDate: '2027-07-01' },
+            { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
+        ];
+        let oilInterval = 7500;
+
         function toggleCard(cardId) {
             const content = document.getElementById('content-' + cardId);
             const icon = document.getElementById('icon-' + cardId);
@@ -465,117 +475,90 @@
             }
         }
 
-        const COMPLETE_LOGS = [
-            { date: '2025-07-10', odo: 1111, oilService: true },
-            { date: '2025-09-03', odo: 7600, oilService: false },
-            { date: '2025-09-06', odo: 7860, oilService: false },
-            { date: '2025-09-07', odo: 7940, oilService: false },
-            { date: '2025-09-08', odo: 8020, oilService: false },
-            { date: '2025-09-09', odo: 8200, oilService: false },
-            { date: '2025-09-10', odo: 8320, oilService: false },
-            { date: '2025-09-11', odo: 8522, oilService: false },
-            { date: '2025-09-12', odo: 8575, oilService: false },
-            { date: '2025-09-13', odo: 8787, oilService: false },
-            { date: '2025-09-14', odo: 8901, oilService: false },
-            { date: '2025-09-15', odo: 9000, oilService: false },
-            { date: '2025-09-16', odo: 9247, oilService: false },
-            { date: '2025-09-17', odo: 9370, oilService: false },
-            { date: '2025-09-18', odo: 9446, oilService: false },
-            { date: '2025-09-19', odo: 9590, oilService: false },
-            { date: '2025-09-20', odo: 9688, oilService: false },
-            { date: '2025-09-21', odo: 9772, oilService: false },
-            { date: '2025-09-22', odo: 9805, oilService: false },
-            { date: '2025-09-23', odo: 9907, oilService: false },
-            { date: '2025-09-24', odo: 10056, oilService: true },
-            { date: '2025-10-15', odo: 12223, oilService: false },
-            { date: '2025-10-22', odo: 12659, oilService: false },
-            { date: '2025-10-23', odo: 12725, oilService: false },
-            { date: '2025-10-26', odo: 13072, oilService: false },
-            { date: '2025-11-06', odo: 13980, oilService: false },
-            { date: '2025-11-07', odo: 14042, oilService: false },
-            { date: '2025-11-09', odo: 14175, oilService: false },
-            { date: '2025-11-10', odo: 14276, oilService: false },
-            { date: '2025-11-11', odo: 14353, oilService: false },
-            { date: '2025-11-13', odo: 14485, oilService: false },
-            { date: '2025-11-14', odo: 14550, oilService: false },
-            { date: '2025-11-15', odo: 14613, oilService: false },
-            { date: '2025-11-16', odo: 14681, oilService: false },
-            { date: '2025-11-18', odo: 14897, oilService: false },
-            { date: '2025-11-19', odo: 14973, oilService: false },
-            { date: '2025-11-20', odo: 15060, oilService: false },
-            { date: '2025-11-22', odo: 15125, oilService: false },
-            { date: '2025-11-23', odo: 15211, oilService: false },
-            { date: '2025-11-24', odo: 15311, oilService: false },
-            { date: '2025-11-25', odo: 15416, oilService: false },
-            { date: '2025-11-26', odo: 15567, oilService: false },
-            { date: '2025-11-27', odo: 15647, oilService: false },
-            { date: '2025-11-28', odo: 15695, oilService: false },
-            { date: '2025-11-29', odo: 15767, oilService: false },
-            { date: '2025-11-30', odo: 15843, oilService: false },
-            { date: '2025-12-01', odo: 15905, oilService: false },
-            { date: '2025-12-02', odo: 15994, oilService: false },
-            { date: '2025-12-04', odo: 16168, oilService: false },
-            { date: '2025-12-05', odo: 16276, oilService: false },
-            { date: '2025-12-06', odo: 16570, oilService: false },
-            { date: '2025-12-07', odo: 16666, oilService: false },
-            { date: '2025-12-08', odo: 16726, oilService: false },
-            { date: '2025-12-11', odo: 16846, oilService: false },
-            { date: '2025-12-13', odo: 16935, oilService: false },
-            { date: '2025-12-14', odo: 17174, oilService: false },
-            { date: '2025-12-15', odo: 17242, oilService: false },
-            { date: '2026-01-05', odo: 19022, oilService: true },
-            { date: '2026-04-15', odo: 28093, oilService: true },
-            { date: '2026-07-03', odo: 34738, oilService: true },
-            { date: '2026-09-23', odo: 42744, oilService: true },
-            { date: '2026-11-13', odo: 46804, oilService: false }
-        ];
+        async function syncDataFromCloud() {
+            const syncIcon = document.getElementById('sync-icon');
+            syncIcon.classList.add('fa-spin', 'text-amber-400');
+            try {
+                const res = await fetch(SHEETDB_URL);
+                const rows = await res.json();
+                
+                if (Array.isArray(rows) && rows.length > 0) {
+                    logs = [];
+                    milestones = [];
+                    
+                    rows.forEach(r => {
+                        if (r.date && r.odo) {
+                            logs.push({
+                                date: r.date,
+                                odo: parseInt(r.odo, 10),
+                                oilService: String(r.oilService).toLowerCase() === 'true'
+                            });
+                        }
+                        if (r.targetOdo && r.notes) {
+                            milestones.push({
+                                targetOdo: parseInt(r.targetOdo, 10),
+                                notes: r.notes,
+                                details: r.details || '',
+                                cost: parseFloat(r.cost) || 0,
+                                done: String(r.done).toLowerCase() === 'true',
+                                serviceDate: r.serviceDate || ''
+                            });
+                        }
+                    });
+                }
+                
+                if (logs.length === 0) {
+                    // Fallback initial dataset if sheet is empty
+                    logs = [
+                        { date: '2025-07-10', odo: 1111, oilService: true },
+                        { date: '2026-11-13', odo: 46804, oilService: false }
+                    ];
+                }
 
-        const DEFAULT_MILESTONES = [
-            { targetOdo: 1111, notes: 'Engine Service', details: '- Proton Fully Synthetic 5w30 - $140\n- Proton Oil Filter - $10\n- Proton Agent - Free', cost: 150.00, done: true, serviceDate: '2025-07-10' },
-            { targetOdo: 10056, notes: 'Engine Service', details: '- Liqui Moly Toptec 4200 5w30 5L (Paintmart) - $79\n- Liqui Moly Toptec 4200 5w30 1L (Caliper) - $17\n- Geely Filter (Bungan Trading) - $8\n- House of Caliper Labor - $15', cost: 119.00, done: true, serviceDate: '2025-09-24' },
-            { targetOdo: 19022, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-01-05' },
-            { targetOdo: 21150, notes: 'Tyre Replacement', details: '- Linglong Sport Master 225/45/17 - $68 x 4 (Tyremart Serusop)', cost: 272.00, done: true, serviceDate: '2026-01-22' },
-            { targetOdo: 28093, notes: 'Engine Service', details: '- Motul 8100 X-Clean+ 5w30 5L (Paintmart) - $69\n- Geely Filter (Sibana Menglait) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-04-15' },
-            { targetOdo: 28495, notes: 'Battery Replacement', details: '- Amaron H5-DIN66L - $160 trade in $10 (Propel Service Telanai)', cost: 150.00, done: true, serviceDate: '2026-04-20' },
-            { targetOdo: 34738, notes: 'Engine Service', details: '- Motul 8100 X-Cess 5w40 5L (Paintmart) - $69\n- Geely Filter (Bungan Trading) - $10\n- House of Caliper Labor - $15', cost: 94.00, done: true, serviceDate: '2026-07-03' },
-            { targetOdo: 36560, notes: 'Tyre Replacement', details: '- Dunlop Blue Response TG 225/45/17 - $100 x 2 (Tyretech Jerudong)', cost: 200.00, done: true, serviceDate: '2026-07-20' },
-            { targetOdo: 40045, notes: 'DCT Service', details: '- Total DCT MV 1L x 3 (Paintmart) - $69\n- Proton DCT Ground Cable (Shopee) - $30\n- Wong Menglait Labor - $20', cost: 119.00, done: true, serviceDate: '2026-08-18' },
-            { targetOdo: 42744, notes: 'Engine Service', details: '- Motul 8100 X-Cess Gen 2 5w40 5L (Capital Auto) - $68.90\n- Geely Oil Filter (Shopee) - $5\n- House of Caliper Labor - $15', cost: 93.90, done: true, serviceDate: '2026-09-23' },
-            { targetOdo: 45080, notes: 'Other Services (Spark Plugs)', details: '- Geely Spark Plugs (Shopee) - $26\n- Wong Menglait Labor - $10', cost: 36.00, done: true, serviceDate: '2026-10-19' },
-            { targetOdo: 45591, notes: 'Other Services (Filters)', details: '- Geely Air Filter (Shopee) - $7\n- Carbon Cabin Filter (Shopee) - $7', cost: 14.00, done: true, serviceDate: '2026-11-01' },
-            { targetOdo: 60000, notes: 'Brake fluid', details: '', cost: 0, done: false },
-            { targetOdo: 80000, notes: 'DCT oil + HCA + timing belt kit + alternator pulley', details: '', cost: 0, done: false },
-            { targetOdo: 95200, notes: 'Brake fluid + brake disc + brake pad + brake line + intercooler + separator + spark plugs', details: '', cost: 0, done: false },
-            { targetOdo: 100000, notes: 'Oil & gas separator', details: '', cost: 0, done: false },
-            { targetOdo: 120000, notes: 'DCT oil', details: '', cost: 0, done: false },
-            { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: '', cost: 0, done: false },
-            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', done: false }
-        ];
-
-        const DEFAULT_TIME_MAINT = [
-            { id: '1', title: 'Coolant flushing', interval: '2 years', dueDate: '2027-07-01' },
-            { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
-        ];
-
-        let logs = COMPLETE_LOGS;
-        let milestones = DEFAULT_MILESTONES;
-        let timeMaint = DEFAULT_TIME_MAINT;
-        let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
-
-        try {
-            const savedLogs = localStorage.getItem('s70_logs');
-            if (savedLogs) logs = JSON.parse(savedLogs);
-            
-            const savedMilestones = localStorage.getItem('s70_milestones');
-            if (savedMilestones) {
-                const parsed = JSON.parse(savedMilestones);
-                if (parsed.length >= 12) milestones = parsed;
+                recalculateAll();
+                syncIcon.classList.remove('fa-spin', 'text-amber-400');
+                syncIcon.classList.add('text-emerald-400');
+                setTimeout(() => syncIcon.classList.remove('text-emerald-400'), 2000);
+            } catch (err) {
+                console.error("Cloud sync failed:", err);
+                syncIcon.classList.remove('fa-spin', 'text-amber-400');
+                syncIcon.classList.add('text-rose-400');
+                alert("Could not connect to Google Sheets cloud backend.");
             }
+        }
 
-            const savedTime = localStorage.getItem('s70_time_maint');
-            if (savedTime) timeMaint = JSON.parse(savedTime);
-        } catch (e) {
-            console.warn("Resetting local storage due to parse error");
+        async function pushDataToCloud() {
+            try {
+                // Preparing flat payload representation for SheetDB
+                const maxLength = Math.max(logs.length, milestones.length);
+                const payloadData = [];
+
+                for (let i = 0; i < maxLength; i++) {
+                    let row = {};
+                    if (logs[i]) {
+                        row.date = logs[i].date;
+                        row.odo = logs[i].odo;
+                        row.oilService = logs[i].oilService;
+                    }
+                    if (milestones[i]) {
+                        row.targetOdo = milestones[i].targetOdo;
+                        row.notes = milestones[i].notes;
+                        row.details = milestones[i].details;
+                        row.cost = milestones[i].cost;
+                        row.done = milestones[i].done;
+                        row.serviceDate = milestones[i].serviceDate;
+                    }
+                    payloadData.push(row);
+                }
+
+                await fetch(SHEETDB_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: payloadData })
+                });
+            } catch (err) {
+                console.error("Failed to push to cloud:", err);
+            }
         }
 
         const BENCHMARK_PACE = 95;
@@ -611,12 +594,9 @@
 
         function recalculateAll() {
             try {
+                if (logs.length === 0) return;
                 logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
                 milestones.sort((a, b) => a.targetOdo - b.targetOdo);
-                localStorage.setItem('s70_logs', JSON.stringify(logs));
-                localStorage.setItem('s70_milestones', JSON.stringify(milestones));
-                localStorage.setItem('s70_time_maint', JSON.stringify(timeMaint));
-                localStorage.setItem('s70_oil_interval', oilInterval);
 
                 const latest = logs[logs.length - 1];
                 const prev = logs.length > 1 ? logs[logs.length - 2] : latest;
@@ -817,7 +797,7 @@
             listContainer.innerHTML = html;
         }
 
-        function saveSingleLog(index) {
+        async function saveSingleLog(index) {
             const dateVal = document.getElementById(`log-date-${index}`).value;
             const odoVal = parseInt(document.getElementById(`log-odo-${index}`).value, 10);
             const oilVal = document.getElementById(`log-oil-${index}`).checked;
@@ -832,10 +812,11 @@
             logs[index].oilService = oilVal;
 
             recalculateAll();
-            alert("Daily mileage log updated successfully!");
+            await pushDataToCloud();
+            alert("Daily mileage log updated & synced to cloud!");
         }
 
-        function deleteSingleLog(index) {
+        async function deleteSingleLog(index) {
             if (logs.length <= 1) {
                 alert("Cannot delete the last remaining log entry.");
                 return;
@@ -843,6 +824,7 @@
             if (confirm("Are you sure you want to delete this daily mileage log?")) {
                 logs.splice(index, 1);
                 recalculateAll();
+                await pushDataToCloud();
             }
         }
 
@@ -984,7 +966,7 @@
 
         function closeEditMilestoneModal() { document.getElementById('edit-milestone-modal').classList.add('hidden'); }
 
-        function handleEditMilestoneSubmit(e) {
+        async function handleEditMilestoneSubmit(e) {
             e.preventDefault();
             const originalOdo = parseInt(document.getElementById('edit-original-odo').value, 10);
             const m = milestones.find(item => item.targetOdo === originalOdo);
@@ -995,6 +977,7 @@
 
             closeEditMilestoneModal();
             recalculateAll();
+            await pushDataToCloud();
         }
 
         function openCompleteModal(targetOdo) {
@@ -1054,7 +1037,7 @@
 
         function closeCompleteModal() { document.getElementById('complete-modal').classList.add('hidden'); }
 
-        function handleCompleteSubmit(e) {
+        async function handleCompleteSubmit(e) {
             e.preventDefault();
             const targetOdo = parseInt(document.getElementById('complete-target-odo').value, 10);
             const m = milestones.find(item => item.targetOdo === targetOdo);
@@ -1081,16 +1064,18 @@
 
             closeCompleteModal();
             recalculateAll();
+            await pushDataToCloud();
         }
 
-        function deleteMilestone(targetOdo) {
+        async function deleteMilestone(targetOdo) {
             if (confirm("Are you sure you want to delete this maintenance record?")) {
                 milestones = milestones.filter(item => item.targetOdo !== targetOdo);
                 recalculateAll();
+                await pushDataToCloud();
             }
         }
 
-        function handleAddMilestone(e) {
+        async function handleAddMilestone(e) {
             e.preventDefault();
             const odoVal = parseInt(document.getElementById('input-new-odo').value, 10);
             const titleVal = document.getElementById('input-new-title').value.trim();
@@ -1108,7 +1093,8 @@
             document.getElementById('input-new-title').value = '';
 
             recalculateAll();
-            alert("New maintenance record added successfully!");
+            await pushDataToCloud();
+            alert("New maintenance record added & synced!");
         }
 
         function handleAddTimeMaint(e) {
@@ -1149,7 +1135,7 @@
         function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
         function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
 
-        function handleLogSubmit(e) {
+        async function handleLogSubmit(e) {
             e.preventDefault();
             const newEntry = { 
                 date: document.getElementById('input-log-date').value, 
@@ -1159,8 +1145,12 @@
             logs.push(newEntry);
             recalculateAll();
             closeLogModal();
+            
             document.getElementById('input-log-odo').value = '';
             document.getElementById('input-log-oil').checked = false;
+
+            await pushDataToCloud();
+            alert("New mileage log saved and instantly synced to Google Sheets!");
         }
 
         let inactivityTimer;
@@ -1206,11 +1196,11 @@
             });
         });
 
-        window.onload = () => {
+        window.onload = async () => {
             checkAuth();
             document.getElementById('input-log-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
-            recalculateAll();
+            await syncDataFromCloud();
         };
     </script>
 </body>
