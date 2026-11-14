@@ -540,9 +540,6 @@
 
         async function pushDataToCloud() {
             try {
-                // Clear existing sheet data first via DELETE to ensure clean sync without 405 PUT errors
-                await fetch(SHEETDB_URL, { method: 'DELETE' });
-
                 const logsNewestFirst = [...logs].sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
                 
@@ -553,12 +550,12 @@
                     let row = {
                         date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
                         odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
-                        oilService: logsNewestFirst[i] ? logsNewestFirst[i].oilService : "",
+                        oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
                         targetOdo: sortedMilestones[i] ? sortedMilestones[i].targetOdo : "",
                         notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
                         details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
                         cost: sortedMilestones[i] ? (sortedMilestones[i].cost || 0) : "",
-                        done: sortedMilestones[i] ? sortedMilestones[i].done : "",
+                        done: sortedMilestones[i] ? String(sortedMilestones[i].done) : "",
                         serviceDate: sortedMilestones[i] ? (sortedMilestones[i].serviceDate || '') : "",
                         timeTitle: timeMaint[i] ? timeMaint[i].title : "",
                         timeInterval: timeMaint[i] ? timeMaint[i].interval : "",
@@ -567,13 +564,11 @@
                     payloadData.push(row);
                 }
 
-                if (payloadData.length > 0) {
-                    await fetch(SHEETDB_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ data: payloadData })
-                    });
-                }
+                await fetch(SHEETDB_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: payloadData })
+                });
             } catch (err) {
                 console.error("Failed to push to cloud:", err);
             }
