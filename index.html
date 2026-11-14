@@ -1437,6 +1437,7 @@
         }
 
         function lockApp() {
+            sessionStorage.getItem('s70_unlocked'); // verify
             sessionStorage.removeItem('s70_unlocked');
             checkAuth();
         }
@@ -1454,7 +1455,6 @@
 
         window.onload = () => {
             checkAuth();
-            // If already unlocked in session or upon successful unlock check, trigger export
             if (sessionStorage.getItem('s70_unlocked') === 'true') {
                 triggerAutoBackupExport();
             }
@@ -1463,7 +1463,6 @@
             recalculateAll();
         };
 
-        // Hook into unlock to trigger backup export immediately
         const originalHandleUnlock = handleUnlock;
         handleUnlock = function(e) {
             originalHandleUnlock(e);
