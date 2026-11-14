@@ -58,9 +58,9 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <!-- OIL ARCHIVE BUTTON (ENGINE LOGO) -->
+            <!-- ENGINE OIL BUTTON (ENGINE LOGO & "Engine Oil") -->
             <button onclick="openOilArchiveModal()" title="Engine Oil Archive & Interval Settings" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
-                <i class="fa-solid fa-engine text-sky-400"></i> <span class="hidden sm:inline">Oil & Interval</span>
+                <i class="fa-solid fa-engine text-sky-400"></i> <span>Engine Oil</span>
             </button>
             <!-- OTHER MAINTENANCE BUTTON (CLIPBOARD WITH SPANNER) -->
             <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
@@ -222,39 +222,36 @@
 
     </main>
 
-    <!-- ENGINE OIL ARCHIVE & INTERVAL MODAL -->
+    <!-- ENGINE OIL ARCHIVE & INTERVAL MODAL (COMPACT LAYOUT) -->
     <div id="oil-archive-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                <h3 class="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-engine text-sky-400"></i> Engine Oil Archive & Daily Mileage Logs
                 </h3>
                 <button onclick="closeOilArchiveModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- TOP: GLOBAL PARAMETER FOR ENGINE OIL INTERVAL -->
-            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
-                <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Engine Oil Interval (km)</label>
-                    <div class="flex gap-2">
-                        <input type="number" id="input-oil-interval" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono font-bold">
-                        <button onclick="saveOilInterval()" class="px-4 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Update</button>
-                    </div>
+            <!-- TOP: GLOBAL PARAMETER FOR ENGINE OIL INTERVAL (COMPACT) -->
+            <div class="space-y-2 bg-[#050913] border border-slate-800/80 p-3 rounded-xl">
+                <h4 class="text-[11px] font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
+                <div class="flex gap-2">
+                    <input type="number" id="input-oil-interval" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none font-mono font-bold">
+                    <button onclick="saveOilInterval()" class="px-3 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] uppercase rounded-lg transition-all shrink-0">Update</button>
                 </div>
             </div>
 
-            <!-- BOTTOM: EDITABLE / DELETABLE DAILY MILEAGE LOGS (NEWEST AT TOP, 2 BOXES IN A ROW) -->
-            <div class="space-y-3 pt-2 border-t border-slate-800">
+            <!-- BOTTOM: EDITABLE / DELETABLE DAILY MILEAGE LOGS (COMPACT 2-BOX GRID, NEWEST AT TOP) -->
+            <div class="space-y-2.5 pt-1 border-t border-slate-800">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Daily Mileage Update Logs (Newest First)</h4>
-                    <span id="total-logs-badge" class="text-xs font-mono font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">0 Logs</span>
+                    <h4 class="text-[11px] font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Daily Mileage Update Logs (Newest First)</h4>
+                    <span id="total-logs-badge" class="text-[10px] font-mono font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">0 Logs</span>
                 </div>
-                <div id="daily-logs-list" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
+                <div id="daily-logs-list" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
             </div>
 
             <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeOilArchiveModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
+                <button type="button" onclick="closeOilArchiveModal()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-[11px] font-bold text-white uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
@@ -838,7 +835,7 @@
             { targetOdo: 100000, notes: 'Oil & gas separator', details: '', cost: 0, done: false },
             { targetOdo: 120000, notes: 'DCT oil', details: '', cost: 0, done: false },
             { targetOdo: 140000, notes: 'Brake fluid + spark plugs', details: '', cost: 0, done: false },
-            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', cost: 0, done: false }
+            { targetOdo: 200000, notes: 'Major 200k servicing item', details: '', done: false }
         ];
 
         const DEFAULT_TIME_MAINT = [
@@ -938,7 +935,7 @@
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
                 document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
-                document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
+                document.getElementById('row-last-oil').textContent = `${lastOil.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
                 document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
                 document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${oilInterval.toLocaleString()} km`;
                 document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
@@ -1054,23 +1051,23 @@
             }
 
             listContainer.innerHTML = sortedLogs.map(item => `
-                <div class="bg-[#050913] border border-slate-800/80 p-3 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-center font-mono text-xs">
+                <div class="bg-[#050913] border border-slate-800/70 p-2.5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 items-center font-mono text-xs">
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Date</label>
-                        <input type="date" id="log-date-${item.originalIndex}" value="${item.date}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs focus:outline-none">
+                        <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Date</label>
+                        <input type="date" id="log-date-${item.originalIndex}" value="${item.date}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2 py-1 text-white font-mono text-xs focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Odometer (km)</label>
-                        <input type="number" id="log-odo-${item.originalIndex}" value="${item.odo}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs font-bold focus:outline-none">
+                        <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Odometer (km)</label>
+                        <input type="number" id="log-odo-${item.originalIndex}" value="${item.odo}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2 py-1 text-white font-mono text-xs font-bold focus:outline-none">
                     </div>
-                    <div class="sm:col-span-2 flex items-center justify-between pt-1 border-t border-slate-800/50">
-                        <div class="flex items-center gap-2">
+                    <div class="sm:col-span-2 flex items-center justify-between pt-1 border-t border-slate-800/40">
+                        <div class="flex items-center gap-1.5">
                             <input type="checkbox" id="log-oil-${item.originalIndex}" ${item.oilService ? 'checked' : ''} class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
-                            <label for="log-oil-${item.originalIndex}" class="text-[11px] text-slate-300 cursor-pointer select-none">Oil Service Changed</label>
+                            <label for="log-oil-${item.originalIndex}" class="text-[10px] text-slate-300 cursor-pointer select-none">Oil Service Changed</label>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="saveSingleLog(${item.originalIndex})" class="px-3 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[11px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-                            <button onclick="deleteSingleLog(${item.originalIndex})" class="px-3 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[11px] font-bold transition-all"><i class="fa-solid fa-trash"></i> Delete</button>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="saveSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                            <button onclick="deleteSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-trash"></i> Delete</button>
                         </div>
                     </div>
                 </div>
