@@ -70,8 +70,8 @@
         </div>
     </header>
 
-    <!-- MAIN DASHBOARD -->
-    <main class="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-5 space-y-4">
+    <!-- MAIN DASHBOARD (RESPONSIVE 2-COLUMN GRID ON DESKTOP) -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
 
         <!-- CARD 1: MILEAGE UPDATE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
@@ -119,13 +119,54 @@
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
                 </h2>
-                <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
+                <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
             </button>
-            <div id="content-card-incoming" class="p-2 space-y-1 font-mono hidden"></div>
+            <div id="content-card-incoming" class="p-2 space-y-1 font-mono"></div>
         </div>
 
-        <!-- ENGINE OIL REALISTIC -->
+        <!-- TIME-BASED MAINTENANCE -->
         <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
+                </h2>
+                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono">
+                <div id="time-maint-list" class="space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- PACE DETAILS -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
+                </h2>
+                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-pace" class="p-4 space-y-2 text-xs">
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="text-slate-400">Recent Pace</span>
+                    <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
+                    <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-slate-800/40">
+                    <span class="font-bold text-purple-300">Weighted Realistic</span>
+                    <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                </div>
+                <div class="flex justify-between py-1">
+                    <span class="text-slate-400">Comparison Pace</span>
+                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENGINE OIL REALISTIC (FULL WIDTH) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md md:col-span-2">
             <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (Realistic Pace)
@@ -145,8 +186,8 @@
             </div>
         </div>
 
-        <!-- OTHER MAINTENANCE REALISTIC -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+        <!-- OTHER MAINTENANCE REALISTIC (FULL WIDTH) -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md md:col-span-2">
             <button onclick="toggleCard('card-maint-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                 <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                     <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (Realistic Pace)
@@ -165,47 +206,6 @@
                     </thead>
                     <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
                 </table>
-            </div>
-        </div>
-
-        <!-- TIME-BASED MAINTENANCE -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
-                </h2>
-                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
-            </button>
-            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono hidden">
-                <div id="time-maint-list" class="space-y-2"></div>
-            </div>
-        </div>
-
-        <!-- PACE DETAILS -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
-                </h2>
-                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200" style="transform: rotate(-90deg);"></i>
-            </button>
-            <div id="content-card-pace" class="p-4 space-y-2 text-xs hidden">
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span class="text-slate-400">Recent Pace</span>
-                    <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
-                </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
-                    <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
-                </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span class="font-bold text-purple-300">Weighted Realistic</span>
-                    <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
-                </div>
-                <div class="flex justify-between py-1">
-                    <span class="text-slate-400">Comparison Pace</span>
-                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
-                </div>
             </div>
         </div>
 
@@ -1041,7 +1041,7 @@
             fetch(sheetApiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'config', milestones, oilInterval }) });
         }
 
-        // SECURITY & AUTHENTICATION LOGIC (Password changed to "musroy")
+        // SECURITY & AUTHENTICATION LOGIC (Password: "musroy")
         let inactivityTimer;
         const TIMEOUT_DURATION = 15 * 60 * 1000; // 15 minutes
 
