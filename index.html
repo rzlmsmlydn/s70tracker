@@ -63,7 +63,7 @@
                 <i class="fa-solid fa-engine text-sky-400"></i> <span class="hidden sm:inline">Oil & Interval</span>
             </button>
             <!-- OTHER MAINTENANCE BUTTON (CLIPBOARD WITH SPANNER) -->
-            <button onclick="openSettingsModal()" title="Maintenance Settings & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+            <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-clipboard-list text-amber-400"></i> <span class="hidden sm:inline">Maintenance Hub</span>
             </button>
             <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] px-3.5 py-1.5 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1">
@@ -1044,10 +1044,9 @@
 
         function renderOilArchiveModal() {
             const listContainer = document.getElementById('daily-logs-list');
-            // Sort logs by date descending (newest at the top)
             const sortedLogs = [...logs].map((l, originalIndex) => ({ ...l, originalIndex })).sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
             
-            document.getElementById('total-logs-badge.textContent = `${sortedLogs.length} Total Logs`;
+            document.getElementById('total-logs-badge').textContent = `${sortedLogs.length} Total Logs`;
 
             if (sortedLogs.length === 0) {
                 listContainer.innerHTML = '<div class="text-slate-500 text-xs italic">No daily mileage logs recorded.</div>';
@@ -1430,7 +1429,6 @@
         window.onload = () => {
             checkAuth();
             document.getElementById('input-log-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('input-oil interval').value = oilInterval;
             document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
             recalculateAll();
         };
