@@ -383,11 +383,11 @@
         </div>
     </div>
 
-    <!-- STRUCTURED POPUP MODAL FOR COMPLETING MAINTENANCE -->
+    <!-- STRUCTURED POPUP MODAL FOR COMPLETING / EDITING MAINTENANCE -->
     <div id="complete-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-lg rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <h3 id="complete-modal-title" class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record
                 </h3>
                 <button onclick="closeCompleteModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
@@ -547,8 +547,6 @@
             { date: '2025-12-27', odo: 18264, oilService: false },
             { date: '2025-12-28', odo: 18354, oilService: false },
             { date: '2025-12-29', odo: 18452, oilService: false },
-            { date: '2025-12-30', odo: 18540, oilService: false },
-            { date: '2025-12-31', odo: 18618, oilService: false },
             { date: '2026-01-01', odo: 18618, oilService: false },
             { date: '2026-01-02', odo: 18781, oilService: false },
             { date: '2026-01-03', odo: 18928, oilService: false },
@@ -1006,7 +1004,7 @@
                             <td class="py-2.5 px-3 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
                             <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
                             <td class="py-2.5 px-3 text-right">
-                                <button onclick="openCompleteModal(${m.targetOdo})" class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                                <button onclick="openCompleteModal(${m.targetOdo})" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
                             </td>
                         </tr>
                     `;
@@ -1061,24 +1059,22 @@
                 return;
             }
 
-            // Group logs by Year-Month (e.g., "2026-11")
             const groups = {};
             sortedLogs.forEach(item => {
-                const ym = item.date.substring(0, 7); // "YYYY-MM"
+                const ym = item.date.substring(0, 7);
                 if (!groups[ym]) groups[ym] = [];
                 groups[ym].push(item);
             });
 
-            // Sort months descending (newest month first)
             const sortedMonths = Object.keys(groups).sort((a, b) => b.localeCompare(a));
-            const currentYearMonth = new Date().toISOString().substring(0, 7); // Current YYYY-MM
+            const currentYearMonth = new Date().toISOString().substring(0, 7);
 
             let html = '';
             sortedMonths.forEach(ym => {
                 const [year, monthNum] = ym.split('-');
                 const monthName = new Date(year, parseInt(monthNum, 10) - 1, 1).toLocaleString('en', { month: 'long', year: 'numeric' });
                 const isCurrentMonth = (ym === currentYearMonth);
-                const isOpen = isCurrentMonth; // Past months collapsed, current month open
+                const isOpen = isCurrentMonth;
 
                 html += `
                     <details ${isOpen ? 'open' : ''} class="group bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden mb-2">
@@ -1229,7 +1225,6 @@
                     const costVal = parseFloat(m.cost) || 0;
                     grandTotalSpent += costVal;
 
-                    // Parse items from details string or array
                     let itemsHtml = '';
                     if (m.details) {
                         const lines = m.details.split('\n');
@@ -1262,7 +1257,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
                                     <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
-                                    <button onclick="event.stopPropagation(); uncompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase ml-1">Undo</button>
+                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo})" class="px-2 py-0.5 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 rounded text-[10px] font-bold uppercase ml-1">Edit</button>
                                 </div>
                             </summary>
                             <div class="p-3 pt-0 space-y-2 border-t border-slate-800/45 mt-1">
@@ -1309,7 +1304,14 @@
             if (!m) return;
             document.getElementById('complete-target-odo').value = m.targetOdo;
             document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
-            document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('complete-date').value = m.serviceDate || new Date().toISOString().split('T')[0];
+
+            const modalTitle = document.getElementById('complete-modal-title');
+            if (m.done) {
+                modalTitle.innerHTML = `<i class="fa-solid fa-pen text-sky-400"></i> Edit Service Record`;
+            } else {
+                modalTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record`;
+            }
 
             const container = document.getElementById('complete-rows-container');
             container.innerHTML = '';
@@ -1381,11 +1383,6 @@
 
             closeCompleteModal();
             recalculateAll();
-        }
-
-        function uncompleteMilestone(targetOdo) {
-            const m = milestones.find(item => item.targetOdo === targetOdo);
-            if (m) { m.done = false; recalculateAll(); }
         }
 
         function deleteMilestone(targetOdo) {
