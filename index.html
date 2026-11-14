@@ -500,10 +500,8 @@
         function parseFlexibleDate(dateStr) {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             const trimmed = String(dateStr).trim();
-            // If already YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
             
-            // Handle "13 November 2026" format
             const parts = trimmed.split(' ');
             if (parts.length === 3) {
                 const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12', January: '01', February: '02', March: '03', April: '04', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'};
@@ -531,12 +529,16 @@
 
                 if (Array.isArray(rows) && rows.length > 0) {
                     rows.forEach(r => {
+                        // Only add log if date and valid odometer exist and odometer > 100
                         if (r.date && r.odo) {
-                            logs.push({
-                                date: parseFlexibleDate(r.date),
-                                odo: parseInt(r.odo, 10),
-                                oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true
-                            });
+                            const odoVal = parseInt(r.odo, 10);
+                            if (!isNaN(odoVal) && odoVal > 100) {
+                                logs.push({
+                                    date: parseFlexibleDate(r.date),
+                                    odo: odoVal,
+                                    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true
+                                });
+                            }
                         }
                         if (r.targetOdo && r.notes) {
                             milestones.push({
@@ -671,7 +673,7 @@
                 const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
 
                 const weightedPace = (recentPace * 0.6) + (longTermPace * 0.4);
-                const effectivePace = weightedPace > 0 ? weightedPace : BENCHMARK_PACE;
+                const effectivePace = (weightedPace > 5 && weightedPace < 300) ? weightedPace : BENCHMARK_PACE;
 
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
@@ -690,6 +692,7 @@
                 let oilRealItems = [];
                 for (let i = 1; i <= 10; i++) {
                     const targetOdo = lastOil.odo + (oilInterval * i);
+                    if (targetOdo <= latest.odo) continue;
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / effectivePace);
 
@@ -701,7 +704,7 @@
                         category: 'Engine Oil Service'
                     });
 
-                    const isNext = (i === 1);
+                    const isNext = (oilRealItems.length === 1);
                     const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
                     const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
 
