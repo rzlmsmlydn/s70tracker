@@ -58,14 +58,19 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <!-- ENGINE OIL BUTTON (ENGINE LOGO & "Engine Oil") -->
+            <!-- ENGINE OIL BUTTON -->
             <button onclick="openOilArchiveModal()" title="Engine Oil Archive & Interval Settings" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-engine text-sky-400"></i> <span>Engine Oil</span>
             </button>
-            <!-- OTHER MAINTENANCE BUTTON (CLIPBOARD WITH SPANNER) -->
+            <!-- MAINTENANCE HUB BUTTON -->
             <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
                 <i class="fa-solid fa-clipboard-list text-amber-400"></i> <span class="hidden sm:inline">Maintenance Hub</span>
             </button>
+            <!-- COMPLETED SERVICES BUTTON -->
+            <button onclick="openCompletedModal()" title="Completed Maintenance Ledger" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> <span class="hidden sm:inline">Completed</span>
+            </button>
+            <!-- LOG ODOMETER BUTTON -->
             <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] px-3.5 py-1.5 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1">
                 <i class="fa-solid fa-plus"></i> Log
             </button>
@@ -222,7 +227,7 @@
 
     </main>
 
-    <!-- ENGINE OIL ARCHIVE & INTERVAL MODAL (EXPANDED WIDER & TALLER, 1-ROW LIST) -->
+    <!-- ENGINE OIL ARCHIVE & INTERVAL MODAL -->
     <div id="oil-archive-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-3xl rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[92vh] flex flex-col">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3 shrink-0">
@@ -232,7 +237,6 @@
                 <button onclick="closeOilArchiveModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- TOP: GLOBAL PARAMETER FOR ENGINE OIL INTERVAL -->
             <div class="space-y-2 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl shrink-0">
                 <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
                 <div class="flex gap-2.5">
@@ -241,7 +245,6 @@
                 </div>
             </div>
 
-            <!-- BOTTOM: EDITABLE / DELETABLE DAILY MILEAGE LOGS (SCROLLABLE CONTAINER) -->
             <div class="space-y-2.5 pt-1 border-t border-slate-800 flex-1 flex flex-col min-h-0">
                 <div class="flex items-center justify-between shrink-0">
                     <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Daily Mileage Update Logs (Newest First)</h4>
@@ -256,17 +259,17 @@
         </div>
     </div>
 
-    <!-- SETTINGS & HISTORY MODAL (OTHER MAINTENANCE HUB) -->
+    <!-- MAINTENANCE HUB MODAL -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                 <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-clipboard-list text-amber-400"></i> Maintenance Hub & History
+                    <i class="fa-solid fa-clipboard-list text-amber-400"></i> Maintenance Hub
                 </h3>
                 <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- Add New Milestone Section -->
+            <!-- Add New Milestone Section (Simplified: Odo + Title only) -->
             <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <h4 class="text-xs font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Record</h4>
                 <form onsubmit="handleAddMilestone(event)" class="space-y-3">
@@ -279,14 +282,6 @@
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Service Title / Category</label>
                             <input type="text" id="input-new-title" required placeholder="e.g. Brake Service" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                         </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Itemized Breakdown (Optional)</label>
-                        <textarea id="input-new-details" rows="2" placeholder="e.g. Parts, labor, shop location" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Total Price ($) (Optional)</label>
-                        <input type="number" step="0.01" id="input-new-cost" placeholder="e.g. 150.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none">
                     </div>
                     <div class="flex justify-end pt-1">
                         <button type="submit" class="px-4 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Milestone</button>
@@ -318,23 +313,45 @@
                 </form>
             </div>
 
-            <!-- Manage Active Milestones -->
+            <!-- Manage Active Milestones (No cost/itemized displayed here) -->
             <div class="space-y-3">
                 <h4 class="text-xs font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-list-check text-sky-400"></i> Active Upcoming Maintenance</h4>
                 <div id="settings-active-milestones" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
             </div>
 
-            <!-- Completed Maintenance Ledger -->
+            <!-- Time-Based Active Tasks -->
             <div class="space-y-3 pt-2 border-t border-slate-800">
-                <div class="flex items-center justify-between">
-                    <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-box-archive"></i> Completed Maintenance Ledger & Expenses</h4>
-                    <span id="total-spent-badge" class="text-xs font-mono font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20">Total Spent: $0.00</span>
-                </div>
-                <div id="settings-completed-milestones" class="space-y-2.5 max-h-60 overflow-y-auto pr-1"></div>
+                <h4 class="text-xs font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-clock text-emerald-400"></i> Active Time-Based Tasks</h4>
+                <div id="settings-active-time" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
             </div>
 
             <div class="flex items-center justify-end pt-2 border-t border-slate-800">
                 <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPLETED MAINTENANCE MODAL (Moved to new Completed button) -->
+    <div id="completed-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed Maintenance Ledger & Expenses
+                </h3>
+                <button onclick="closeCompletedModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <div class="flex items-center justify-between bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl font-mono">
+                <span class="text-slate-300 font-bold uppercase text-xs">Total Expenses</span>
+                <span id="total-spent-badge" class="text-amber-400 font-black text-sm">$0.00</span>
+            </div>
+
+            <div class="space-y-3">
+                <div id="settings-completed-milestones" class="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1"></div>
+            </div>
+
+            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeCompletedModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
@@ -357,14 +374,6 @@
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title</label>
                     <input type="text" id="edit-milestone-title" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Total Cost ($)</label>
-                    <input type="number" step="0.01" id="edit-milestone-cost" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white font-mono focus:outline-none">
-                </div>
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Itemized Details</label>
-                    <textarea id="edit-milestone-details" rows="3" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white font-mono focus:outline-none text-xs"></textarea>
                 </div>
                 <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
                     <button type="button" onclick="closeEditMilestoneModal()" class="px-3 py-1.5 rounded-xl border border-slate-800 text-slate-400 font-bold">Cancel</button>
@@ -849,7 +858,6 @@
         let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
 
         try {
-            // Force-load COMPLETE_LOGS directly into localStorage to bypass old cached state
             localStorage.setItem('s70_logs', JSON.stringify(COMPLETE_LOGS));
             const savedLogs = localStorage.getItem('s70_logs');
             if (savedLogs) logs = JSON.parse(savedLogs);
@@ -1035,6 +1043,7 @@
                 document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 text-xs p-3">No upcoming maintenance.</div>';
 
                 renderSettingsLists();
+                renderCompletedList();
 
             } catch (err) {
                 console.error("Error in recalculateAll:", err);
@@ -1054,26 +1063,19 @@
 
             listContainer.innerHTML = sortedLogs.map(item => `
                 <div class="bg-[#050913] border border-slate-800/70 px-3 py-2 rounded-xl flex items-center justify-between gap-3 font-mono text-xs">
-                    <!-- DATE -->
                     <div class="w-36 shrink-0">
                         <input type="date" id="log-date-${item.originalIndex}" value="${item.date}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none">
                     </div>
-
-                    <!-- ODOMETER -->
                     <div class="w-32 shrink-0">
                         <input type="number" id="log-odo-${item.originalIndex}" value="${item.odo}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1 text-white font-mono text-xs font-bold focus:outline-none">
                     </div>
-
-                    <!-- OIL SERVICE CHECKBOX -->
                     <div class="flex items-center gap-1.5 shrink-0">
                         <input type="checkbox" id="log-oil-${item.originalIndex}" ${item.oilService ? 'checked' : ''} class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
-                        <label for="log-oil-${item.originalIndex}" class="text-[10px] text-slate-300 cursor-pointer select-none whitespace-hidden sm:whitespace-nowrap">Oil Service</label>
+                        <label for="log-oil-${item.originalIndex}" class="text-[10px] text-slate-300 cursor-pointer select-none">Oil Service</label>
                     </div>
-
-                    <!-- ACTION BUTTONS -->
                     <div class="flex items-center gap-1.5 shrink-0">
-                        <button onclick="saveSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i> <span class="hidden sm:inline">Save</span></button>
-                        <button onclick="deleteSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-trash"></i> <span class="hidden sm:inline">Delete</span></button>
+                        <button onclick="saveSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i></button>
+                        <button onclick="deleteSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -1130,13 +1132,13 @@
                         <div class="text-right">
                             <div class="text-emerald-400 font-bold">${formatDateDisplay(t.dueDate)}</div>
                         </div>
-                        <button onclick="deleteTimeMaint('${t.id}')" class="text-rose-400 hover:text-rose-300 text-xs"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');
         }
 
         function renderSettingsLists() {
+            // Active milestones (No cost/itemized)
             const activeDiv = document.getElementById('settings-active-milestones');
             const activeList = milestones.filter(m => !m.done);
             if (activeList.length === 0) {
@@ -1156,12 +1158,32 @@
                 `).join('');
             }
 
+            // Time-based active tasks
+            const activeTimeDiv = document.getElementById('settings-active-time');
+            if (timeMaint.length === 0) {
+                activeTimeDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No active time-based tasks.</div>';
+            } else {
+                activeTimeDiv.innerHTML = timeMaint.map(t => `
+                    <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/60 p-2.5 rounded-xl text-xs font-mono">
+                        <div class="flex items-center gap-2 flex-1 overflow-hidden">
+                            <span class="text-emerald-400 font-bold whitespace-nowrap">${formatDateDisplay(t.dueDate)}</span>
+                            <span class="text-slate-300 truncate font-sans">${t.title} (${t.interval})</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 whitespace-nowrap">
+                            <button onclick="deleteTimeMaint('${t.id}')" class="px-2 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded text-[11px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function renderCompletedList() {
             const completedDiv = document.getElementById('settings-completed-milestones');
             const completedList = milestones.filter(m => m.done);
             let grandTotalSpent = 0;
 
             if (completedList.length === 0) {
-                completedDiv.innerHTML = '<div class="text-slate-500 text-xs italic">No completed maintenance items yet.</div>';
+                completedDiv.innerHTML = '<div class="text-slate-500 text-xs italic text-center py-4">No completed maintenance items yet.</div>';
             } else {
                 completedDiv.innerHTML = completedList.map(m => {
                     const costVal = parseFloat(m.cost) || 0;
@@ -1169,7 +1191,7 @@
                     const formattedDetails = (m.details || '').replace(/\n/g, '<br>');
 
                     return `
-                        <details class="group bg-[#050913] border border-slate-800/60 rounded-xl text-xs font-mono overflow-hidden">
+                        <details class="group bg-[#050913] border border-slate-800/65 rounded-xl text-xs font-mono overflow-hidden">
                             <summary class="flex items-center justify-between p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
                                 <div class="flex items-center gap-2">
                                     <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
@@ -1181,7 +1203,7 @@
                                     <button onclick="event.stopPropagation(); uncompleteMilestone(${m.targetOdo})" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[10px] font-bold uppercase ml-1">Undo</button>
                                 </div>
                             </summary>
-                            <div class="p-3 pt-0 space-y-2 border-t border-slate-800/40 mt-1">
+                            <div class="p-3 pt-0 space-y-2 border-t border-slate-800/45 mt-1">
                                 ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-2"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
                                 ${formattedDetails ? `<div class="text-[11px] text-slate-300 bg-[#080d1a] p-2 rounded border border-slate-900 whitespace-pre-line">${formattedDetails}</div>` : '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
                             </div>
@@ -1190,7 +1212,7 @@
                 }).join('');
             }
 
-            document.getElementById('total-spent-badge').textContent = `Total Spent: $${grandTotalSpent.toFixed(2)}`;
+            document.getElementById('total-spent-badge').textContent = `$${grandTotalSpent.toFixed(2)}`;
         }
 
         function openEditMilestoneModal(targetOdo) {
@@ -1199,8 +1221,6 @@
             document.getElementById('edit-original-odo').value = m.targetOdo;
             document.getElementById('edit-milestone-odo').value = m.targetOdo;
             document.getElementById('edit-milestone-title').value = m.notes;
-            document.getElementById('edit-milestone-cost').value = m.cost || 0;
-            document.getElementById('edit-milestone-details').value = m.details || '';
             document.getElementById('edit-milestone-modal').classList.remove('hidden');
         }
 
@@ -1214,8 +1234,6 @@
 
             m.targetOdo = parseInt(document.getElementById('edit-milestone-odo').value, 10);
             m.notes = document.getElementById('edit-milestone-title').value.trim();
-            m.cost = parseFloat(document.getElementById('edit-milestone-cost').value) || 0;
-            m.details = document.getElementById('edit-milestone-details').value.trim();
 
             closeEditMilestoneModal();
             recalculateAll();
@@ -1321,15 +1339,13 @@
             milestones.push({ 
                 targetOdo: odoVal, 
                 notes: titleVal, 
-                details: document.getElementById('input-new-details').value.trim(), 
-                cost: parseFloat(document.getElementById('input-new-cost').value) || 0, 
+                details: '', 
+                cost: 0, 
                 done: false 
             });
 
             document.getElementById('input-new-odo').value = '';
             document.getElementById('input-new-title').value = '';
-            document.getElementById('input-new-details').value = '';
-            document.getElementById('input-new-cost').value = '';
 
             recalculateAll();
             alert("New maintenance record added successfully!");
@@ -1367,6 +1383,9 @@
         function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
         function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
 
+        function openCompletedModal() { document.getElementById('completed-modal').classList.remove('hidden'); }
+        function closeCompletedModal() { document.getElementById('completed-modal').classList.add('hidden'); }
+
         function openLogModal() { document.getElementById('log-modal').classList.remove('hidden'); }
         function closeLogModal() { document.getElementById('log-modal').classList.add('hidden'); }
 
@@ -1384,7 +1403,6 @@
             document.getElementById('input-log-oil').checked = false;
         }
 
-        // SECURITY & AUTHENTICATION LOGIC (Password: "musroy")
         let inactivityTimer;
         const TIMEOUT_DURATION = 15 * 60 * 1000;
 
@@ -1412,11 +1430,6 @@
             }
         }
 
-        /**************************************************************
-         * AUTOMATIC EXPORT FEATURE ON UNLOCK
-         * Automatically triggers a downloadable backup JSON file 
-         * whenever the dashboard is successfully unlocked.
-         **************************************************************/
         function triggerAutoBackupExport() {
             try {
                 const backupData = {
