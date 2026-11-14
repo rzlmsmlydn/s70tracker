@@ -241,13 +241,13 @@
                 </div>
             </div>
 
-            <!-- BOTTOM: EDITABLE / DELETABLE DAILY MILEAGE LOGS (COMPACT 2-BOX GRID, NEWEST AT TOP) -->
+            <!-- BOTTOM: EDITABLE / DELETABLE DAILY MILEAGE LOGS (COMPACT 1-ROW GRID, NEWEST AT TOP) -->
             <div class="space-y-2.5 pt-1 border-t border-slate-800">
                 <div class="flex items-center justify-between">
                     <h4 class="text-[11px] font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Daily Mileage Update Logs (Newest First)</h4>
                     <span id="total-logs-badge" class="text-[10px] font-mono font-bold text-slate-400 bg-slate-800/50 px-2 py-0.5 rounded">0 Logs</span>
                 </div>
-                <div id="daily-logs-list" class="space-y-2 max-h-64 overflow-y-auto pr-1"></div>
+                <div id="daily-logs-list" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
             </div>
 
             <div class="flex justify-end pt-2 border-t border-slate-800">
@@ -538,7 +538,7 @@
             { date: '2025-12-27', odo: 18264, oilService: false },
             { date: '2025-12-28', odo: 18354, oilService: false },
             { date: '2025-12-29', odo: 18452, oilService: false },
-            { date: '2025-12-30', odo: 18540, oilService: false },
+            { date: '2026-12-30', odo: 18540, oilService: false },
             { date: '2025-12-31', odo: 18618, oilService: false },
             { date: '2026-01-01', odo: 18618, oilService: false },
             { date: '2026-01-02', odo: 18781, oilService: false },
@@ -935,7 +935,7 @@
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
                 document.getElementById('row-daily-delta').textContent = `(+${dailyDelta.toLocaleString()} km)`;
-                document.getElementById('row-last-oil').textContent = `${lastOil.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
+                document.getElementById('row-last-oil').textContent = `${lastOil.odo.toLocaleString()} km — ${formatDateDisplay(lastOil.date)}`;
                 document.getElementById('row-oil-used').textContent = `${oilUsed.toLocaleString()} km (${longTermDays} days ago)`;
                 document.getElementById('row-oil-remaining').textContent = `${oilRemaining.toLocaleString()}/${oilInterval.toLocaleString()} km`;
                 document.getElementById('kpi-oil-bar').style.width = `${oilPct}%`;
@@ -1051,24 +1051,27 @@
             }
 
             listContainer.innerHTML = sortedLogs.map(item => `
-                <div class="bg-[#050913] border border-slate-800/70 p-2.5 rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-2 items-center font-mono text-xs">
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Date</label>
-                        <input type="date" id="log-date-${item.originalIndex}" value="${item.date}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2 py-1 text-white font-mono text-xs focus:outline-none">
+                <div class="bg-[#050913] border border-slate-800/70 px-3 py-2 rounded-xl flex items-center justify-between gap-3 font-mono text-xs">
+                    <!-- DATE -->
+                    <div class="w-36 shrink-0">
+                        <input type="date" id="log-date-${item.originalIndex}" value="${item.date}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1 text-white font-mono text-xs focus:outline-none">
                     </div>
-                    <div>
-                        <label class="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">Odometer (km)</label>
-                        <input type="number" id="log-odo-${item.originalIndex}" value="${item.odo}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2 py-1 text-white font-mono text-xs font-bold focus:outline-none">
+
+                    <!-- ODOMETER -->
+                    <div class="w-32 shrink-0">
+                        <input type="number" id="log-odo-${item.originalIndex}" value="${item.odo}" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-lg px-2.5 py-1 text-white font-mono text-xs font-bold focus:outline-none">
                     </div>
-                    <div class="sm:col-span-2 flex items-center justify-between pt-1 border-t border-slate-800/40">
-                        <div class="flex items-center gap-1.5">
-                            <input type="checkbox" id="log-oil-${item.originalIndex}" ${item.oilService ? 'checked' : ''} class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
-                            <label for="log-oil-${item.originalIndex}" class="text-[10px] text-slate-300 cursor-pointer select-none">Oil Service Changed</label>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="saveSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-                            <button onclick="deleteSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-trash"></i> Delete</button>
-                        </div>
+
+                    <!-- OIL SERVICE CHECKBOX -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <input type="checkbox" id="log-oil-${item.originalIndex}" ${item.oilService ? 'checked' : ''} class="w-3.5 h-3.5 rounded accent-sky-500 cursor-pointer">
+                        <label for="log-oil-${item.originalIndex}" class="text-[10px] text-slate-300 cursor-pointer select-none whitespace-hidden sm:whitespace-nowrap">Oil Service</label>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="saveSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-floppy-disk"></i> <span class="hidden sm:inline">Save</span></button>
+                        <button onclick="deleteSingleLog(${item.originalIndex})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[10px] font-bold transition-all"><i class="fa-solid fa-trash"></i> <span class="hidden sm:inline">Delete</span></button>
                     </div>
                 </div>
             `).join('');
