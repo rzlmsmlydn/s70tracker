@@ -70,142 +70,151 @@
         </div>
     </header>
 
-    <!-- MAIN DASHBOARD (RESPONSIVE 2-COLUMN GRID ON DESKTOP) -->
-    <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-5 grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+    <!-- MAIN DASHBOARD (2-COLUMN GRID WIDESCREEN LAYOUT) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- CARD 1: MILEAGE UPDATE -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
-                <div class="flex items-center gap-2 text-xs font-black tracking-wider text-white uppercase">
-                    <i class="fa-solid fa-gauge text-sky-400"></i> Mileage Update
-                </div>
-            </div>
-
-            <div class="divide-y divide-slate-800/60 text-xs">
-                <div class="px-4 py-2.5 flex items-center justify-between">
-                    <span class="text-slate-400 font-medium">Date</span>
-                    <span id="row-date" class="font-mono font-bold text-slate-200">1 Nov 2026</span>
-                </div>
-                <div class="px-4 py-2.5 flex items-center justify-between">
-                    <span class="text-slate-400 font-medium">Current Odometer</span>
-                    <div class="flex items-center gap-2 font-mono">
-                        <span id="row-current-odo" class="font-black text-white">45,591 km</span>
-                        <span id="row-daily-delta" class="text-[11px] font-bold text-emerald-400">(+511 km)</span>
+        <!-- ROW 1: Mileage Update + Incoming Maintenance -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <!-- CARD 1: MILEAGE UPDATE -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
+                    <div class="flex items-center gap-2 text-xs font-black tracking-wider text-white uppercase">
+                        <i class="fa-solid fa-gauge text-sky-400"></i> Mileage Update
                     </div>
                 </div>
-                <div class="px-4 py-2.5 flex items-center justify-between">
-                    <span class="text-slate-400 font-medium">Latest Oil Service</span>
-                    <span id="row-last-oil" class="font-mono text-slate-300">42,744 km — 23 Sep 2026</span>
-                </div>
-                <div class="px-4 py-2.5 flex items-center justify-between">
-                    <span class="text-slate-400 font-medium">Oil Used</span>
-                    <span id="row-oil-used" class="font-mono text-slate-300">2,847 km (39 days ago)</span>
-                </div>
-                <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
-                    <div class="flex items-center justify-between">
-                        <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
-                        <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">4,653/7,500 km</span>
+
+                <div class="divide-y divide-slate-800/60 text-xs flex-1 flex flex-col justify-between">
+                    <div class="px-4 py-2.5 flex items-center justify-between">
+                        <span class="text-slate-400 font-medium">Date</span>
+                        <span id="row-date" class="font-mono font-bold text-slate-200">1 Nov 2026</span>
                     </div>
-                    <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
-                        <div id="kpi-oil-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 38%"></div>
+                    <div class="px-4 py-2.5 flex items-center justify-between">
+                        <span class="text-slate-400 font-medium">Current Odometer</span>
+                        <div class="flex items-center gap-2 font-mono">
+                            <span id="row-current-odo" class="font-black text-white">45,591 km</span>
+                            <span id="row-daily-delta" class="text-[11px] font-bold text-emerald-400">(+511 km)</span>
+                        </div>
+                    </div>
+                    <div class="px-4 py-2.5 flex items-center justify-between">
+                        <span class="text-slate-400 font-medium">Latest Oil Service</span>
+                        <span id="row-last-oil" class="font-mono text-slate-300">42,744 km — 23 Sep 2026</span>
+                    </div>
+                    <div class="px-4 py-2.5 flex items-center justify-between">
+                        <span class="text-slate-400 font-medium">Oil Used</span>
+                        <span id="row-oil-used" class="font-mono text-slate-300">2,847 km (39 days ago)</span>
+                    </div>
+                    <div class="px-4 py-3 space-y-2 bg-[#060a15]/50">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
+                            <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm">4,653/7,500 km</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                            <div id="kpi-oil-bar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 38%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- INCOMING MAINTENANCE -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
-                </h2>
-                <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-incoming" class="p-2 space-y-1 font-mono"></div>
-        </div>
-
-        <!-- TIME-BASED MAINTENANCE -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
-                </h2>
-                <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono">
-                <div id="time-maint-list" class="space-y-2"></div>
+            <!-- INCOMING MAINTENANCE -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
+                    </h2>
+                    <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="content-card-incoming" class="p-2 space-y-1 font-mono flex-1"></div>
             </div>
         </div>
 
-        <!-- PACE DETAILS -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
-                </h2>
-                <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-pace" class="p-4 space-y-2 text-xs">
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span class="text-slate-400">Recent Pace</span>
-                    <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+        <!-- ROW 2: Engine Oil Realistic + Other Maintenance Realistic -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <!-- ENGINE OIL REALISTIC -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (Realistic Pace)
+                    </h2>
+                    <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="content-card-oil-real" class="overflow-x-auto flex-1">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                                <th class="py-2.5 px-4">Target Mileage</th>
+                                <th class="py-2.5 px-4">Realistic Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="oil-realistic-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
+                    </table>
                 </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
-                    <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
-                </div>
-                <div class="flex justify-between py-1 border-b border-slate-800/40">
-                    <span class="font-bold text-purple-300">Weighted Realistic</span>
-                    <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
-                </div>
-                <div class="flex justify-between py-1">
-                    <span class="text-slate-400">Comparison Pace</span>
-                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+            </div>
+
+            <!-- OTHER MAINTENANCE REALISTIC -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-maint-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (Realistic Pace)
+                    </h2>
+                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="content-card-maint-real" class="overflow-x-auto flex-1">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                                <th class="py-2.5 px-3">Target Odo</th>
+                                <th class="py-2.5 px-3">Realistic Date</th>
+                                <th class="py-2.5 px-3">Notes / Purposes</th>
+                                <th class="py-2.5 px-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <!-- ENGINE OIL REALISTIC (FULL WIDTH) -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md md:col-span-2">
-            <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service (Realistic Pace)
-                </h2>
-                <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-oil-real" class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
-                            <th class="py-2.5 px-4">Target Mileage</th>
-                            <th class="py-2.5 px-4">Realistic Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="oil-realistic-body" class="divide-y divide-slate-800/50 text-xs font-mono"></tbody>
-                </table>
+        <!-- ROW 3: Time-Based Maintenance + Pace Details -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <!-- TIME-BASED MAINTENANCE -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
+                    </h2>
+                    <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono flex-1">
+                    <div id="time-maint-list" class="space-y-2"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- OTHER MAINTENANCE REALISTIC (FULL WIDTH) -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md md:col-span-2">
-            <button onclick="toggleCard('card-maint-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance (Realistic Pace)
-                </h2>
-                <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-maint-real" class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
-                            <th class="py-2.5 px-3">Target Odo</th>
-                            <th class="py-2.5 px-3">Realistic Date</th>
-                            <th class="py-2.5 px-3">Notes / Purposes</th>
-                            <th class="py-2.5 px-3 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50 text-xs"></tbody>
-                </table>
+            <!-- PACE DETAILS -->
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-pace')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
+                    </h2>
+                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                </button>
+                <div id="content-card-pace" class="p-4 space-y-2 text-xs flex-1 flex flex-col justify-center">
+                    <div class="flex justify-between py-1 border-b border-slate-800/40">
+                        <span class="text-slate-400">Recent Pace</span>
+                        <span id="pace-recent" class="font-mono font-bold text-white">71.08 km/day</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/40">
+                        <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
+                        <span id="pace-longterm" class="font-mono font-bold text-white">79.61 km/day</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/40">
+                        <span class="font-bold text-purple-300">Weighted Realistic</span>
+                        <span id="pace-weighted" class="font-mono font-black text-purple-300">74.49 km/day</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-400">Comparison Pace</span>
+                        <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -681,7 +690,7 @@
                 const closest10 = allIncoming.slice(0, 10);
 
                 const incomingHtml = closest10.map(item => `
-                    <div class="py-1.5 px-3 border-b border-slate-800/30 last:border-0 flex items-center justify-between gap-3 text-xs">
+                    <div class="py-1 px-3 border-b border-slate-800/30 last:border-0 flex items-center justify-between gap-3 text-xs">
                         <div class="font-sans font-semibold text-slate-200 leading-snug flex-1 break-words">${item.title}</div>
                         <div class="flex items-center gap-3 shrink-0">
                             ${item.odo ? `<span class="text-[10px] font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : '<span></span>'}
