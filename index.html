@@ -428,15 +428,12 @@
     </div>
 
     <script>
-        const SHEETDB_URL = 'https://sheetdb.io/api/v1/gpbidec3qbdkx?sheet=LOGS';
+        const SHEETDB_URL = 'https://sheetdb.io/api/v1/gpbidec3qbdkx?sheet=Logs';
         const BENCHMARK_PACE = 95;
 
         let logs = [];
         let milestones = [];
-        let timeMaint = [
-            { id: '1', title: 'Coolant flushing', interval: '2 years', dueDate: '2027-07-01' },
-            { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
-        ];
+        let timeMaint = [];
         let oilInterval = 7500;
 
         function toggleCard(cardId) {
@@ -494,7 +491,7 @@
                                 logs.push({
                                     date: parseFlexibleDate(r.date),
                                     odo: odoVal,
-                                    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true
+                                    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
                                 });
                             }
                         }
@@ -504,7 +501,7 @@
                                 notes: r.notes,
                                 details: r.details || '',
                                 cost: parseFloat(r.cost) || 0,
-                                done: String(r.done).toLowerCase() === 'true' || r.done === true,
+                                done: String(r.done).toLowerCase() === 'true' || r.done === true || r.done === 'TRUE',
                                 serviceDate: r.serviceDate ? parseFlexibleDate(r.serviceDate) : ''
                             });
                         }
@@ -534,7 +531,7 @@
 
         async function pushDataToCloud() {
             try {
-                // Keep sheet order: NEWEST AT THE TOP (descending by date & odo)
+                // Keep sheet order: NEWEST LOGS AT THE TOP (descending by date & odo)
                 const logsNewestFirst = [...logs].sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
                 
@@ -542,7 +539,17 @@
                 const payloadData = [];
 
                 for (let i = 0; i < maxLength; i++) {
-                    let row = {};
+                    let row = {
+                        date: "",
+                        odo: "",
+                        oilService: "",
+                        targetOdo: "",
+                        notes: "",
+                        details: "",
+                        cost: "",
+                        done: "",
+                        serviceDate: ""
+                    };
                     if (logsNewestFirst[i]) {
                         row.date = logsNewestFirst[i].date;
                         row.odo = logsNewestFirst[i].odo;
@@ -603,10 +610,6 @@
             return Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
         }
 
-        /**
-         * Selects an actual reading from approximately 7-14 days prior.
-         * Never invents missing mileage readings.
-         */
         function findRecentPaceAnchor(sortedLogs, latest) {
             if (sortedLogs.length <= 1) return sortedLogs[0];
 
@@ -640,7 +643,6 @@
             try {
                 if (logs.length === 0) return;
 
-                // Sort chronologically (oldest first) internally for accurate math
                 logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
                 milestones.sort((a, b) => a.targetOdo - b.targetOdo);
 
@@ -1036,7 +1038,7 @@
 
             recalculateAll();
             await pushDataToCloud();
-            alert("New maintenance record added & synced!");
+            alert("New maintenance record added & synced to Sheet!");
         }
 
         function handleAddTimeMaint(e) {
@@ -1051,7 +1053,8 @@
             document.getElementById('input-time-interval').value = '';
             document.getElementById('input-time-duedate').value = '';
 
-            recalculateAll();
+            renderTimeMaintCard();
+            renderSettingsLists();
             alert("Time-based maintenance task added!");
         }
 
