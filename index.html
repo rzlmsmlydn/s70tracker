@@ -466,7 +466,7 @@
             }
         }
 
-        const DEFAULT_LOGS = [
+        const COMPLETE_LOGS = [
             { date: '2025-07-10', odo: 1111, oilService: true },
             { date: '2025-09-03', odo: 7600, oilService: false },
             { date: '2025-09-06', odo: 7860, oilService: false },
@@ -843,12 +843,14 @@
             { id: '2', title: 'Cabin filter', interval: '6 months', dueDate: '2027-05-01' }
         ];
 
-        let logs = DEFAULT_LOGS;
+        let logs = COMPLETE_LOGS;
         let milestones = DEFAULT_MILESTONES;
         let timeMaint = DEFAULT_TIME_MAINT;
         let oilInterval = parseInt(localStorage.getItem('s70_oil_interval'), 10) || 7500;
 
         try {
+            // Force-load COMPLETE_LOGS directly into localStorage to bypass old cached state
+            localStorage.setItem('s70_logs', JSON.stringify(COMPLETE_LOGS));
             const savedLogs = localStorage.getItem('s70_logs');
             if (savedLogs) logs = JSON.parse(savedLogs);
             
@@ -1437,7 +1439,6 @@
         }
 
         function lockApp() {
-            sessionStorage.getItem('s70_unlocked'); // verify
             sessionStorage.removeItem('s70_unlocked');
             checkAuth();
         }
