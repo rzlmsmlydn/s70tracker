@@ -482,6 +482,7 @@
                 
                 logs = [];
                 milestones = [];
+                timeMaint = [];
 
                 if (Array.isArray(rows) && rows.length > 0) {
                     rows.forEach(r => {
@@ -503,6 +504,14 @@
                                 cost: parseFloat(r.cost) || 0,
                                 done: String(r.done).toLowerCase() === 'true' || r.done === true || r.done === 'TRUE',
                                 serviceDate: r.serviceDate ? parseFlexibleDate(r.serviceDate) : ''
+                            });
+                        }
+                        if (r.timeTitle && r.timeInterval && r.timeDueDate) {
+                            timeMaint.push({
+                                id: Date.now().toString() + Math.random(),
+                                title: r.timeTitle,
+                                interval: r.timeInterval,
+                                dueDate: parseFlexibleDate(r.timeDueDate)
                             });
                         }
                     });
@@ -531,11 +540,10 @@
 
         async function pushDataToCloud() {
             try {
-                // Keep sheet order: NEWEST LOGS AT THE TOP (descending by date & odo)
                 const logsNewestFirst = [...logs].sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
                 
-                const maxLength = Math.max(logsNewestFirst.length, sortedMilestones.length);
+                const maxLength = Math.max(logsNewestFirst.length, sortedMilestones.length, timeMaint.length);
                 const payloadData = [];
 
                 for (let i = 0; i < maxLength; i++) {
@@ -548,7 +556,10 @@
                         details: "",
                         cost: "",
                         done: "",
-                        serviceDate: ""
+                        serviceDate: "",
+                        timeTitle: "",
+                        timeInterval: "",
+                        timeDueDate: ""
                     };
                     if (logsNewestFirst[i]) {
                         row.date = logsNewestFirst[i].date;
@@ -558,10 +569,15 @@
                     if (sortedMilestones[i]) {
                         row.targetOdo = sortedMilestones[i].targetOdo;
                         row.notes = sortedMilestones[i].notes;
-                        row.details = sortedMilestones[i].details;
-                        row.cost = sortedMilestones[i].cost;
+                        row.details = sortedMilestones[i].details || '';
+                        row.cost = sortedMilestones[i].cost || 0;
                         row.done = sortedMilestones[i].done;
                         row.serviceDate = sortedMilestones[i].serviceDate || '';
+                    }
+                    if (timeMaint[i]) {
+                        row.timeTitle = timeMaint[i].title;
+                        row.timeInterval = timeMaint[i].interval;
+                        row.timeDueDate = timeMaint[i].dueDate;
                     }
                     payloadData.push(row);
                 }
@@ -1041,7 +1057,7 @@
             alert("New maintenance record added & synced to Sheet!");
         }
 
-        function handleAddTimeMaint(e) {
+        async function handleAddTimeMaint(e) {
             e.preventDefault();
             const title = document.getElementById('input-time-title').value.trim();
             const interval = document.getElementById('input-time-interval').value.trim();
@@ -1055,19 +1071,23 @@
 
             renderTimeMaintCard();
             renderSettingsLists();
-            alert("Time-based maintenance task added!");
+            recalculateAll();
+            await pushDataToCloud();
+            alert("Time-based maintenance task added & synced!");
         }
 
-        function deleteTimeMaint(id) {
+        async function deleteTimeMaint(id) {
             timeMaint = timeMaint.filter(t => t.id !== id);
             recalculateAll();
+            await pushDataToCloud();
         }
 
-        function saveOilInterval() {
+        async function saveOilInterval() {
             const val = parseInt(document.getElementById('input-oil-interval').value, 10);
             if (isNaN(val) || val <= 0) { alert("Please enter a valid oil interval in km."); return; }
             oilInterval = val;
             recalculateAll();
+            await pushDataToCloud();
             alert(`Engine oil interval updated to ${oilInterval.toLocaleString()} km!`);
         }
 
