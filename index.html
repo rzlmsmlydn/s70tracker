@@ -449,6 +449,7 @@
             { date: '2026-09-23', odo: 42744, oilService: true },
             { date: '2026-10-19', odo: 45080, oilService: false },
             { date: '2026-11-01', odo: 45591, oilService: false },
+            { date: '2026-11-12', odo: 46720, oilService: false },
             { date: '2026-11-13', odo: 46804, oilService: false }
         ];
 
@@ -493,7 +494,12 @@
             
             const parts = trimmed.split(' ');
             if (parts.length === 3) {
-                const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12', January: '01', February: '02', March: '03', April: '04', June: '06', July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'};
+                const months = {
+                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
+                    January: '01', February: '02', March: '03', April: '04', June: '06',
+                    July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+                };
                 const day = parts[0].padStart(2, '0');
                 const m = months[parts[1]] || '01';
                 const year = parts[2];
@@ -519,7 +525,7 @@
                 if (Array.isArray(rows) && rows.length > 0) {
                     rows.forEach(r => {
                         if (r.date && r.odo !== undefined && r.odo !== '') {
-                            const odoVal = parseInt(r.odo, 10);
+                            const odoVal = parseInt(String(r.odo).replace(/,/g, ''), 10);
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
                                     date: parseFlexibleDate(r.date),
@@ -530,7 +536,7 @@
                         }
                         if (r.targetOdo !== undefined && r.targetOdo !== '' && r.notes) {
                             milestones.push({
-                                targetOdo: parseInt(r.targetOdo, 10),
+                                targetOdo: parseInt(String(r.targetOdo).replace(/,/g, ''), 10),
                                 notes: r.notes,
                                 details: r.details || '',
                                 cost: parseFloat(r.cost) || 0,
@@ -549,9 +555,6 @@
                     milestones = JSON.parse(JSON.stringify(DEFAULT_MILESTONES));
                 }
 
-                // SORT LOGS CHRONOLOGICALLY: OLDEST FIRST (Ensures newest at top in sheet doesn't break calculations)
-                logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
-
                 recalculateAll();
                 syncIcon.classList.remove('fa-spin', 'text-amber-400');
                 syncIcon.classList.add('text-emerald-400');
@@ -566,25 +569,27 @@
 
         async function pushDataToCloud() {
             try {
-                // Ensure correct chronological order before pushing
-                logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
-                const maxLength = Math.max(logs.length, milestones.length);
+                // Keep sheet order: NEWEST AT THE TOP (descending by date & odo)
+                const logsNewestFirst = [...logs].sort((a, b) => b.date.localeCompare(a.date) || b.odo - a.odo);
+                const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
+                
+                const maxLength = Math.max(logsNewestFirst.length, sortedMilestones.length);
                 const payloadData = [];
 
                 for (let i = 0; i < maxLength; i++) {
                     let row = {};
-                    if (logs[i]) {
-                        row.date = logs[i].date;
-                        row.odo = logs[i].odo;
-                        row.oilService = logs[i].oilService;
+                    if (logsNewestFirst[i]) {
+                        row.date = logsNewestFirst[i].date;
+                        row.odo = logsNewestFirst[i].odo;
+                        row.oilService = logsNewestFirst[i].oilService;
                     }
-                    if (milestones[i]) {
-                        row.targetOdo = milestones[i].targetOdo;
-                        row.notes = milestones[i].notes;
-                        row.details = milestones[i].details;
-                        row.cost = milestones[i].cost;
-                        row.done = milestones[i].done;
-                        row.serviceDate = milestones[i].serviceDate || '';
+                    if (sortedMilestones[i]) {
+                        row.targetOdo = sortedMilestones[i].targetOdo;
+                        row.notes = sortedMilestones[i].notes;
+                        row.details = sortedMilestones[i].details;
+                        row.cost = sortedMilestones[i].cost;
+                        row.done = sortedMilestones[i].done;
+                        row.serviceDate = sortedMilestones[i].serviceDate || '';
                     }
                     payloadData.push(row);
                 }
@@ -617,7 +622,10 @@
         function parseDateGB(dateStr) {
             const parts = dateStr.split(' ');
             if (parts.length === 3) {
-                const months = {Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'};
+                const months = {
+                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12'
+                };
                 const m = months[parts[1]] || '01';
                 return new Date(`${parts[2]}-${m}-${parts[0].padStart(2, '0')}T00:00:00`);
             }
@@ -633,6 +641,7 @@
         function recalculateAll() {
             try {
                 if (logs.length === 0) return;
+                // Sort chronologically (oldest first) internally for accurate math
                 logs.sort((a, b) => a.date.localeCompare(b.date) || a.odo - b.odo);
                 milestones.sort((a, b) => a.targetOdo - b.targetOdo);
 
@@ -650,9 +659,10 @@
                 const longTermDays = daysBetween(lastOil.date, latest.date);
                 const longTermPace = oilUsed / longTermDays;
 
+                // Find an anchor around 14-30 days ago for recent driving pace
                 let recentAnchor = logs[0];
                 for (let i = logs.length - 2; i >= 0; i--) {
-                    if (daysBetween(logs[i].date, latest.date) >= 10) {
+                    if (daysBetween(logs[i].date, latest.date) >= 14) {
                         recentAnchor = logs[i];
                         break;
                     }
