@@ -428,7 +428,7 @@
     </div>
 
     <script>
-        const SHEETDB_URL = 'https://sheetdb.io/api/v1/gpbidec3qbdkx?sheet=Logs';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzod4DJRCH8oOdrAUmbOFx4d5kv_ncpLgCDngHSvP5SMB1gtb9-OC4fse9t55wmbhMw/exec';
         const BENCHMARK_PACE = 95;
 
         let logs = [];
@@ -477,7 +477,7 @@
             const syncIcon = document.getElementById('sync-icon');
             syncIcon.classList.add('fa-spin', 'text-amber-400');
             try {
-                const res = await fetch(SHEETDB_URL);
+                const res = await fetch(SCRIPT_URL);
                 const rows = await res.json();
                 
                 logs = [];
@@ -534,7 +534,7 @@
                 syncIcon.classList.remove('fa-spin', 'text-amber-400');
                 syncIcon.classList.add('text-rose-400');
                 document.getElementById('row-date').textContent = 'Sync Error';
-                document.getElementById('content-card-incoming').innerHTML = '<div class="text-rose-400 text-xs p-3">Could not connect to Google Sheets backend.</div>';
+                document.getElementById('content-card-incoming').innerHTML = '<div class="text-rose-400 text-xs p-3">Could not connect to Google Apps Script backend.</div>';
             }
         }
 
@@ -544,10 +544,10 @@
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
                 
                 const maxLength = Math.max(logsNewestFirst.length, sortedMilestones.length, timeMaint.length);
-                const payloadData = [];
+                const payloadRows = [];
 
                 for (let i = 0; i < maxLength; i++) {
-                    let row = {
+                    payloadRows.push({
                         date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
                         odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
                         oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
@@ -555,19 +555,17 @@
                         notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
                         details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
                         cost: sortedMilestones[i] ? (sortedMilestones[i].cost || 0) : "",
-                        done: sortedMilestones[i] ? String(sortedMilestones[i].done) : "",
+                        done: sortedMilestones[i] ? String(sortedMilestones[i].done) : "false",
                         serviceDate: sortedMilestones[i] ? (sortedMilestones[i].serviceDate || '') : "",
                         timeTitle: timeMaint[i] ? timeMaint[i].title : "",
                         timeInterval: timeMaint[i] ? timeMaint[i].interval : "",
                         timeDueDate: timeMaint[i] ? timeMaint[i].dueDate : ""
-                    };
-                    payloadData.push(row);
+                    });
                 }
 
-                await fetch(SHEETDB_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: payloadData })
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ rows: payloadRows })
                 });
             } catch (err) {
                 console.error("Failed to push to cloud:", err);
