@@ -55,10 +55,6 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <!-- DATE <-> MILEAGE CALCULATOR BUTTON -->
-            <button onclick="openCalcModal()" title="Date ↔ Mileage Calculator" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-calculator text-purple-400 text-sm"></i>
-            </button>
             <!-- MAINTENANCE HUB BUTTON -->
             <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-clipboard-list text-amber-400 text-sm"></i>
@@ -223,71 +219,58 @@
             </div>
         </div>
 
-    </main>
-
-    <!-- DATE <-> MILEAGE BIDIRECTIONAL CALCULATOR MODAL -->
-    <div id="calc-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-md rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-purple-400"></i> Date ↔ Mileage Estimator
-                </h3>
-                <button onclick="closeCalcModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
-            </div>
-
-            <!-- CURRENT BASELINE INFO -->
-            <div class="bg-[#050913] border border-slate-800/80 p-3 rounded-xl flex items-center justify-between text-xs font-mono">
-                <div>
-                    <div class="text-[10px] text-slate-400 uppercase font-sans font-bold">Base Odometer</div>
-                    <div id="calc-base-odo" class="text-white font-black">-- km</div>
-                </div>
-                <div class="text-right">
-                    <div class="text-[10px] text-slate-400 uppercase font-sans font-bold">Realistic Pace</div>
-                    <div id="calc-base-pace" class="text-purple-400 font-black">-- km/d</div>
-                </div>
-            </div>
-
-            <!-- MODE A: DATE -> MILEAGE -->
-            <div class="space-y-2.5 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
-                <label class="block text-[11px] font-black uppercase text-sky-400 tracking-wider">
-                    <i class="fa-regular fa-calendar"></i> Enter Date → Estimate Odometer
-                </label>
-                <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
-                <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
-                    <div class="bg-[#080d1a] border border-slate-800/80 p-2.5 rounded-lg">
-                        <div class="text-[10px] text-slate-400 font-sans">Realistic Pace</div>
-                        <div id="calc-out-odo-real" class="font-black text-emerald-400 mt-0.5">-- km</div>
+        <!-- ROW 4: Bidirectional Date ↔ Mileage Calculator -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-calculator')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-sky-400"></i> Date ↔ Mileage Calculator
+                </h2>
+                <i id="icon-card-calculator" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
+            </button>
+            <div id="content-card-calculator" class="p-4 space-y-4 text-xs hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Calculator A: Enter Date -> Get Odometer -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Future Date</label>
+                            <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Odo:</span>
+                                <span id="calc-result-odo-realistic" class="font-black text-purple-300">-- km</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Odo:</span>
+                                <span id="calc-result-odo-benchmark" class="font-bold text-sky-400">-- km</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-[#080d1a] border border-slate-800/80 p-2.5 rounded-lg">
-                        <div class="text-[10px] text-slate-400 font-sans">95 km/day</div>
-                        <div id="calc-out-odo-bench" class="font-black text-sky-400 mt-0.5">-- km</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- MODE B: MILEAGE -> DATE -->
-            <div class="space-y-2.5 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
-                <label class="block text-[11px] font-black uppercase text-amber-400 tracking-wider">
-                    <i class="fa-solid fa-gauge"></i> Enter Target Odo (km) → Estimate Date
-                </label>
-                <input type="number" id="calc-input-odo" oninput="calculateFromOdo()" placeholder="e.g. 55000" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono font-bold">
-                <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-xs">
-                    <div class="bg-[#080d1a] border border-slate-800/80 p-2.5 rounded-lg">
-                        <div class="text-[10px] text-slate-400 font-sans">Realistic Pace</div>
-                        <div id="calc-out-date-real" class="font-black text-emerald-400 mt-0.5">--</div>
-                    </div>
-                    <div class="bg-[#080d1a] border border-slate-800/80 p-2.5 rounded-lg">
-                        <div class="text-[10px] text-slate-400 font-sans">95 km/day</div>
-                        <div id="calc-out-date-bench" class="font-black text-sky-400 mt-0.5">--</div>
+                    <!-- Calculator B: Enter Odometer -> Get Date -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
+                            <input type="number" id="calc-input-odo" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Date:</span>
+                                <span id="calc-result-date-realistic" class="font-black text-purple-300">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Date:</span>
+                                <span id="calc-result-date-benchmark" class="font-bold text-sky-400">--</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="flex items-center justify-end pt-1">
-                <button type="button" onclick="closeCalcModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
             </div>
         </div>
-    </div>
+
+    </main>
 
     <!-- MAINTENANCE HUB MODAL -->
     <div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
@@ -496,14 +479,14 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwy6e5zwAk0NkeNRBp1Rqb69wMfJ0cgnv6Zweqf4t7IseWhGD9e0-018HF57pvPoMVm/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_rhRJRhnuEqv8e8g_oyspyNRs1leXlpnG65HqhoEwVScpAsu0cf8NouFG_REGi2-D/exec';
         const BENCHMARK_PACE = 95;
 
         let logs = [];
         let milestones = [];
         let timeMaint = [];
         let oilInterval = 7500;
-        let currentEffectivePace = BENCHMARK_PACE;
+        let globalEffectivePace = BENCHMARK_PACE;
 
         function toggleCard(cardId) {
             const content = document.getElementById('content-' + cardId);
@@ -748,7 +731,7 @@
                 const recentPace = (latest.odo - recentAnchor.odo) / recentDays;
 
                 const weightedRealisticPace = (recentPace * 0.60) + (longTermPace * 0.40);
-                currentEffectivePace = (weightedRealisticPace > 0 && isFinite(weightedRealisticPace)) ? weightedRealisticPace : BENCHMARK_PACE;
+                globalEffectivePace = (weightedRealisticPace > 0 && isFinite(weightedRealisticPace)) ? weightedRealisticPace : BENCHMARK_PACE;
 
                 document.getElementById('row-date').textContent = formatDateDisplay(latest.date);
                 document.getElementById('row-current-odo').textContent = `${latest.odo.toLocaleString()} km`;
@@ -762,7 +745,7 @@
                 document.getElementById('pace-recent').textContent = `${recentPace.toFixed(2)} km/day`;
                 document.getElementById('pace-longterm-label').textContent = `Long-term Pace (${longTermDays} days)`;
                 document.getElementById('pace-longterm').textContent = `${longTermPace.toFixed(2)} km/day`;
-                document.getElementById('pace-weighted').textContent = `${currentEffectivePace.toFixed(2)} km/day`;
+                document.getElementById('pace-weighted').textContent = `${globalEffectivePace.toFixed(2)} km/day`;
 
                 let oilRealHtml = '';
                 let oilRealItems = [];
@@ -770,7 +753,7 @@
                     const targetOdo = lastOil.odo + (oilInterval * i);
                     if (targetOdo <= latest.odo) continue;
                     const kmLeft = targetOdo - latest.odo;
-                    const realDate = addDays(latest.date, kmLeft / currentEffectivePace);
+                    const realDate = addDays(latest.date, kmLeft / globalEffectivePace);
                     const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
 
                     oilRealItems.push({
@@ -799,7 +782,7 @@
                 let maintRealItems = [];
                 document.getElementById('milestones-realistic-body').innerHTML = activeMilestones.map(m => {
                     const kmLeft = m.targetOdo - latest.odo;
-                    const realDate = addDays(latest.date, kmLeft / currentEffectivePace);
+                    const realDate = addDays(latest.date, kmLeft / globalEffectivePace);
                     const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
 
                     maintRealItems.push({
@@ -852,78 +835,70 @@
 
                 renderSettingsLists();
                 renderCompletedList();
+                calculateFromDate();
+                calculateFromOdo();
 
             } catch (err) {
                 console.error("Error in recalculateAll:", err);
             }
         }
 
-        // BIDIRECTIONAL CALCULATOR LOGIC
-        function openCalcModal() {
-            if (logs.length === 0) return;
-            const latest = logs[logs.length - 1];
-            document.getElementById('calc-base-odo').textContent = `${latest.odo.toLocaleString()} km (${formatDateDisplay(latest.date)})`;
-            document.getElementById('calc-base-pace').textContent = `${currentEffectivePace.toFixed(2)} km/d`;
-            
-            document.getElementById('calc-input-date').value = latest.date;
-            document.getElementById('calc-input-odo').value = '';
-            calculateFromDate();
-            document.getElementById('calc-out-date-real').textContent = '--';
-            document.getElementById('calc-out-date-bench').textContent = '--';
-            
-            document.getElementById('calc-modal').classList.remove('hidden');
-        }
-
-        function closeCalcModal() {
-            document.getElementById('calc-modal').classList.add('hidden');
-        }
-
         function calculateFromDate() {
             if (logs.length === 0) return;
-            const latest = logs[logs.length - 1];
             const targetDateStr = document.getElementById('calc-input-date').value;
-            if (!targetDateStr) return;
+            const latest = logs[logs.length - 1];
 
-            const d1 = new Date(latest.date + 'T00:00:00');
-            const d2 = new Date(targetDateStr + 'T00:00:00');
-            const diffDays = Math.round((d2 - d1) / (1000 * 60 * 60 * 24));
+            const odoRealEl = document.getElementById('calc-result-odo-realistic');
+            const odoBenchEl = document.getElementById('calc-result-odo-benchmark');
 
-            if (diffDays < 0) {
-                document.getElementById('calc-out-odo-real').textContent = 'Past Date';
-                document.getElementById('calc-out-odo-bench').textContent = 'Past Date';
+            if (!targetDateStr) {
+                odoRealEl.textContent = '-- km';
+                odoBenchEl.textContent = '-- km';
                 return;
             }
 
-            const estReal = Math.round(latest.odo + (diffDays * currentEffectivePace));
-            const estBench = Math.round(latest.odo + (diffDays * BENCHMARK_PACE));
+            const days = daysBetween(latest.date, targetDateStr);
+            const isPast = new Date(targetDateStr + 'T00:00:00') < new Date(latest.date + 'T00:00:00');
 
-            document.getElementById('calc-out-odo-real').textContent = `${estReal.toLocaleString()} km`;
-            document.getElementById('calc-out-odo-bench').textContent = `${estBench.toLocaleString()} km`;
+            if (isPast) {
+                odoRealEl.textContent = 'Date is prior to latest log';
+                odoBenchEl.textContent = 'Date is prior to latest log';
+                return;
+            }
+
+            const odoRealistic = Math.round(latest.odo + (days * globalEffectivePace));
+            const odoBenchmark = Math.round(latest.odo + (days * BENCHMARK_PACE));
+
+            odoRealEl.textContent = `${odoRealistic.toLocaleString()} km`;
+            odoBenchEl.textContent = `${odoBenchmark.toLocaleString()} km`;
         }
 
         function calculateFromOdo() {
             if (logs.length === 0) return;
+            const targetOdoVal = parseInt(document.getElementById('calc-input-odo').value, 10);
             const latest = logs[logs.length - 1];
-            const targetOdo = parseInt(document.getElementById('calc-input-odo').value, 10);
 
-            if (isNaN(targetOdo)) {
-                document.getElementById('calc-out-date-real').textContent = '--';
-                document.getElementById('calc-out-date-bench').textContent = '--';
+            const dateRealEl = document.getElementById('calc-result-date-realistic');
+            const dateBenchEl = document.getElementById('calc-result-date-benchmark');
+
+            if (isNaN(targetOdoVal)) {
+                dateRealEl.textContent = '--';
+                dateBenchEl.textContent = '--';
                 return;
             }
 
-            if (targetOdo <= latest.odo) {
-                document.getElementById('calc-out-date-real').textContent = 'Reached';
-                document.getElementById('calc-out-date-bench').textContent = 'Reached';
+            if (targetOdoVal <= latest.odo) {
+                dateRealEl.textContent = 'Odo is less than current';
+                dateBenchEl.textContent = 'Odo is less than current';
                 return;
             }
 
-            const kmLeft = targetOdo - latest.odo;
-            const realDate = addDays(latest.date, kmLeft / currentEffectivePace);
-            const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
+            const kmNeeded = targetOdoVal - latest.odo;
+            const daysRealistic = kmNeeded / globalEffectivePace;
+            const daysBenchmark = kmNeeded / BENCHMARK_PACE;
 
-            document.getElementById('calc-out-date-real').textContent = realDate;
-            document.getElementById('calc-out-date-bench').textContent = benchDate;
+            dateRealEl.textContent = addDays(latest.date, daysRealistic);
+            dateBenchEl.textContent = addDays(latest.date, daysBenchmark);
         }
 
         function renderTimeMaintCard() {
