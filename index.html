@@ -495,7 +495,7 @@
         </div>
     </div>
 
-    <>
+    <script>
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwy6e5zwAk0NkeNRBp1Rqb69wMfJ0cgnv6Zweqf4t7IseWhGD9e0-018HF57pvPoMVm/exec';
         const BENCHMARK_PACE = 95;
 
@@ -518,20 +518,12 @@
             }
         }
 
-        // Timezone-safe local date parser to prevent day-shifting
         function parseLocalDate(dateStr) {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             const trimmed = String(dateStr).trim();
-            
-            // If it's already ISO format YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
-            
-            // Handle ISO string with time (e.g. 2026-11-15T00:00:00.000Z)
-            if (trimmed.includes('T')) {
-                return trimmed.split('T')[0];
-            }
+            if (trimmed.includes('T')) return trimmed.split('T')[0];
 
-            // Handle formats like "15 Nov 2026", "15 November 2026", or "2026-November-15"
             const months = {
                 Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
                 Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
@@ -539,7 +531,6 @@
                 July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
             };
 
-            // Check for "15 Nov 2026" or "15 November 2026"
             const parts = trimmed.replace(/,/g, '').split(/\s+/);
             if (parts.length === 3 && months[parts[1]]) {
                 const day = parts[0].padStart(2, '0');
@@ -548,17 +539,14 @@
                 return `${year}-${m}-${day}`;
             }
 
-            // Check for dash-separated like "2026-November-15" or "2026-Nov-15"
             const dashParts = trimmed.split('-');
             if (dashParts.length === 3) {
                 if (dashParts[0].length === 4) {
-                    // YYYY-MM-DD or YYYY-Mon-DD
                     const year = dashParts[0];
                     const m = months[dashParts[1]] || dashParts[1].padStart(2, '0');
                     const day = dashParts[2].padStart(2, '0');
                     return `${year}-${m}-${day}`;
                 } else if (dashParts[2].length === 4) {
-                    // DD-Mon-YYYY
                     const day = dashParts[0].padStart(2, '0');
                     const m = months[dashParts[1]] || '01';
                     const year = dashParts[2];
@@ -579,7 +567,6 @@
             const [year, month, day] = cleanStr.split('-');
             if (!year || !month || !day) return isoStr;
             
-            // Construct date explicitly using local components to avoid UTC shift
             const d = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
             if (isNaN(d.getTime())) return isoStr;
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -651,9 +638,10 @@
                 
                 if (logs.length === 0) {
                     document.getElementById('row-date').textContent = 'No Sheet Data';
-                    document.getElementById('content-card-incoming').innerHTML = '<div class="text-slate-500 text-xs p-3">Google Sheet is empty or unlinked.</div>';
+                    document.getElementById('content-card-incoming').innerHTML = '<div class="text-slate-500 text-xs p-3">Google Sheet is empty or unlinked. Use + Log to add your first entry.</div>';
                     syncIcon.classList.remove('fa-spin', 'text-amber-400');
-                    syncIcon.classList.add('text-rose-400');
+                    syncIcon.classList.add('text-emerald-400');
+                    setTimeout(() => syncIcon.classList.remove('text-emerald-400'), 2000);
                     return;
                 }
 
@@ -770,7 +758,6 @@
             try {
                 if (logs.length === 0) return;
 
-                // Sort strictly chronologically
                 logs.sort((a, b) => {
                     const dateA = new Date(parseLocalDate(a.date));
                     const dateB = new Date(parseLocalDate(b.date));
@@ -911,7 +898,6 @@
             }
         }
 
-        // BIDIRECTIONAL CALCULATOR LOGIC
         function openCalcModal() {
             if (logs.length === 0) return;
             const latest = logs[logs.length - 1];
@@ -927,9 +913,7 @@
             document.getElementById('calc-modal').classList.remove('hidden');
         }
 
-        function closeCalcModal() {
-            document.getElementById('calc-modal').classList.add('hidden');
-        }
+        function closeCalcModal() { document.getElementById('calc-modal').classList.add('hidden'); }
 
         function calculateFromDate() {
             if (logs.length === 0) return;
