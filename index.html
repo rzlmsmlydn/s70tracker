@@ -63,9 +63,9 @@
             <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
             </button>
-            <!-- SYNC STATUS INDICATOR -->
-            <button onclick="syncDataFromCloud()" title="Sync Cloud Data" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
-                <i id="sync-icon" class="fa-solid fa-cloud text-sky-400 text-sm"></i>
+            <!-- MANUAL BACKUP / SYNC BUTTON -->
+            <button onclick="manualBackupToCloud()" title="Backup & Sync to Cloud" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
+                <i id="sync-icon" class="fa-solid fa-cloud-arrow-up text-sky-400 text-sm"></i>
             </button>
             <!-- LOG ODOMETER BUTTON -->
             <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] px-3.5 py-1.5 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1">
@@ -118,7 +118,7 @@
                 </div>
             </div>
 
-            <!-- INCOMING MAINTENANCE -->
+            <!-- INCOMING MAINTENANCE (Scrollable) -->
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-incoming')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                     <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -126,7 +126,7 @@
                     </h2>
                     <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
                 </button>
-                <div id="content-card-incoming" class="p-2 space-y-1 font-mono flex-1"></div>
+                <div id="content-card-incoming" class="p-2 space-y-1 font-mono max-h-72 overflow-y-auto"></div>
             </div>
         </div>
 
@@ -139,10 +139,10 @@
                     </h2>
                     <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
                 </button>
-                <div id="content-card-oil-real" class="overflow-x-auto flex-1">
+                <div id="content-card-oil-real" class="max-h-72 overflow-y-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                        <thead class="sticky top-0 bg-[#050913] z-10">
+                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase">
                                 <th class="py-2.5 px-4">Target Mileage</th>
                                 <th class="py-2.5 px-4">Realistic Date</th>
                                 <th class="py-2.5 px-4 text-right">95 km/day Date</th>
@@ -160,10 +160,10 @@
                     </h2>
                     <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
                 </button>
-                <div id="content-card-maint-real" class="overflow-x-auto flex-1">
+                <div id="content-card-maint-real" class="max-h-72 overflow-y-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase bg-[#050913]/50">
+                        <thead class="sticky top-0 bg-[#050913] z-10">
+                            <tr class="border-b border-slate-800/80 text-[10px] font-extrabold text-slate-400 uppercase">
                                 <th class="py-2.5 px-3">Target Odo</th>
                                 <th class="py-2.5 px-3">Realistic</th>
                                 <th class="py-2.5 px-3">95/day</th>
@@ -184,9 +184,9 @@
                     <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
                     </h2>
-                    <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                    <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono flex-1">
+                <div id="content-card-time-maint" class="p-4 space-y-2.5 text-xs font-mono hidden">
                     <div id="time-maint-list" class="space-y-2"></div>
                 </div>
             </div>
@@ -196,9 +196,9 @@
                     <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
                     </h2>
-                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-pace" class="p-4 space-y-2 text-xs flex-1 flex flex-col justify-center">
+                <div id="content-card-pace" class="p-4 space-y-2 text-xs flex-col justify-center hidden">
                     <div class="flex justify-between py-1 border-b border-slate-800/40">
                         <span id="pace-recent-label" class="text-slate-400">Recent Pace (7–14d)</span>
                         <span id="pace-recent" class="font-mono font-bold text-white">0.00 km/day</span>
@@ -441,6 +441,7 @@
             const icon = document.getElementById('icon-' + cardId);
             if (content.classList.contains('hidden')) {
                 content.classList.remove('hidden');
+                content.style.display = '';
                 icon.style.transform = 'rotate(0deg)';
             } else {
                 content.classList.add('hidden');
@@ -471,6 +472,23 @@
                 return parsed.toISOString().split('T')[0];
             }
             return new Date().toISOString().split('T')[0];
+        }
+
+        async function manualBackupToCloud() {
+            const syncIcon = document.getElementById('sync-icon');
+            syncIcon.classList.add('fa-spin', 'text-amber-400');
+            try {
+                await pushDataToCloud();
+                await syncDataFromCloud();
+                syncIcon.classList.remove('fa-spin', 'text-amber-400');
+                syncIcon.classList.add('text-emerald-400');
+                alert("Backup successful! All changes are saved to Google Sheets.");
+                setTimeout(() => syncIcon.classList.remove('text-emerald-400'), 2000);
+            } catch (err) {
+                syncIcon.classList.remove('fa-spin', 'text-amber-400');
+                syncIcon.classList.add('text-rose-400');
+                alert("Backup failed. Check your internet connection or Apps Script deployment.");
+            }
         }
 
         async function syncDataFromCloud() {
@@ -679,7 +697,7 @@
 
                 let oilRealHtml = '';
                 let oilRealItems = [];
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; i <= 20; i++) {
                     const targetOdo = lastOil.odo + (oilInterval * i);
                     if (targetOdo <= latest.odo) continue;
                     const kmLeft = targetOdo - latest.odo;
@@ -708,7 +726,7 @@
                 }
                 document.getElementById('oil-realistic-body').innerHTML = oilRealHtml;
 
-                const activeMilestones = milestones.filter(m => !m.done).slice(0, 5);
+                const activeMilestones = milestones.filter(m => !m.done);
                 let maintRealItems = [];
                 document.getElementById('milestones-realistic-body').innerHTML = activeMilestones.map(m => {
                     const kmLeft = m.targetOdo - latest.odo;
@@ -750,10 +768,9 @@
                 });
 
                 allIncoming.sort((a, b) => a.dateObj - b.dateObj);
-                const closest10 = allIncoming.slice(0, 10);
 
-                const incomingHtml = closest10.map(item => `
-                    <div class="py-1 px-3 border-b border-slate-800/30 last:border-0 flex items-center justify-between gap-3 text-xs">
+                const incomingHtml = allIncoming.map(item => `
+                    <div class="py-1.5 px-3 border-b border-slate-800/30 last:border-0 flex items-center justify-between gap-3 text-xs">
                         <div class="font-sans font-semibold text-slate-200 leading-snug flex-1 break-words">${item.title}</div>
                         <div class="flex items-center gap-3 shrink-0">
                             ${item.odo ? `<span class="text-[10px] font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-1.5 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : '<span></span>'}
