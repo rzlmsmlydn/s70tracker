@@ -560,10 +560,11 @@
                             const odoVal = parseInt(String(r.odo).replace(/,/g, ''), 10);
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
-                                    date: parseFlexibleDate(r.date),
-                                    odo: odoVal,
-                                    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
-                                });
+    id: r.id || (String(r.date) + '-' + String(r.odo)),
+    date: parseFlexibleDate(r.date),
+    odo: odoVal,
+    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
+});
                             }
                         }
                         if (r.targetOdo !== undefined && r.targetOdo !== '' && r.notes) {
@@ -617,10 +618,11 @@
                 const payloadRows = [];
 
                 for (let i = 0; i < maxLength; i++) {
-                    payloadRows.push({
-                        date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
-                        odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
-                        oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
+                   payloadRows.push({
+    id: logsNewestFirst[i] ? (logsNewestFirst[i].id || logsNewestFirst[i].date + '-' + logsNewestFirst[i].odo) : "",
+    date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
+    odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
+    oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
                         targetOdo: sortedMilestones[i] ? sortedMilestones[i].targetOdo : "",
                         notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
                         details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
@@ -1229,10 +1231,11 @@
         async function handleLogSubmit(e) {
             e.preventDefault();
             const newEntry = { 
-                date: document.getElementById('input-log-date').value, 
-                odo: parseInt(document.getElementById('input-log-odo').value, 10), 
-                oilService: document.getElementById('input-log-oil').checked 
-            };
+    id: 'log-' + Date.now(),
+    date: document.getElementById('input-log-date').value, 
+    odo: parseInt(document.getElementById('input-log-odo').value, 10), 
+    oilService: document.getElementById('input-log-oil').checked 
+};
             logs.push(newEntry);
             recalculateAll();
             closeLogModal();
