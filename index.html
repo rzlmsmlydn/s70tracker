@@ -25,6 +25,9 @@
 </head>
 <body class="min-h-full bg-slate-950 text-slate-100 flex flex-col">
 
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
     <!-- PASSWORD LOCK SCREEN OVERLAY -->
     <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
@@ -488,6 +491,27 @@
         let oilInterval = 7500;
         let globalEffectivePace = BENCHMARK_PACE;
 
+        function showToast(message, isError = false) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const borderColor = isError ? 'border-rose-500/50 text-rose-300' : 'border-emerald-500/50 text-emerald-300';
+            const icon = isError ? 'fa-circle-exclamation text-rose-400' : 'fa-circle-check text-emerald-400';
+
+            toast.className = `bg-[#0a0f1d] border ${borderColor} px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold flex items-center gap-2.5 transition-all duration-300 translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-2', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         function toggleCard(cardId) {
             const content = document.getElementById('content-' + cardId);
             const icon = document.getElementById('icon-' + cardId);
@@ -521,7 +545,10 @@
             }
             const parsed = new Date(trimmed);
             if (!isNaN(parsed.getTime())) {
-                return parsed.toISOString().split('T')[0];
+                const y = parsed.getFullYear();
+                const m = String(parsed.getMonth() + 1).padStart(2, '0');
+                const d = String(parsed.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             }
             return new Date().toISOString().split('T')[0];
         }
@@ -546,12 +573,12 @@
                 await syncDataFromCloud();
                 syncIcon.classList.remove('fa-spin', 'text-amber-400');
                 syncIcon.classList.add('text-emerald-400');
-                alert("Backup successful! All changes are saved to Google Sheets.");
+                showToast("Backup successful! Saved to Google Sheets.");
                 setTimeout(() => syncIcon.classList.remove('text-emerald-400'), 2000);
             } catch (err) {
                 syncIcon.classList.remove('fa-spin', 'text-amber-400');
                 syncIcon.classList.add('text-rose-400');
-                alert("Backup failed. Check your internet connection or Apps Script deployment.");
+                showToast("Backup failed. Check connection.", true);
             }
         }
 
@@ -630,20 +657,24 @@
                 const payloadRows = [];
 
                 for (let i = 0; i < maxLength; i++) {
+                    const l = logsNewestFirst[i];
+                    const m = sortedMilestones[i];
+                    const t = timeMaint[i];
+
                     payloadRows.push({
-                        id: logsNewestFirst[i] ? (logsNewestFirst[i].id || logsNewestFirst[i].date + '-' + logsNewestFirst[i].odo) : "",
-                        date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
-                        odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
-                        oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
-                        targetOdo: sortedMilestones[i] ? sortedMilestones[i].targetOdo : "",
-                        notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
-                        details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
-                        cost: sortedMilestones[i] ? (sortedMilestones[i].cost || 0) : "",
-                        done: sortedMilestones[i] ? String(sortedMilestones[i].done) : "false",
-                        serviceDate: sortedMilestones[i] ? (sortedMilestones[i].serviceDate || '') : "",
-                        timeTitle: timeMaint[i] ? timeMaint[i].title : "",
-                        timeInterval: timeMaint[i] ? timeMaint[i].interval : "",
-                        timeDueDate: timeMaint[i] ? timeMaint[i].dueDate : ""
+                        id: l ? (l.id || l.date + '-' + l.odo) : "",
+                        date: l ? l.date : "",
+                        odo: l ? l.odo : "",
+                        oilService: l ? (l.oilService ? "TRUE" : "") : "",
+                        targetOdo: m ? m.targetOdo : "",
+                        notes: m ? m.notes : "",
+                        details: m ? (m.details || '') : "",
+                        cost: m ? (m.cost || "") : "",
+                        done: m ? (m.done ? "TRUE" : "") : "",
+                        serviceDate: m ? (m.serviceDate || '') : "",
+                        timeTitle: t ? t.title : "",
+                        timeInterval: t ? t.interval : "",
+                        timeDueDate: t ? t.dueDate : ""
                     });
                 }
 
@@ -828,7 +859,7 @@
                         title: t.title,
                         odo: t.interval,
                         dateStr: formatDateDisplay(t.dueDate),
-                        dateObj: new Date(t.dueDate + 'T00:00:00'),
+                        dateObj: parseDateGB(t.dueDate),
                         category: 'Time-Based'
                     });
                 });
@@ -872,7 +903,7 @@
             }
 
             const days = daysBetween(latest.date, targetDateStr);
-            const isPast = new Date(targetDateStr + 'T00:00:00') < new Date(latest.date + 'T00:00:00');
+            const isPast = parseDateGB(targetDateStr) < parseDateGB(latest.date);
 
             if (isPast) {
                 odoRealEl.textContent = 'Date is prior to latest log';
@@ -1160,6 +1191,7 @@
             closeCompleteModal();
             recalculateAll();
             await pushDataToCloud();
+            showToast("Service record completed & saved!");
         }
 
         async function deleteMilestone(targetOdo) {
@@ -1167,6 +1199,7 @@
                 milestones = milestones.filter(item => item.targetOdo !== targetOdo);
                 recalculateAll();
                 await pushDataToCloud();
+                showToast("Milestone deleted.");
             }
         }
 
@@ -1189,7 +1222,7 @@
 
             recalculateAll();
             await pushDataToCloud();
-            alert("New maintenance record added & synced to Sheet!");
+            showToast("Maintenance record added & synced!");
         }
 
         async function handleAddTimeMaint(e) {
@@ -1208,22 +1241,23 @@
             renderSettingsLists();
             recalculateAll();
             await pushDataToCloud();
-            alert("Time-based maintenance task added & synced!");
+            showToast("Time-based task added & synced!");
         }
 
         async function deleteTimeMaint(id) {
             timeMaint = timeMaint.filter(t => t.id !== id);
             recalculateAll();
             await pushDataToCloud();
+            showToast("Time-based task deleted.");
         }
 
         async function saveOilInterval() {
             const val = parseInt(document.getElementById('input-oil-interval').value, 10);
-            if (isNaN(val) || val <= 0) { alert("Please enter a valid oil interval in km."); return; }
+            if (isNaN(val) || val <= 0) { showToast("Enter a valid oil interval in km.", true); return; }
             oilInterval = val;
             recalculateAll();
             await pushDataToCloud();
-            alert(`Engine oil interval updated to ${oilInterval.toLocaleString()} km!`);
+            showToast(`Oil interval updated to ${oilInterval.toLocaleString()} km!`);
         }
 
         function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
@@ -1251,7 +1285,7 @@
             document.getElementById('input-log-oil').checked = false;
 
             await pushDataToCloud();
-            alert("New mileage log saved and synced to Google Sheets!");
+            showToast("Mileage log saved & synced!");
         }
 
         let inactivityTimer;
@@ -1276,7 +1310,7 @@
                 document.getElementById('input-password').value = '';
                 checkAuth();
             } else {
-                alert('Incorrect password!');
+                showToast('Incorrect password!', true);
                 document.getElementById('input-password').value = '';
             }
         }
