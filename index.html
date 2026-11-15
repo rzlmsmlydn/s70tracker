@@ -1248,8 +1248,10 @@
 
         async function handleLogSubmit(e) {
             e.preventDefault();
+            const rawDateVal = document.getElementById('input-log-date').value;
+            
             const newEntry = { 
-                date: document.getElementById('input-log-date').value, 
+                date: rawDateVal, 
                 odo: parseInt(document.getElementById('input-log-odo').value, 10), 
                 oilService: document.getElementById('input-log-oil').checked 
             };
