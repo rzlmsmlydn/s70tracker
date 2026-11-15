@@ -235,7 +235,6 @@
                 <button onclick="closeCalcModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- CURRENT BASELINE INFO -->
             <div class="bg-[#050913] border border-slate-800/80 p-3 rounded-xl flex items-center justify-between text-xs font-mono">
                 <div>
                     <div class="text-[10px] text-slate-400 uppercase font-sans font-bold">Base Odometer</div>
@@ -247,7 +246,6 @@
                 </div>
             </div>
 
-            <!-- MODE A: DATE -> MILEAGE -->
             <div class="space-y-2.5 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <label class="block text-[11px] font-black uppercase text-sky-400 tracking-wider">
                     <i class="fa-regular fa-calendar"></i> Enter Date → Estimate Odometer
@@ -265,7 +263,6 @@
                 </div>
             </div>
 
-            <!-- MODE B: MILEAGE -> DATE -->
             <div class="space-y-2.5 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <label class="block text-[11px] font-black uppercase text-amber-400 tracking-wider">
                     <i class="fa-solid fa-gauge"></i> Enter Target Odo (km) → Estimate Date
@@ -299,7 +296,6 @@
                 <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- GLOBAL ENGINE OIL INTERVAL SETTING -->
             <div class="space-y-2 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
                 <div class="flex gap-2.5">
@@ -555,10 +551,6 @@
             }
 
             return trimmed.substring(0, 10);
-        }
-
-        function parseFlexibleDate(dateStr) {
-            return parseLocalDate(dateStr);
         }
 
         function formatDateDisplay(isoStr) {
@@ -1292,9 +1284,9 @@
             const rawDateVal = document.getElementById('input-log-date').value;
             
             const newEntry = { 
-                date: parseLocalDate(rawDateVal), // Forces standard YYYY-MM-DD format
+                date: rawDateVal, 
                 odo: parseInt(document.getElementById('input-log-odo').value, 10), 
-                oilService: document.getElementById('input-log-oil').checked ? "TRUE" : "FALSE" 
+                oilService: document.getElementById('input-log-oil').checked 
             };
             logs.push(newEntry);
             recalculateAll();
