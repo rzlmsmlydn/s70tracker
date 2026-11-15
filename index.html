@@ -1292,9 +1292,9 @@
             const rawDateVal = document.getElementById('input-log-date').value;
             
             const newEntry = { 
-                date: rawDateVal, 
+                date: parseLocalDate(rawDateVal), // Forces standard YYYY-MM-DD format
                 odo: parseInt(document.getElementById('input-log-odo').value, 10), 
-                oilService: document.getElementById('input-log-oil').checked 
+                oilService: document.getElementById('input-log-oil').checked ? "TRUE" : "FALSE" 
             };
             logs.push(newEntry);
             recalculateAll();
