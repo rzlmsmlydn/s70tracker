@@ -597,9 +597,18 @@
                     rows.forEach(r => {
                         if (r.date && r.odo !== undefined && r.odo !== '') {
                             const odoVal = parseInt(String(r.odo).replace(/,/g, ''), 10);
+                            
+                            // Robust date extraction to bypass sheet timezone/formatting string shifts
+                            let cleanDateStr = r.date;
+                            if (typeof r.date === 'string' && r.date.includes('T')) {
+                                cleanDateStr = r.date.split('T')[0];
+                            } else {
+                                cleanDateStr = parseFlexibleDate(r.date);
+                            }
+
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
-                                    date: parseFlexibleDate(r.date),
+                                    date: cleanDateStr,
                                     odo: odoVal,
                                     oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
                                 });
