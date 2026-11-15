@@ -518,47 +518,68 @@
             }
         }
 
-        function parseFlexibleDate(dateStr) {
+        // Timezone-safe local date parser to prevent day-shifting
+        function parseLocalDate(dateStr) {
             if (!dateStr) return new Date().toISOString().split('T')[0];
             const trimmed = String(dateStr).trim();
+            
+            // If it's already ISO format YYYY-MM-DD
             if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
             
-            const dashParts = trimmed.split('-');
-            if (dashParts.length === 3 && isNaN(dashParts[1])) {
-                const months = {
-                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
-                    January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
-                    July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
-                };
-                const year = dashParts[0];
-                const m = months[dashParts[1]] || '01';
-                const day = dashParts[2].padStart(2, '0');
-                return `${year}-${m}-${day}`;
+            // Handle ISO string with time (e.g. 2026-11-15T00:00:00.000Z)
+            if (trimmed.includes('T')) {
+                return trimmed.split('T')[0];
             }
 
-            const parts = trimmed.split(' ');
-            if (parts.length === 3) {
-                const months = {
-                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
-                    January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
-                    July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
-                };
+            // Handle formats like "15 Nov 2026", "15 November 2026", or "2026-November-15"
+            const months = {
+                Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+                Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
+                January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
+                July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+            };
+
+            // Check for "15 Nov 2026" or "15 November 2026"
+            const parts = trimmed.replace(/,/g, '').split(/\s+/);
+            if (parts.length === 3 && months[parts[1]]) {
                 const day = parts[0].padStart(2, '0');
-                const m = months[parts[1]] || '01';
+                const m = months[parts[1]];
                 const year = parts[2];
                 return `${year}-${m}-${day}`;
             }
+
+            // Check for dash-separated like "2026-November-15" or "2026-Nov-15"
+            const dashParts = trimmed.split('-');
+            if (dashParts.length === 3) {
+                if (dashParts[0].length === 4) {
+                    // YYYY-MM-DD or YYYY-Mon-DD
+                    const year = dashParts[0];
+                    const m = months[dashParts[1]] || dashParts[1].padStart(2, '0');
+                    const day = dashParts[2].padStart(2, '0');
+                    return `${year}-${m}-${day}`;
+                } else if (dashParts[2].length === 4) {
+                    // DD-Mon-YYYY
+                    const day = dashParts[0].padStart(2, '0');
+                    const m = months[dashParts[1]] || '01';
+                    const year = dashParts[2];
+                    return `${year}-${m}-${day}`;
+                }
+            }
+
             return trimmed.substring(0, 10);
+        }
+
+        function parseFlexibleDate(dateStr) {
+            return parseLocalDate(dateStr);
         }
 
         function formatDateDisplay(isoStr) {
             if (!isoStr) return '';
-            const cleanStr = String(isoStr).substring(0, 10);
+            const cleanStr = parseLocalDate(isoStr);
             const [year, month, day] = cleanStr.split('-');
             if (!year || !month || !day) return isoStr;
             
+            // Construct date explicitly using local components to avoid UTC shift
             const d = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
             if (isNaN(d.getTime())) return isoStr;
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -597,14 +618,7 @@
                     rows.forEach(r => {
                         if (r.date && r.odo !== undefined && r.odo !== '') {
                             const odoVal = parseInt(String(r.odo).replace(/,/g, ''), 10);
-                            
-                            // Robust date extraction to bypass sheet timezone/formatting string shifts
-                            let cleanDateStr = r.date;
-                            if (typeof r.date === 'string' && r.date.includes('T')) {
-                                cleanDateStr = r.date.split('T')[0];
-                            } else {
-                                cleanDateStr = parseFlexibleDate(r.date);
-                            }
+                            const cleanDateStr = parseLocalDate(r.date);
 
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
@@ -621,7 +635,7 @@
                                 details: r.details || '',
                                 cost: parseFloat(r.cost) || 0,
                                 done: String(r.done).toLowerCase() === 'true' || r.done === true || r.done === 'TRUE',
-                                serviceDate: r.serviceDate ? parseFlexibleDate(r.serviceDate) : ''
+                                serviceDate: r.serviceDate ? parseLocalDate(r.serviceDate) : ''
                             });
                         }
                         if (r.timeTitle && r.timeInterval && r.timeDueDate) {
@@ -629,7 +643,7 @@
                                 id: Date.now().toString() + Math.random(),
                                 title: r.timeTitle,
                                 interval: r.timeInterval,
-                                dueDate: parseFlexibleDate(r.timeDueDate)
+                                dueDate: parseLocalDate(r.timeDueDate)
                             });
                         }
                     });
@@ -659,8 +673,8 @@
         async function pushDataToCloud() {
             try {
                 const logsNewestFirst = [...logs].sort((a, b) => {
-                    const dateA = new Date(parseFlexibleDate(a.date));
-                    const dateB = new Date(parseFlexibleDate(b.date));
+                    const dateA = new Date(parseLocalDate(a.date));
+                    const dateB = new Date(parseLocalDate(b.date));
                     return dateB - dateA || b.odo - a.odo;
                 });
                 const sortedMilestones = [...milestones].sort((a, b) => a.targetOdo - b.targetOdo);
@@ -696,7 +710,7 @@
 
         function addDays(baseDateStr, daysToAdd) {
             if (!isFinite(daysToAdd) || daysToAdd < 0) return 'Due Now';
-            const cleanStr = String(baseDateStr).substring(0, 10);
+            const cleanStr = parseLocalDate(baseDateStr);
             const [year, month, day] = cleanStr.split('-');
             if (!year || !month || !day) return 'Due Now';
             
@@ -707,21 +721,14 @@
         }
 
         function parseDateGB(dateStr) {
-            const parts = dateStr.split(' ');
-            if (parts.length === 3) {
-                const months = {
-                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12'
-                };
-                const m = months[parts[1]] || '01';
-                return new Date(parseInt(parts[2], 10), parseInt(m, 10) - 1, parseInt(parts[0], 10));
-            }
-            return new Date(dateStr);
+            const cleanStr = parseLocalDate(dateStr);
+            const [y, m, d] = cleanStr.split('-');
+            return new Date(parseInt(y, 10), parseInt(m, 10) - 1, parseInt(d, 10));
         }
 
         function daysBetween(date1Str, date2Str) {
-            const clean1 = String(date1Str).substring(0, 10);
-            const clean2 = String(date2Str).substring(0, 10);
+            const clean1 = parseLocalDate(date1Str);
+            const clean2 = parseLocalDate(date2Str);
             const [y1, m1, d1] = clean1.split('-');
             const [y2, m2, d2] = clean2.split('-');
             
@@ -765,8 +772,8 @@
 
                 // Sort strictly chronologically
                 logs.sort((a, b) => {
-                    const dateA = new Date(parseFlexibleDate(a.date));
-                    const dateB = new Date(parseFlexibleDate(b.date));
+                    const dateA = new Date(parseLocalDate(a.date));
+                    const dateB = new Date(parseLocalDate(b.date));
                     return dateA - dateB || a.odo - b.odo;
                 });
                 milestones.sort((a, b) => a.targetOdo - b.targetOdo);
@@ -869,9 +876,9 @@
 
                 let allIncoming = [...oilRealItems, ...maintRealItems];
                 timeMaint.forEach(t => {
-                    const cleanTDate = String(t.dueDate).substring(0, 10);
+                    const cleanTDate = parseLocalDate(t.dueDate);
                     const [ty, tm, td] = cleanTDate.split('-');
-                    const tObj = (ty && tm && td) ? new Date(parseInt(ty, 10), parseInt(tm, 10) - 1, parseInt(td, 10)) : new Date(t.dueDate);
+                    const tObj = new Date(parseInt(ty, 10), parseInt(tm, 10) - 1, parseInt(td, 10));
                     
                     allIncoming.push({
                         title: t.title,
@@ -930,7 +937,7 @@
             const targetDateStr = document.getElementById('calc-input-date').value;
             if (!targetDateStr) return;
 
-            const cleanLatest = String(latest.date).substring(0, 10);
+            const cleanLatest = parseLocalDate(latest.date);
             const [y1, m1, d1] = cleanLatest.split('-');
             const [y2, m2, d2] = targetDateStr.split('-');
 
