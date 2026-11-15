@@ -479,7 +479,7 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_rhRJRhnuEqv8e8g_oyspyNRs1leXlpnG65HqhoEwVScpAsu0cf8NouFG_REGi2-D/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwfGzRXEZnWvKrWtXJTEZLExnMkky9xnukFDKhRTXP9gZ8O495R14x2mB9keSZBUO6A/exec';
         const BENCHMARK_PACE = 95;
 
         let logs = [];
@@ -526,6 +526,18 @@
             return new Date().toISOString().split('T')[0];
         }
 
+        function formatDateDisplay(isoStr) {
+            if (!isoStr) return '';
+            const parts = String(isoStr).split('T')[0].split('-');
+            if (parts.length !== 3) return isoStr;
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            const d = new Date(year, month, day);
+            if (isNaN(d.getTime())) return isoStr;
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
         async function manualBackupToCloud() {
             const syncIcon = document.getElementById('sync-icon');
             syncIcon.classList.add('fa-spin', 'text-amber-400');
@@ -560,11 +572,11 @@
                             const odoVal = parseInt(String(r.odo).replace(/,/g, ''), 10);
                             if (!isNaN(odoVal) && odoVal > 100) {
                                 logs.push({
-    id: r.id || (String(r.date) + '-' + String(r.odo)),
-    date: parseFlexibleDate(r.date),
-    odo: odoVal,
-    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
-});
+                                    id: r.id || (String(r.date) + '-' + String(odoVal)),
+                                    date: parseFlexibleDate(r.date),
+                                    odo: odoVal,
+                                    oilService: String(r.oilService).toLowerCase() === 'true' || r.oilService === true || r.oilService === 'TRUE'
+                                });
                             }
                         }
                         if (r.targetOdo !== undefined && r.targetOdo !== '' && r.notes) {
@@ -618,11 +630,11 @@
                 const payloadRows = [];
 
                 for (let i = 0; i < maxLength; i++) {
-                   payloadRows.push({
-    id: logsNewestFirst[i] ? (logsNewestFirst[i].id || logsNewestFirst[i].date + '-' + logsNewestFirst[i].odo) : "",
-    date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
-    odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
-    oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
+                    payloadRows.push({
+                        id: logsNewestFirst[i] ? (logsNewestFirst[i].id || logsNewestFirst[i].date + '-' + logsNewestFirst[i].odo) : "",
+                        date: logsNewestFirst[i] ? logsNewestFirst[i].date : "",
+                        odo: logsNewestFirst[i] ? logsNewestFirst[i].odo : "",
+                        oilService: logsNewestFirst[i] ? String(logsNewestFirst[i].oilService) : "false",
                         targetOdo: sortedMilestones[i] ? sortedMilestones[i].targetOdo : "",
                         notes: sortedMilestones[i] ? sortedMilestones[i].notes : "",
                         details: sortedMilestones[i] ? (sortedMilestones[i].details || '') : "",
@@ -644,21 +656,11 @@
             }
         }
 
-        function formatDateDisplay(isoStr) {
-    if (!isoStr) return '';
-    const parts = String(isoStr).split('T')[0].split('-');
-    if (parts.length !== 3) return isoStr;
-    const year = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-    const d = new Date(year, month, day);
-    if (isNaN(d.getTime())) return isoStr;
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
         function addDays(baseDateStr, daysToAdd) {
             if (!isFinite(daysToAdd) || daysToAdd < 0) return 'Due Now';
-            const d = new Date(baseDateStr + 'T00:00:00');
+            const parts = baseDateStr.split('T')[0].split('-');
+            if (parts.length !== 3) return 'Due Now';
+            const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
             if (isNaN(d.getTime())) return 'Due Now';
             d.setDate(d.getDate() + Math.round(daysToAdd));
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -668,18 +670,23 @@
             const parts = dateStr.split(' ');
             if (parts.length === 3) {
                 const months = {
-                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12'
+                    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+                    Jul: 6, Aug: 7, Sep: 8, Sept: 8, Oct: 9, Nov: 10, Dec: 11
                 };
-                const m = months[parts[1]] || '01';
-                return new Date(`${parts[2]}-${m}-${parts[0].padStart(2, '0')}T00:00:00`);
+                return new Date(parseInt(parts[2], 10), months[parts[1]] || 0, parseInt(parts[0], 10));
             }
-            return new Date(dateStr + 'T00:00:00');
+            const p = dateStr.split('-');
+            if (p.length === 3) {
+                return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+            }
+            return new Date(dateStr);
         }
 
         function daysBetween(date1Str, date2Str) {
-            const d1 = new Date(date1Str + 'T00:00:00');
-            const d2 = new Date(date2Str + 'T00:00:00');
+            const p1 = date1Str.split('T')[0].split('-');
+            const p2 = date2Str.split('T')[0].split('-');
+            const d1 = new Date(parseInt(p1[0], 10), parseInt(p1[1], 10) - 1, parseInt(p1[2], 10));
+            const d2 = new Date(parseInt(p2[0], 10), parseInt(p2[1], 10) - 1, parseInt(p2[2], 10));
             return Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)));
         }
 
@@ -1231,11 +1238,11 @@
         async function handleLogSubmit(e) {
             e.preventDefault();
             const newEntry = { 
-    id: 'log-' + Date.now(),
-    date: document.getElementById('input-log-date').value, 
-    odo: parseInt(document.getElementById('input-log-odo').value, 10), 
-    oilService: document.getElementById('input-log-oil').checked 
-};
+                id: 'log-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+                date: document.getElementById('input-log-date').value, 
+                odo: parseInt(document.getElementById('input-log-odo').value, 10), 
+                oilService: document.getElementById('input-log-oil').checked 
+            };
             logs.push(newEntry);
             recalculateAll();
             closeLogModal();
