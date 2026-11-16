@@ -66,8 +66,8 @@
             <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
             </button>
-            <!-- MANUAL BACKUP / SYNC BUTTON -->
-            <button onclick="manualBackupToCloud()" title="Backup & Sync to Cloud" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
+            <!-- MANUAL BACKUP / SYNC BUTTON (WITH DOUBLE CONFIRMATION) -->
+            <button id="backup-btn" onclick="handleBackupClick()" title="Backup & Sync to Cloud (Double-click to confirm)" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i id="sync-icon" class="fa-solid fa-cloud-arrow-up text-sky-400 text-sm"></i>
             </button>
             <!-- LOG ODOMETER BUTTON -->
@@ -80,7 +80,58 @@
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- ROW 1: Mileage Update + Incoming Maintenance -->
+        <!-- PROMINENT ROW 1: Date ↔ Mileage Calculator -->
+        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-calculator')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-sky-400"></i> Date ↔ Mileage Calculator
+                </h2>
+                <i id="icon-card-calculator" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
+            </button>
+            <div id="content-card-calculator" class="p-4 space-y-4 text-xs">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Calculator A: Enter Date -> Get Odometer -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Future Date</label>
+                            <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Odo:</span>
+                                <span id="calc-result-odo-realistic" class="font-black text-purple-300">-- km</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Odo:</span>
+                                <span id="calc-result-odo-benchmark" class="font-bold text-sky-400">-- km</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculator B: Enter Odometer -> Get Date -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
+                            <input type="number" id="calc-input-odo" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Date:</span>
+                                <span id="calc-result-date-realistic" class="font-black text-purple-300">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Date:</span>
+                                <span id="calc-result-date-benchmark" class="font-bold text-sky-400">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 2: Mileage Update + Incoming Maintenance -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
@@ -133,7 +184,7 @@
             </div>
         </div>
 
-        <!-- ROW 2: Engine Oil Realistic + Other Maintenance Realistic -->
+        <!-- ROW 3: Engine Oil Realistic + Other Maintenance Realistic -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
@@ -180,7 +231,7 @@
             </div>
         </div>
 
-        <!-- ROW 3: Time-Based Maintenance + Pace Details -->
+        <!-- ROW 4: Time-Based Maintenance + Pace Details -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
@@ -217,57 +268,6 @@
                     <div class="flex justify-between py-1">
                         <span class="text-slate-400">Comparison Benchmark</span>
                         <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ROW 4: Bidirectional Date ↔ Mileage Calculator -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-calculator')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-sky-400"></i> Date ↔ Mileage Calculator
-                </h2>
-                <i id="icon-card-calculator" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
-            </button>
-            <div id="content-card-calculator" class="p-4 space-y-4 text-xs hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Calculator A: Enter Date -> Get Odometer -->
-                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
-                        <h3 class="text-xs font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h3>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Future Date</label>
-                            <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
-                        </div>
-                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Realistic Pace Odo:</span>
-                                <span id="calc-result-odo-realistic" class="font-black text-purple-300">-- km</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">95 km/day Odo:</span>
-                                <span id="calc-result-odo-benchmark" class="font-bold text-sky-400">-- km</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Calculator B: Enter Odometer -> Get Date -->
-                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
-                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h3>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
-                            <input type="number" id="calc-input-odo" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
-                        </div>
-                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Realistic Pace Date:</span>
-                                <span id="calc-result-date-realistic" class="font-black text-purple-300">--</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">95 km/day Date:</span>
-                                <span id="calc-result-date-benchmark" class="font-bold text-sky-400">--</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -491,6 +491,9 @@
         let oilInterval = 7500;
         let globalEffectivePace = BENCHMARK_PACE;
 
+        let backupConfirmTimer = null;
+        let backupStep = 1;
+
         function showToast(message, isError = false) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -526,35 +529,32 @@
         }
 
         function parseFlexibleDate(dateStr) {
-    if (!dateStr) return new Date().toISOString().split('T')[0];
-    const trimmed = String(dateStr).trim();
-    
-    // If it's already YYYY-MM-DD, return it directly without any time zone shift
-    if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed.split('T')[0];
-    
-    const parts = trimmed.split(' ');
-    if (parts.length === 3) {
-        const months = {
-            Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-            Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
-            January: '01', February: '02', March: '03', April: '04', June: '06',
-            July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
-        };
-        const day = parts[0].padStart(2, '0');
-        const m = months[parts[1]] || '01';
-        const year = parts[2];
-        return `${year}-${m}-${day}`;
-    }
-    
-    const parsed = new Date(trimmed);
-    if (!isNaN(parsed.getTime())) {
-        const y = parsed.getFullYear();
-        const m = String(parsed.getMonth() + 1).padStart(2, '0');
-        const d = String(parsed.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    }
-    return new Date().toISOString().split('T')[0];
-}
+            if (!dateStr) return new Date().toISOString().split('T')[0];
+            const trimmed = String(dateStr).trim();
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed.split('T')[0];
+            
+            const parts = trimmed.split(' ');
+            if (parts.length === 3) {
+                const months = {
+                    Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+                    Jul: '07', Aug: '08', Sep: '09', Sept: '09', Oct: '10', Nov: '11', Dec: '12',
+                    January: '01', February: '02', March: '03', April: '04', June: '06',
+                    July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+                };
+                const day = parts[0].padStart(2, '0');
+                const m = months[parts[1]] || '01';
+                const year = parts[2];
+                return `${year}-${m}-${day}`;
+            }
+            const parsed = new Date(trimmed);
+            if (!isNaN(parsed.getTime())) {
+                const y = parsed.getFullYear();
+                const m = String(parsed.getMonth() + 1).padStart(2, '0');
+                const d = String(parsed.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+            return new Date().toISOString().split('T')[0];
+        }
 
         function formatDateDisplay(isoStr) {
             if (!isoStr) return '';
@@ -566,6 +566,25 @@
             const d = new Date(year, month, day);
             if (isNaN(d.getTime())) return isoStr;
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function handleBackupClick() {
+            const btn = document.getElementById('backup-btn');
+            if (backupStep === 1) {
+                backupStep = 2;
+                btn.classList.add('border-amber-500', 'bg-amber-500/10');
+                showToast("Click backup button again to confirm sync.", false);
+                
+                backupConfirmTimer = setTimeout(() => {
+                    backupStep = 1;
+                    btn.classList.remove('border-amber-500', 'bg-amber-500/10');
+                }, 3000);
+            } else {
+                clearTimeout(backupConfirmTimer);
+                backupStep = 1;
+                btn.classList.remove('border-amber-500', 'bg-amber-500/10');
+                manualBackupToCloud();
+            }
         }
 
         async function manualBackupToCloud() {
