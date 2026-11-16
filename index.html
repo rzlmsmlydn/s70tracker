@@ -16,6 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -46,18 +47,45 @@
         </div>
     </div>
 
+    <!-- DOUBLE CONFIRMATION BACKUP MODAL -->
+    <div id="backup-confirm-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-sky-400"></i> Confirm Cloud Backup
+                </h3>
+                <button onclick="closeBackupConfirmModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                Are you sure you want to manually overwrite and sync all local tracker records to your Google Sheet?
+            </p>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                <button type="button" onclick="closeBackupConfirmModal()" class="px-3.5 py-1.5 rounded-xl border border-slate-800 text-xs font-bold text-slate-400 hover:text-white transition-colors">Cancel</button>
+                <button type="button" onclick="confirmAndRunBackup()" class="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase tracking-wider transition-colors">Yes, Sync Now</button>
+            </div>
+        </div>
+    </div>
+
     <!-- APP HEADER -->
     <header class="h-14 border-b border-slate-900 bg-[#090d16] px-4 flex items-center justify-between sticky top-0 z-30">
+        <!-- LEFT: LOGO, TITLE & BACKUP BUTTON -->
         <div class="flex items-center gap-2.5">
             <svg class="w-7 h-7 text-white shrink-0" viewBox="235 0 530 530" fill="currentColor">
                 <path d="M383.5,82.3c71.2-15.2,154.5,16.1,216.2,48.2c10.4,5.4,14.5,11.5,4.4,14.4c-4.1,1.2-4.7,4,0.1,5.4c31.1,9.1,61.3,20.9,89.5,36.1c4.8,2.6,8.7,5,6.3,10.5c-0.7,1.6-0.5,2.5,1.1,3.4c15,8.8,18.2,18.9,11.3,31.1c-11.7,20.8-30.8,41.2-49.8,56.3c-4,3.2-7.8,5.8-11.9,3.8c-4.1-2-3.5-6.4-3.3-11.6c0.3-6.4,0.1-13.5-1.1-18.3c-0.4-1.8-1.2-2.3-3-2.1c-7.9,0.9-16.2,1.8-24.7,2.7c-2.3,0.3-3.1,0.5-5.2,1.5c-22.3,11-49.4,24.7-69.1,37.1c-8,5-9.5,9.6-2.6,16.6c11.4,11.6,24.4,24,35.3,33.9c6.6,6,19.6,12.9,34.8,0.4c3.3-2.7,5.9-1.5,5.1,2.9c-8.7,47.7-35.8,87.8-79.7,105.6c-2.1,0.9-3.4,0.6-5-0.9c-45.6-42.6-114.1-79.9-169.8-32.5c-2.8,2.3-2.6,4-0.2,5.8c122.9,93.9,300.4,39.9,351.3-104.1c0.6-1.8,1.1-2.5,2.7-3.6l33.2-23.4c3.2-2.2,5.3-1,4.6,2.8c-22.4,121.5-128.5,211.1-254,211.2c-125.5,0-231.8-89.6-254.1-211.2c-0.7-3.8,1.5-5,4.6-2.8l33.2,23.4c1.6,1.1,2.1,1.8,2.7,3.6c10.1,28.6,26,55,46.6,77.4c2.3,2.5,4.1,2.7,6.9,0.7c12.5-8.9,27-16.8,42.3-21.3c3.9-1.1,4.7-2.6,1.4-5.4c-11.2-9.5-20.3-22.3-27.7-36.4c-1.7-3.2-4.6-3.7-7.7-1.6l-15.4,10.5c-3.1,2.1-4.8,0.8-5.1-3.1c-0.6-7.6-0.9-15.1-0.9-22.4c0-3.2-1.8-3.8-4.5-2.1l-4.5,2.8c-2.6,1.6-4.1,0.6-3.4-2.5c8.1-36.4,28.5-69.9,58.8-92.8c3.6-2.7,5.8-0.9,3.5,3.1c-16.1,28.2-24.2,61.6-23.8,94.3c0.1,4.6,2.3,5.9,6.2,3.1l18.3-12.9c3.7-2.6,5.8-1.3,5.5,3.3c-1.9,32,12.2,67.3,41,85.2c19.5,12.1,43,19.4,63.3,31.4c11.2,6.6,22.2,13.9,32.7,21.6c2.3,1.7,3.9,1.8,6.2,0.1c16.8-12.5,29.3-28.7,36.8-47.4c1.3-3.2-0.2-5.1-3.6-4.7c-5.9,0.7-12.3-0.7-17.9-3.9c-14.1-8-26.9-20.4-39.1-32.9c-16.5-16.9-16.1-31.3,3.7-43.3c24.2-14.7,51.2-28.1,78.1-40.8c3.5-1.6,7.1-2.5,11.6-3.1c11.6-1.4,23.5-2.6,35.6-3.6c3.9-0.3,6.4,0.8,8.5,4l7.6,11.5c1.8,2.7,3.5,2.7,5.7,0.2c4.4-4.9,8.7-10.2,12.7-15.6c2.5-3.4,2.1-5.8-1.5-8l-11.2-7.1c-3.8-2.4-4-4.7-1.4-8.4c2.1-3,1.3-4.6-2.1-6.2c-53.4-24.8-113.1-38.7-175.4-39.6c-4.5-0.1-6.5-1.9-6.6-6.3c-0.3-13.5,14.8-19.6,35.6-19.4c12.6,0.1,26.1,1.6,39.4,3.8c3.6,0.6,6.8-0.2,9.7-2.2c2.8-1.9,2.5-3.4-0.6-4.9c-40.8-19.1-85.8-30.7-132.4-32.7c-5.1-0.2-6.5,2.1-3.3,6.1l13.2,16.4c3,3.7,1.8,6.2-3,6.3l-114.3,2.3c-3.8,0.1-5.6,1.3-7.5,4.6c-11.2,19.4-19.8,40.4-25.5,62.5c-0.8,3.2-2.1,4.6-4.8,6.4l-26.2,17.8c-3.6,2.4-5.7,1.1-5-3.2C269.7,100.3,375,11.5,499.6,11.5c124.7,0,230,88.8,252.2,207c0.8,4.3-1.3,5.6-5,3.2l-26.2-17.8c-2.7-1.8-4-3.3-4.8-6.4C690.5,99.6,601.5,28,499.6,28c-60.9,0-116.5,24.6-157,64.4c-3.8,3.7-2.8,6.3,2.5,6.5l35.4,1.3c3.9,0.1,5.2-1.7,2.7-4.7l-4.5-5.5C375.8,86.4,378.1,83.5,383.5,82.3z"/>
             </svg>
-            <div>
-                <h1 class="text-xs font-black tracking-wider text-white uppercase">PROTON S70 TRACKER</h1>
-            </div>
+            <h1 class="text-xs font-black tracking-wider text-white uppercase">PROTON S70 TRACKER</h1>
+            <!-- MANUAL BACKUP / SYNC BUTTON (WITH DOUBLE CONFIRMATION) -->
+            <button onclick="openBackupConfirmModal()" title="Backup & Sync to Cloud" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-1.5 rounded-lg transition-all flex items-center justify-center ml-1">
+                <i id="sync-icon" class="fa-solid fa-cloud-arrow-up text-sky-400 text-xs"></i>
+            </button>
         </div>
 
+        <!-- RIGHT: CALCULATOR, HUB, COMPLETED, LOG -->
         <div class="flex items-center gap-2">
+            <!-- CALCULATOR JUMP BUTTON -->
+            <button onclick="jumpToCalculator()" title="Date ↔ Mileage Calculator" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
+                <i class="fa-solid fa-calculator text-purple-400 text-sm"></i>
+            </button>
             <!-- MAINTENANCE HUB BUTTON -->
             <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-clipboard-list text-amber-400 text-sm"></i>
@@ -65,10 +93,6 @@
             <!-- COMPLETED SERVICES BUTTON -->
             <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
-            </button>
-            <!-- MANUAL BACKUP / SYNC BUTTON (WITH DOUBLE CONFIRMATION) -->
-            <button id="backup-btn" onclick="handleBackupClick()" title="Backup & Sync to Cloud (Double-click to confirm)" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
-                <i id="sync-icon" class="fa-solid fa-cloud-arrow-up text-sky-400 text-sm"></i>
             </button>
             <!-- LOG ODOMETER BUTTON -->
             <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-[11px] px-3.5 py-1.5 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1">
@@ -80,58 +104,7 @@
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 space-y-4">
 
-        <!-- PROMINENT ROW 1: Date ↔ Mileage Calculator -->
-        <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
-            <button onclick="toggleCard('card-calculator')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
-                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-sky-400"></i> Date ↔ Mileage Calculator
-                </h2>
-                <i id="icon-card-calculator" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200"></i>
-            </button>
-            <div id="content-card-calculator" class="p-4 space-y-4 text-xs">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Calculator A: Enter Date -> Get Odometer -->
-                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
-                        <h3 class="text-xs font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h3>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Future Date</label>
-                            <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
-                        </div>
-                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Realistic Pace Odo:</span>
-                                <span id="calc-result-odo-realistic" class="font-black text-purple-300">-- km</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">95 km/day Odo:</span>
-                                <span id="calc-result-odo-benchmark" class="font-bold text-sky-400">-- km</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Calculator B: Enter Odometer -> Get Date -->
-                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
-                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h3>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
-                            <input type="number" id="calc-input-odo" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
-                        </div>
-                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">Realistic Pace Date:</span>
-                                <span id="calc-result-date-realistic" class="font-black text-purple-300">--</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-slate-400">95 km/day Date:</span>
-                                <span id="calc-result-date-benchmark" class="font-bold text-sky-400">--</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ROW 2: Mileage Update + Incoming Maintenance -->
+        <!-- ROW 1: Mileage Update + Incoming Maintenance -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <div class="px-4 py-3 border-b border-slate-800/80 bg-[#050913]">
@@ -184,7 +157,7 @@
             </div>
         </div>
 
-        <!-- ROW 3: Engine Oil Realistic + Other Maintenance Realistic -->
+        <!-- ROW 2: Engine Oil Realistic + Other Maintenance Realistic -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-oil-real')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
@@ -231,7 +204,7 @@
             </div>
         </div>
 
-        <!-- ROW 4: Time-Based Maintenance + Pace Details -->
+        <!-- ROW 3: Time-Based Maintenance + Pace Details -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-time-maint')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
@@ -268,6 +241,57 @@
                     <div class="flex justify-between py-1">
                         <span class="text-slate-400">Comparison Benchmark</span>
                         <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROW 4: Bidirectional Date ↔ Mileage Calculator -->
+        <div id="section-calculator" class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md">
+            <button onclick="toggleCard('card-calculator')" class="w-full px-4 py-3 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                <h2 class="text-xs font-black tracking-wider text-white uppercase flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-purple-400"></i> Date ↔ Mileage Calculator
+                </h2>
+                <i id="icon-card-calculator" class="fa-solid fa-chevron-down text-slate-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
+            </button>
+            <div id="content-card-calculator" class="p-4 space-y-4 text-xs hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Calculator A: Enter Date -> Get Odometer -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Select Future Date</label>
+                            <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Odo:</span>
+                                <span id="calc-result-odo-realistic" class="font-black text-purple-300">-- km</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Odo:</span>
+                                <span id="calc-result-odo-benchmark" class="font-bold text-sky-400">-- km</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculator B: Enter Odometer -> Get Date -->
+                    <div class="bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl space-y-3">
+                        <h3 class="text-xs font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h3>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Target Odometer (km)</label>
+                            <input type="number" id="calc-input-odo" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono">
+                        </div>
+                        <div class="space-y-1.5 pt-2 border-t border-slate-800 font-mono">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Realistic Pace Date:</span>
+                                <span id="calc-result-date-realistic" class="font-black text-purple-300">--</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">95 km/day Date:</span>
+                                <span id="calc-result-date-benchmark" class="font-bold text-sky-400">--</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -491,9 +515,6 @@
         let oilInterval = 7500;
         let globalEffectivePace = BENCHMARK_PACE;
 
-        let backupConfirmTimer = null;
-        let backupStep = 1;
-
         function showToast(message, isError = false) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -528,10 +549,45 @@
             }
         }
 
+        function jumpToCalculator() {
+            const content = document.getElementById('content-card-calculator');
+            const icon = document.getElementById('icon-card-calculator');
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                content.style.display = '';
+                icon.style.transform = 'rotate(0deg)';
+            }
+            const section = document.getElementById('section-calculator');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function openBackupConfirmModal() {
+            document.getElementById('backup-confirm-modal').classList.remove('hidden');
+        }
+
+        function closeBackupConfirmModal() {
+            document.getElementById('backup-confirm-modal').classList.add('hidden');
+        }
+
+        async function confirmAndRunBackup() {
+            closeBackupConfirmModal();
+            await manualBackupToCloud();
+        }
+
+        function getTodayLocalISO() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
         function parseFlexibleDate(dateStr) {
-            if (!dateStr) return new Date().toISOString().split('T')[0];
+            if (!dateStr) return getTodayLocalISO();
             const trimmed = String(dateStr).trim();
-            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed.split('T')[0];
+            if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
             
             const parts = trimmed.split(' ');
             if (parts.length === 3) {
@@ -553,7 +609,7 @@
                 const d = String(parsed.getDate()).padStart(2, '0');
                 return `${y}-${m}-${d}`;
             }
-            return new Date().toISOString().split('T')[0];
+            return getTodayLocalISO();
         }
 
         function formatDateDisplay(isoStr) {
@@ -566,25 +622,6 @@
             const d = new Date(year, month, day);
             if (isNaN(d.getTime())) return isoStr;
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-
-        function handleBackupClick() {
-            const btn = document.getElementById('backup-btn');
-            if (backupStep === 1) {
-                backupStep = 2;
-                btn.classList.add('border-amber-500', 'bg-amber-500/10');
-                showToast("Click backup button again to confirm sync.", false);
-                
-                backupConfirmTimer = setTimeout(() => {
-                    backupStep = 1;
-                    btn.classList.remove('border-amber-500', 'bg-amber-500/10');
-                }, 3000);
-            } else {
-                clearTimeout(backupConfirmTimer);
-                backupStep = 1;
-                btn.classList.remove('border-amber-500', 'bg-amber-500/10');
-                manualBackupToCloud();
-            }
         }
 
         async function manualBackupToCloud() {
@@ -1126,6 +1163,7 @@
             closeEditMilestoneModal();
             recalculateAll();
             await pushDataToCloud();
+            showToast("Milestone updated!");
         }
 
         function openCompleteModal(targetOdo) {
@@ -1133,7 +1171,7 @@
             if (!m) return;
             document.getElementById('complete-target-odo').value = m.targetOdo;
             document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
-            document.getElementById('complete-date').value = m.serviceDate || new Date().toISOString().split('T')[0];
+            document.getElementById('complete-date').value = m.serviceDate || getTodayLocalISO();
 
             const modalTitle = document.getElementById('complete-modal-title');
             if (m.done) {
@@ -1355,8 +1393,9 @@
 
         window.onload = async () => {
             checkAuth();
-            document.getElementById('input-log-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('complete-date').value = new Date().toISOString().split('T')[0];
+            const todayLocal = getTodayLocalISO();
+            document.getElementById('input-log-date').value = todayLocal;
+            document.getElementById('complete-date').value = todayLocal;
             await syncDataFromCloud();
         };
     </script>
