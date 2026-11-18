@@ -139,7 +139,6 @@
             <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
             </button>
-            <!-- FUEL DATABASE BUTTON -->
             <button onclick="openFuelModal()" title="Fuel Database" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-gas-pump text-sky-400 text-sm"></i>
             </button>
@@ -290,7 +289,7 @@
         </div>
     </main>
 
-    <!-- FUEL DATABASE MODAL -->
+    <!-- FUEL DATABASE MODAL (COMPACT & HIERARCHICAL) -->
     <div id="fuel-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -300,18 +299,13 @@
                 <button onclick="closeFuelModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <!-- ADD FUEL RECORD FORM -->
             <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Fuel Fill</h4>
                 <form onsubmit="handleAddFuel(event)" class="space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Date</label>
                             <input type="date" id="input-fuel-date" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Location / Station</label>
-                            <input type="text" id="input-fuel-location" required placeholder="e.g. SPC Gadong" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cost ($)</label>
@@ -329,8 +323,7 @@
                 <span id="total-fuel-spent-badge" class="text-sky-400 font-black text-sm">$0.00</span>
             </div>
 
-            <!-- FUEL RECORDS LIST -->
-            <div class="space-y-2 max-h-60 overflow-y-auto pr-1" id="fuel-records-list"></div>
+            <div class="space-y-3 max-h-72 overflow-y-auto pr-1" id="fuel-records-list"></div>
 
             <div class="flex items-center justify-end pt-2 border-t border-slate-800">
                 <button type="button" onclick="closeFuelModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white uppercase tracking-wider">Close</button>
@@ -379,7 +372,7 @@
                 <h4 class="text-xs font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-clock"></i> Add Time-Based Maintenance</h4>
                 <form onsubmit="handleAddTimeMaint(event)" class="space-y-3">
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Name (Include Interval if desired)</label>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Task Name</label>
                         <input type="text" id="input-time-title" required placeholder="e.g. Cabin Filter (6 Months)" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none">
                     </div>
                     <div>
@@ -408,7 +401,7 @@
         </div>
     </div>
 
-    <!-- COMPLETED MAINTENANCE LOG MODAL -->
+    <!-- COMPLETED MAINTENANCE LOG MODAL (HIERARCHICAL YEAR -> MONTH) -->
     <div id="completed-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -549,6 +542,12 @@
         let fuelLogs = [];
         let oilInterval = 7500;
         let globalEffectivePace = BENCHMARK_PACE;
+
+        const monthNames = {
+            '01': 'January', '02': 'February', '03': 'March', '04': 'April',
+            '05': 'May', '06': 'June', '07': 'July', '08': 'August',
+            '09': 'September', '10': 'October', '11': 'November', '12': 'December'
+        };
 
         function escapeAttr(str) {
             return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -756,11 +755,10 @@
                                 dueDate: parseFlexibleDate(r.timeDueDate)
                             });
                         }
-                        if (r.fuelDate && r.fuelLocation) {
+                        if (r.fuelDate) {
                             fuelLogs.push({
                                 id: Date.now().toString() + Math.random(),
                                 date: parseFlexibleDate(r.fuelDate),
-                                location: r.fuelLocation,
                                 cost: parseFloat(r.fuelCost) || 0
                             });
                         }
@@ -825,7 +823,6 @@
                         timeInterval: "",
                         timeDueDate: t ? t.dueDate : "",
                         fuelDate: f ? f.date : "",
-                        fuelLocation: f ? f.location : "",
                         fuelCost: f ? f.cost : ""
                     });
                 }
@@ -1122,19 +1119,16 @@
         function handleAddFuel(e) {
             e.preventDefault();
             const date = document.getElementById('input-fuel-date').value;
-            const location = document.getElementById('input-fuel-location').value.trim();
             const cost = parseFloat(document.getElementById('input-fuel-cost').value) || 0;
 
-            if (!date || !location) return;
+            if (!date) return;
 
             fuelLogs.push({
                 id: Date.now().toString() + Math.random(),
                 date,
-                location,
                 cost
             });
 
-            document.getElementById('input-fuel-location').value = '';
             document.getElementById('input-fuel-cost').value = '';
             document.getElementById('input-fuel-date').value = getTodayLocalISO();
 
@@ -1151,29 +1145,86 @@
         }
 
         function renderFuelList() {
-            const listDiv = document.getElementById('fuel-records-list');
+            const container = document.getElementById('fuel-records-list');
             const sortedFuel = [...fuelLogs].sort((a, b) => b.date.localeCompare(a.date));
             let totalFuelCost = 0;
 
             if (sortedFuel.length === 0) {
-                listDiv.innerHTML = '<div class="text-slate-500 text-xs italic text-center py-4">No fuel records added yet.</div>';
-            } else {
-                listDiv.innerHTML = sortedFuel.map(f => {
-                    totalFuelCost += f.cost;
-                    return `
-                        <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/60 p-2.5 rounded-xl text-xs font-mono">
-                            <div class="flex items-center gap-3 flex-1 overflow-hidden">
-                                <span class="text-sky-400 font-bold whitespace-nowrap"><i class="fa-regular fa-calendar"></i> ${formatDateDisplay(f.date)}</span>
-                                <span class="text-slate-200 truncate font-sans font-semibold">${f.location}</span>
-                            </div>
-                            <div class="flex items-center gap-3 whitespace-nowrap">
-                                <span class="text-amber-400 font-black">$${f.cost.toFixed(2)}</span>
-                                <button onclick="deleteFuelRecord('${f.id}')" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                container.innerHTML = '<div class="text-slate-500 text-xs italic text-center py-4">No fuel records added yet.</div>';
+                document.getElementById('total-fuel-spent-badge').textContent = '$0.00';
+                return;
             }
+
+            // Group by Year -> Month
+            const grouped = {};
+            sortedFuel.forEach(f => {
+                const [year, month] = f.date.split('-');
+                if (!year || !month) return;
+                if (!grouped[year]) grouped[year] = {};
+                if (!grouped[year][month]) grouped[year][month] = [];
+                grouped[year][month].push(f);
+                totalFuelCost += f.cost;
+            });
+
+            const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+            let html = '';
+
+            years.forEach((year, yIdx) => {
+                const isLatestYear = (yIdx === 0);
+                let yearTotal = 0;
+                Object.values(grouped[year]).forEach(mArr => mArr.forEach(item => yearTotal += item.cost));
+
+                html += `
+                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono" ${isLatestYear ? 'open' : ''}>
+                        <summary class="flex items-center justify-between p-3 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none text-xs">
+                            <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-sky-400"></i> ${year}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-amber-400 font-bold">$${yearTotal.toFixed(2)}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform"></i>
+                            </div>
+                        </summary>
+                        <div class="p-2 space-y-2 border-t border-slate-800/60">
+                `;
+
+                const months = Object.keys(grouped[year]).sort((a, b) => b.localeCompare(a));
+                months.forEach((month, mIdx) => {
+                    const isLatestMonth = isLatestYear && (mIdx === 0);
+                    const monthName = monthNames[month] || month;
+                    const mArr = grouped[year][month];
+                    let monthTotal = 0;
+                    mArr.forEach(item => monthTotal += item.cost);
+
+                    html += `
+                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden" ${isLatestMonth ? 'open' : ''}>
+                            <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none text-xs">
+                                <span class="font-bold text-slate-300">${monthName}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-amber-400">$${monthTotal.toFixed(2)}</span>
+                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[9px]"></i>
+                                </div>
+                            </summary>
+                            <div class="p-2 space-y-1.5 border-t border-slate-800/40 bg-[#050913]">
+                    `;
+
+                    mArr.forEach(f => {
+                        html += `
+                            <div class="flex items-center justify-between gap-2 p-2 bg-[#0a0f1d] rounded-lg border border-slate-900 text-xs">
+                                <span class="text-slate-300"><i class="fa-regular fa-calendar text-sky-400 text-[10px]"></i> ${formatDateDisplay(f.date)}</span>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-amber-400 font-black">$${f.cost.toFixed(2)}</span>
+                                    <button onclick="deleteFuelRecord('${f.id}')" class="text-rose-400 hover:text-rose-300 px-1.5 py-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    html += `</div></details>`;
+                });
+
+                html += `</div></details>`;
+            });
+
+            container.innerHTML = html;
             document.getElementById('total-fuel-spent-badge').textContent = `$${totalFuelCost.toFixed(2)}`;
         }
 
@@ -1219,64 +1270,128 @@
 
         function renderCompletedList() {
             const completedDiv = document.getElementById('settings-completed-milestones');
-            const completedList = [...milestones].filter(m => m.done).sort((a, b) => b.targetOdo - a.targetOdo);
+            const completedList = [...milestones].filter(m => m.done).sort((a, b) => {
+                const dateA = a.serviceDate || '2026-01-01';
+                const dateB = b.serviceDate || '2026-01-01';
+                return dateB.localeCompare(dateA) || b.targetOdo - a.targetOdo;
+            });
+
             let grandTotalSpent = 0;
 
             if (completedList.length === 0) {
                 completedDiv.innerHTML = '<div class="text-slate-500 text-xs italic text-center py-4">No completed maintenance items yet.</div>';
-            } else {
-                completedDiv.innerHTML = completedList.map(m => {
-                    const costVal = parseFloat(m.cost) || 0;
-                    grandTotalSpent += costVal;
-
-                    let itemsHtml = '';
-                    if (m.details) {
-                        const lines = m.details.split('\n');
-                        itemsHtml = lines.map(line => {
-                            const cleanLine = line.replace(/^- /, '').trim();
-                            if (!cleanLine) return '';
-                            const lastDashIdx = cleanLine.lastIndexOf(' - $');
-                            let itemName = cleanLine;
-                            let itemPrice = '0.00';
-                            if (lastDashIdx !== -1) {
-                                itemName = cleanLine.substring(0, lastDashIdx).trim();
-                                itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
-                            }
-                            return `
-                                <div class="flex items-center justify-between py-1.5 px-2.5 bg-[#080d1a] rounded-lg border border-slate-900">
-                                    <span class="text-slate-300 font-sans text-xs">${itemName}</span>
-                                    <span class="text-amber-400 font-mono font-bold text-xs">$${itemPrice}</span>
-                                </div>
-                            `;
-                        }).join('');
-                    }
-
-                    return `
-                        <details class="group bg-[#050913] border border-slate-800/65 rounded-xl text-xs font-mono overflow-hidden">
-                            <summary class="flex items-center justify-between p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
-                                <div class="flex items-center gap-2.5">
-                                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
-                                    <span class="text-white font-bold font-sans text-xs">${m.notes}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo / Mark Active" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-[10px] font-bold uppercase">Undo</button>
-                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 rounded-lg text-[10px] font-bold uppercase ml-1">Edit</button>
-                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
-                                </div>
-                            </summary>
-                            <div class="p-3 pt-0 space-y-2 border-t border-slate-800/45 mt-1">
-                                ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-2"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
-                                <div class="space-y-1.5 pt-1">
-                                    <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Item/Place & Price Breakdown</div>
-                                    ${itemsHtml || '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
-                                </div>
-                            </div>
-                        </details>
-                    `;
-                }).join('');
+                document.getElementById('total-spent-badge').textContent = '$0.00';
+                return;
             }
 
+            // Group by Year -> Month based on serviceDate (fallback to current year/month)
+            const grouped = {};
+            completedList.forEach(m => {
+                const dStr = m.serviceDate || getTodayLocalISO();
+                const [year, month] = dStr.split('-');
+                if (!year || !month) return;
+                if (!grouped[year]) grouped[year] = {};
+                if (!grouped[year][month]) grouped[year][month] = [];
+                grouped[year][month].push(m);
+                grandTotalSpent += (parseFloat(m.cost) || 0);
+            });
+
+            const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+            let html = '';
+
+            years.forEach((year, yIdx) => {
+                const isLatestYear = (yIdx === 0);
+                let yearTotal = 0;
+                Object.values(grouped[year]).forEach(mArr => mArr.forEach(m => yearTotal += (parseFloat(m.cost) || 0)));
+
+                html += `
+                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono" ${isLatestYear ? 'open' : ''}>
+                        <summary class="flex items-center justify-between p-3 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none text-xs">
+                            <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-emerald-400"></i> ${year}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-amber-400 font-bold">$${yearTotal.toFixed(2)}</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform"></i>
+                            </div>
+                        </summary>
+                        <div class="p-2 space-y-2 border-t border-slate-800/60">
+                `;
+
+                const months = Object.keys(grouped[year]).sort((a, b) => b.localeCompare(a));
+                months.forEach((month, mIdx) => {
+                    const isLatestMonth = isLatestYear && (mIdx === 0);
+                    const monthName = monthNames[month] || month;
+                    const mArr = grouped[year][month];
+                    let monthTotal = 0;
+                    mArr.forEach(m => monthTotal += (parseFloat(m.cost) || 0));
+
+                    html += `
+                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden" ${isLatestMonth ? 'open' : ''}>
+                            <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none text-xs">
+                                <span class="font-bold text-slate-300">${monthName}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-amber-400">$${monthTotal.toFixed(2)}</span>
+                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[9px]"></i>
+                                </div>
+                            </summary>
+                            <div class="p-2 space-y-2 border-t border-slate-800/40 bg-[#050913]">
+                    `;
+
+                    mArr.forEach(m => {
+                        const costVal = parseFloat(m.cost) || 0;
+                        let itemsHtml = '';
+                        if (m.details) {
+                            const lines = m.details.split('\n');
+                            itemsHtml = lines.map(line => {
+                                const cleanLine = line.replace(/^- /, '').trim();
+                                if (!cleanLine) return '';
+                                const lastDashIdx = cleanLine.lastIndexOf(' - $');
+                                let itemName = cleanLine;
+                                let itemPrice = '0.00';
+                                if (lastDashIdx !== -1) {
+                                    itemName = cleanLine.substring(0, lastDashIdx).trim();
+                                    itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
+                                }
+                                return `
+                                    <div class="flex items-center justify-between py-1 px-2 bg-[#0a0f1d] rounded border border-slate-900 text-xs">
+                                        <span class="text-slate-300 font-sans">${itemName}</span>
+                                        <span class="text-amber-400 font-mono font-bold">$${itemPrice}</span>
+                                    </div>
+                                `;
+                            }).join('');
+                        }
+
+                        html += `
+                            <details class="group/item bg-[#0a0f1d] border border-slate-800/65 rounded-xl text-xs overflow-hidden">
+                                <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
+                                        <span class="text-white font-bold font-sans text-xs">${m.notes}</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
+                                        <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[10px] font-bold uppercase">Undo</button>
+                                        <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-0.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[10px] font-bold uppercase">Edit</button>
+                                        <i class="fa-solid fa-chevron-down text-slate-500 text-[9px] transition-transform group-open/item:rotate-180"></i>
+                                    </div>
+                                </summary>
+                                <div class="p-2.5 pt-0 space-y-1.5 border-t border-slate-800/45 mt-1 font-mono">
+                                    ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-1"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
+                                    <div class="space-y-1 pt-1">
+                                        <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Breakdown</div>
+                                        ${itemsHtml || '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
+                                    </div>
+                                </div>
+                            </details>
+                        `;
+                    });
+
+                    html += `</div></details>`;
+                });
+
+                html += `</div></details>`;
+            });
+
+            completedDiv.innerHTML = html;
             document.getElementById('total-spent-badge').textContent = `$${grandTotalSpent.toFixed(2)}`;
         }
 
