@@ -289,7 +289,7 @@
         </div>
     </main>
 
-    <!-- FUEL DATABASE MODAL (COMPACT & HIERARCHICAL) -->
+    <!-- FUEL DATABASE MODAL (DEFAULT COLLAPSED) -->
     <div id="fuel-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -401,7 +401,7 @@
         </div>
     </div>
 
-    <!-- COMPLETED MAINTENANCE LOG MODAL (HIERARCHICAL YEAR -> MONTH) -->
+    <!-- COMPLETED MAINTENANCE LOG MODAL (YEAR ONLY & DEFAULT COLLAPSED) -->
     <div id="completed-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-4 overflow-y-auto">
         <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -1155,7 +1155,6 @@
                 return;
             }
 
-            // Group by Year -> Month
             const grouped = {};
             sortedFuel.forEach(f => {
                 const [year, month] = f.date.split('-');
@@ -1169,13 +1168,12 @@
             const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
             let html = '';
 
-            years.forEach((year, yIdx) => {
-                const isLatestYear = (yIdx === 0);
+            years.forEach((year) => {
                 let yearTotal = 0;
                 Object.values(grouped[year]).forEach(mArr => mArr.forEach(item => yearTotal += item.cost));
 
                 html += `
-                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono" ${isLatestYear ? 'open' : ''}>
+                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono">
                         <summary class="flex items-center justify-between p-3 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none text-xs">
                             <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-sky-400"></i> ${year}</span>
                             <div class="flex items-center gap-3">
@@ -1187,15 +1185,14 @@
                 `;
 
                 const months = Object.keys(grouped[year]).sort((a, b) => b.localeCompare(a));
-                months.forEach((month, mIdx) => {
-                    const isLatestMonth = isLatestYear && (mIdx === 0);
+                months.forEach((month) => {
                     const monthName = monthNames[month] || month;
                     const mArr = grouped[year][month];
                     let monthTotal = 0;
                     mArr.forEach(item => monthTotal += item.cost);
 
                     html += `
-                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden" ${isLatestMonth ? 'open' : ''}>
+                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden">
                             <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none text-xs">
                                 <span class="font-bold text-slate-300">${monthName}</span>
                                 <div class="flex items-center gap-2">
@@ -1284,28 +1281,26 @@
                 return;
             }
 
-            // Group by Year -> Month based on serviceDate (fallback to current year/month)
+            // Group by Year ONLY based on serviceDate
             const grouped = {};
             completedList.forEach(m => {
                 const dStr = m.serviceDate || getTodayLocalISO();
-                const [year, month] = dStr.split('-');
-                if (!year || !month) return;
-                if (!grouped[year]) grouped[year] = {};
-                if (!grouped[year][month]) grouped[year][month] = [];
-                grouped[year][month].push(m);
+                const year = dStr.split('-')[0];
+                if (!year) return;
+                if (!grouped[year]) grouped[year] = [];
+                grouped[year].push(m);
                 grandTotalSpent += (parseFloat(m.cost) || 0);
             });
 
             const years = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
             let html = '';
 
-            years.forEach((year, yIdx) => {
-                const isLatestYear = (yIdx === 0);
+            years.forEach((year) => {
                 let yearTotal = 0;
-                Object.values(grouped[year]).forEach(mArr => mArr.forEach(m => yearTotal += (parseFloat(m.cost) || 0)));
+                grouped[year].forEach(m => yearTotal += (parseFloat(m.cost) || 0));
 
                 html += `
-                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono" ${isLatestYear ? 'open' : ''}>
+                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono">
                         <summary class="flex items-center justify-between p-3 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none text-xs">
                             <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-emerald-400"></i> ${year}</span>
                             <div class="flex items-center gap-3">
@@ -1313,79 +1308,56 @@
                                 <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform"></i>
                             </div>
                         </summary>
-                        <div class="p-2 space-y-2 border-t border-slate-800/60">
+                        <div class="p-2 space-y-2 border-t border-slate-800/60 bg-[#050913]">
                 `;
 
-                const months = Object.keys(grouped[year]).sort((a, b) => b.localeCompare(a));
-                months.forEach((month, mIdx) => {
-                    const isLatestMonth = isLatestYear && (mIdx === 0);
-                    const monthName = monthNames[month] || month;
-                    const mArr = grouped[year][month];
-                    let monthTotal = 0;
-                    mArr.forEach(m => monthTotal += (parseFloat(m.cost) || 0));
+                grouped[year].forEach(m => {
+                    const costVal = parseFloat(m.cost) || 0;
+                    let itemsHtml = '';
+                    if (m.details) {
+                        const lines = m.details.split('\n');
+                        itemsHtml = lines.map(line => {
+                            const cleanLine = line.replace(/^- /, '').trim();
+                            if (!cleanLine) return '';
+                            const lastDashIdx = cleanLine.lastIndexOf(' - $');
+                            let itemName = cleanLine;
+                            let itemPrice = '0.00';
+                            if (lastDashIdx !== -1) {
+                                itemName = cleanLine.substring(0, lastDashIdx).trim();
+                                itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
+                            }
+                            return `
+                                <div class="flex items-center justify-between py-1 px-2 bg-[#0a0f1d] rounded border border-slate-900 text-xs">
+                                    <span class="text-slate-300 font-sans">${itemName}</span>
+                                    <span class="text-amber-400 font-mono font-bold">$${itemPrice}</span>
+                                </div>
+                            `;
+                        }).join('');
+                    }
 
                     html += `
-                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden" ${isLatestMonth ? 'open' : ''}>
-                            <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none text-xs">
-                                <span class="font-bold text-slate-300">${monthName}</span>
+                        <details class="group/item bg-[#0a0f1d] border border-slate-800/65 rounded-xl text-xs overflow-hidden">
+                            <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-amber-400">$${monthTotal.toFixed(2)}</span>
-                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[9px]"></i>
+                                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
+                                    <span class="text-white font-bold font-sans text-xs">${m.notes}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
+                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[10px] font-bold uppercase">Undo</button>
+                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-0.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[10px] font-bold uppercase">Edit</button>
+                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[9px] transition-transform group-open/item:rotate-180"></i>
                                 </div>
                             </summary>
-                            <div class="p-2 space-y-2 border-t border-slate-800/40 bg-[#050913]">
-                    `;
-
-                    mArr.forEach(m => {
-                        const costVal = parseFloat(m.cost) || 0;
-                        let itemsHtml = '';
-                        if (m.details) {
-                            const lines = m.details.split('\n');
-                            itemsHtml = lines.map(line => {
-                                const cleanLine = line.replace(/^- /, '').trim();
-                                if (!cleanLine) return '';
-                                const lastDashIdx = cleanLine.lastIndexOf(' - $');
-                                let itemName = cleanLine;
-                                let itemPrice = '0.00';
-                                if (lastDashIdx !== -1) {
-                                    itemName = cleanLine.substring(0, lastDashIdx).trim();
-                                    itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
-                                }
-                                return `
-                                    <div class="flex items-center justify-between py-1 px-2 bg-[#0a0f1d] rounded border border-slate-900 text-xs">
-                                        <span class="text-slate-300 font-sans">${itemName}</span>
-                                        <span class="text-amber-400 font-mono font-bold">$${itemPrice}</span>
-                                    </div>
-                                `;
-                            }).join('');
-                        }
-
-                        html += `
-                            <details class="group/item bg-[#0a0f1d] border border-slate-800/65 rounded-xl text-xs overflow-hidden">
-                                <summary class="flex items-center justify-between p-2.5 cursor-pointer hover:bg-slate-900/40 select-none list-none">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
-                                        <span class="text-white font-bold font-sans text-xs">${m.notes}</span>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                        <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-0.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[10px] font-bold uppercase">Undo</button>
-                                        <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-0.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[10px] font-bold uppercase">Edit</button>
-                                        <i class="fa-solid fa-chevron-down text-slate-500 text-[9px] transition-transform group-open/item:rotate-180"></i>
-                                    </div>
-                                </summary>
-                                <div class="p-2.5 pt-0 space-y-1.5 border-t border-slate-800/45 mt-1 font-mono">
-                                    ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-1"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
-                                    <div class="space-y-1 pt-1">
-                                        <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Breakdown</div>
-                                        ${itemsHtml || '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
-                                    </div>
+                            <div class="p-2.5 pt-0 space-y-1.5 border-t border-slate-800/45 mt-1 font-mono">
+                                ${m.serviceDate ? `<div class="text-[10px] text-slate-400 pt-1"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
+                                <div class="space-y-1 pt-1">
+                                    <div class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Breakdown</div>
+                                    ${itemsHtml || '<div class="text-[11px] text-slate-500 italic">No itemized details recorded.</div>'}
                                 </div>
-                            </details>
-                        `;
-                    });
-
-                    html += `</div></details>`;
+                            </div>
+                        </details>
+                    `;
                 });
 
                 html += `</div></details>`;
