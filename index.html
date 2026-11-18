@@ -302,7 +302,7 @@
             <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-3.5 rounded-xl">
                 <h4 class="text-xs font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Fuel Fill</h4>
                 <form onsubmit="handleAddFuel(event)" class="space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div class="grid grid-cols-2 gap-2.5">
                         <div>
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Date</label>
                             <input type="date" id="input-fuel-date" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
@@ -312,8 +312,8 @@
                             <input type="number" step="0.01" id="input-fuel-cost" required placeholder="0.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-xs text-white focus:outline-none font-mono">
                         </div>
                     </div>
-                    <div class="flex justify-end pt-1">
-                        <button type="submit" class="px-4 py-1.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all">Add Fuel Record</button>
+                    <div>
+                        <button type="submit" class="w-full py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs uppercase rounded-xl transition-all shadow-md">Add Fuel Record</button>
                     </div>
                 </form>
             </div>
@@ -1281,7 +1281,6 @@
                 return;
             }
 
-            // Group by Year ONLY based on serviceDate
             const grouped = {};
             completedList.forEach(m => {
                 const dStr = m.serviceDate || getTodayLocalISO();
