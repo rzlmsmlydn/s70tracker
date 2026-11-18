@@ -408,6 +408,7 @@
             </div>
             <form onsubmit="handleEditMilestoneSubmit(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="edit-original-odo">
+                <input type="hidden" id="edit-original-notes">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Target Odometer (km)</label>
                     <input type="number" id="edit-milestone-odo" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3 py-2 text-white font-mono focus:outline-none">
@@ -436,6 +437,7 @@
 
             <form onsubmit="handleCompleteSubmit(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="complete-target-odo">
+                <input type="hidden" id="complete-notes-key">
                 <div>
                     <label class="block text-[11px] font-bold text-slate-300 uppercase mb-1">Service Title / Item</label>
                     <input type="text" id="complete-title" readonly class="w-full bg-[#050913] border border-slate-800 rounded-xl px-3 py-2 text-slate-300 font-mono">
@@ -510,6 +512,10 @@
         let timeMaint = [];
         let oilInterval = 7500;
         let globalEffectivePace = BENCHMARK_PACE;
+
+        function escapeAttr(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
 
         function showToast(message, isError = false) {
             const container = document.getElementById('toast-container');
@@ -616,6 +622,34 @@
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
+        function syncOilLogsToCompletedMilestones() {
+            let added = false;
+            logs.forEach(l => {
+                if (l.oilService) {
+                    const existing = milestones.find(m =>
+                        m.targetOdo === l.odo &&
+                        (m.notes.toLowerCase().includes('oil') || m.notes === 'Engine Oil Service')
+                    );
+                    if (!existing) {
+                        milestones.push({
+                            targetOdo: l.odo,
+                            notes: 'Engine Oil Service',
+                            details: '',
+                            cost: 0,
+                            done: true,
+                            serviceDate: l.date
+                        });
+                        added = true;
+                    } else if (!existing.done) {
+                        existing.done = true;
+                        existing.serviceDate = existing.serviceDate || l.date;
+                        added = true;
+                    }
+                }
+            });
+            return added;
+        }
+
         async function manualBackupToCloud() {
             const syncIcon = document.getElementById('sync-icon');
             syncIcon.classList.add('fa-spin', 'text-amber-400');
@@ -685,7 +719,12 @@
                     return;
                 }
 
+                const autoAddedOil = syncOilLogsToCompletedMilestones();
                 recalculateAll();
+                if (autoAddedOil) {
+                    await pushDataToCloud();
+                }
+
                 syncIcon.classList.remove('fa-spin', 'text-amber-400');
                 syncIcon.classList.add('text-emerald-400');
                 setTimeout(() => syncIcon.classList.remove('text-emerald-400'), 2000);
@@ -895,7 +934,7 @@
                             <td class="py-2.5 px-3 font-mono text-sky-400/90 whitespace-nowrap">${benchDate}</td>
                             <td class="py-2.5 px-3 text-slate-300 leading-snug">${m.notes}</td>
                             <td class="py-2.5 px-3 text-right">
-                                <button onclick="openCompleteModal(${m.targetOdo})" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
+                                <button onclick="openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold">Done</button>
                             </td>
                         </tr>
                     `;
@@ -1025,8 +1064,8 @@
                             <span class="text-slate-300 truncate font-sans">${m.notes}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap">
-                            <button onclick="openEditMilestoneModal(${m.targetOdo})" class="px-2.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-lg text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteMilestone(${m.targetOdo})" class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="openEditMilestoneModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-lg text-xs font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteMilestone(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-bold"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `).join('');
@@ -1052,7 +1091,7 @@
 
         function renderCompletedList() {
             const completedDiv = document.getElementById('settings-completed-milestones');
-            const completedList = milestones.filter(m => m.done);
+            const completedList = [...milestones].filter(m => m.done).sort((a, b) => b.targetOdo - a.targetOdo);
             let grandTotalSpent = 0;
 
             if (completedList.length === 0) {
@@ -1093,8 +1132,8 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo})" title="Undo / Mark Active" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-[10px] font-bold uppercase">Undo</button>
-                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo})" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 rounded-lg text-[10px] font-bold uppercase ml-1">Edit</button>
+                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo / Mark Active" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-[10px] font-bold uppercase">Undo</button>
+                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/30 text-sky-400 rounded-lg text-[10px] font-bold uppercase ml-1">Edit</button>
                                     <i class="fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform group-open:rotate-180"></i>
                                 </div>
                             </summary>
@@ -1113,21 +1152,31 @@
             document.getElementById('total-spent-badge').textContent = `$${grandTotalSpent.toFixed(2)}`;
         }
 
-        async function undoComplete(targetOdo) {
-            const m = milestones.find(item => item.targetOdo === targetOdo);
+        async function undoComplete(targetOdo, notes) {
+            const m = milestones.find(item => item.targetOdo === targetOdo && item.notes === notes);
             if (!m) return;
-            if (confirm(`Are you sure you want to undo/revert "${m.notes}" back to active status?`)) {
-                m.done = false;
-                m.serviceDate = '';
+            if (confirm(`Are you sure you want to undo/revert "${m.notes}"?`)) {
+                if (m.notes === 'Engine Oil Service') {
+                    milestones = milestones.filter(item => !(item.targetOdo === targetOdo && item.notes === notes));
+                    const matchingLog = logs.find(l => l.odo === targetOdo && l.oilService);
+                    if (matchingLog) {
+                        matchingLog.oilService = false;
+                    }
+                } else {
+                    m.done = false;
+                    m.serviceDate = '';
+                }
                 recalculateAll();
                 await pushDataToCloud();
+                showToast("Service reverted & synced!");
             }
         }
 
-        function openEditMilestoneModal(targetOdo) {
-            const m = milestones.find(item => item.targetOdo === targetOdo);
+        function openEditMilestoneModal(targetOdo, notes) {
+            const m = milestones.find(item => item.targetOdo === targetOdo && item.notes === notes);
             if (!m) return;
             document.getElementById('edit-original-odo').value = m.targetOdo;
+            document.getElementById('edit-original-notes').value = m.notes;
             document.getElementById('edit-milestone-odo').value = m.targetOdo;
             document.getElementById('edit-milestone-title').value = m.notes;
             document.getElementById('edit-milestone-modal').classList.remove('hidden');
@@ -1138,7 +1187,8 @@
         async function handleEditMilestoneSubmit(e) {
             e.preventDefault();
             const originalOdo = parseInt(document.getElementById('edit-original-odo').value, 10);
-            const m = milestones.find(item => item.targetOdo === originalOdo);
+            const originalNotes = document.getElementById('edit-original-notes').value;
+            const m = milestones.find(item => item.targetOdo === originalOdo && item.notes === originalNotes);
             if (!m) return;
 
             m.targetOdo = parseInt(document.getElementById('edit-milestone-odo').value, 10);
@@ -1150,15 +1200,16 @@
             showToast("Milestone updated!");
         }
 
-        function openCompleteModal(targetOdo) {
-            const m = milestones.find(item => item.targetOdo === targetOdo);
+        function openCompleteModal(targetOdo, notes) {
+            const m = milestones.find(item => item.targetOdo === targetOdo && (!notes || item.notes === notes));
             if (!m) return;
             document.getElementById('complete-target-odo').value = m.targetOdo;
+            document.getElementById('complete-notes-key').value = m.notes;
             document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
             document.getElementById('complete-date').value = m.serviceDate || getTodayLocalISO();
 
             const modalTitle = document.getElementById('complete-modal-title');
-            if (m.done) {
+            if (m.done && (m.details || m.cost > 0)) {
                 modalTitle.innerHTML = `<i class="fa-solid fa-pen text-sky-400"></i> Edit Service Record`;
             } else {
                 modalTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record`;
@@ -1191,7 +1242,7 @@
             const rowDiv = document.createElement('div');
             rowDiv.className = 'flex items-center gap-2';
             rowDiv.innerHTML = `
-                <input type="text" placeholder="e.g. Motul 8100 X-Cess 5L / Wong Menglait" value="${name}" class="flex-1 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono text-xs item-name-input" oninput="updateCompleteTotal()">
+                <input type="text" placeholder="e.g. Motul 8100 X-Cess 5L / Wong Menglait" value="${escapeAttr(name)}" class="flex-1 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono text-xs item-name-input" oninput="updateCompleteTotal()">
                 <input type="number" step="0.01" placeholder="Price ($)" value="${price}" class="w-28 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-2 text-white focus:outline-none font-mono text-xs item-price-input" oninput="updateCompleteTotal()">
                 <button type="button" onclick="this.parentElement.remove(); updateCompleteTotal();" class="text-rose-400 hover:text-rose-300 px-2 py-2 text-xs"><i class="fa-solid fa-trash"></i></button>
             `;
@@ -1210,7 +1261,8 @@
         async function handleCompleteSubmit(e) {
             e.preventDefault();
             const targetOdo = parseInt(document.getElementById('complete-target-odo').value, 10);
-            const m = milestones.find(item => item.targetOdo === targetOdo);
+            const notesKey = document.getElementById('complete-notes-key').value;
+            const m = milestones.find(item => item.targetOdo === targetOdo && (!notesKey || item.notes === notesKey));
             if (!m) return;
 
             const nameInputs = document.querySelectorAll('.item-name-input');
@@ -1238,9 +1290,9 @@
             showToast("Service record completed & saved!");
         }
 
-        async function deleteMilestone(targetOdo) {
+        async function deleteMilestone(targetOdo, notes) {
             if (confirm("Are you sure you want to delete this maintenance record?")) {
-                milestones = milestones.filter(item => item.targetOdo !== targetOdo);
+                milestones = milestones.filter(item => !(item.targetOdo === targetOdo && (!notes || item.notes === notes)));
                 recalculateAll();
                 await pushDataToCloud();
                 showToast("Milestone deleted.");
@@ -1313,13 +1365,22 @@
 
         async function handleLogSubmit(e) {
             e.preventDefault();
+            const logDate = document.getElementById('input-log-date').value;
+            const logOdo = parseInt(document.getElementById('input-log-odo').value, 10);
+            const isOilChanged = document.getElementById('input-log-oil').checked;
+
             const newEntry = { 
                 id: 'log-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                date: document.getElementById('input-log-date').value, 
-                odo: parseInt(document.getElementById('input-log-odo').value, 10), 
-                oilService: document.getElementById('input-log-oil').checked 
+                date: logDate, 
+                odo: logOdo, 
+                oilService: isOilChanged 
             };
             logs.push(newEntry);
+
+            if (isOilChanged) {
+                syncOilLogsToCompletedMilestones();
+            }
+
             recalculateAll();
             closeLogModal();
             
@@ -1328,6 +1389,10 @@
 
             await pushDataToCloud();
             showToast("Mileage log saved & synced!");
+
+            if (isOilChanged) {
+                openCompleteModal(logOdo, 'Engine Oil Service');
+            }
         }
 
         let inactivityTimer;
