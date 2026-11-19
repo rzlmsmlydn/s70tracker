@@ -21,12 +21,64 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Scrollable Wheel Date Picker */
+        .wheel-col {
+            height: 180px;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .wheel-col::-webkit-scrollbar { display: none; }
+        .wheel-item {
+            height: 36px;
+            scroll-snap-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+        .wheel-pad { height: 72px; flex-shrink: 0; }
     </style>
 </head>
 <body class="min-h-full bg-slate-950 text-slate-100 flex flex-col text-[13px] sm:text-sm">
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- SCROLLABLE WHEEL DATE PICKER MODAL -->
+    <div id="scroll-date-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[60] flex items-center justify-center hidden p-4">
+        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 id="wheel-picker-title" class="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-days text-sky-400"></i> Scroll to Select Date
+                </h3>
+                <button type="button" onclick="closeScrollDatePicker()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+
+            <div class="relative bg-[#050913] border border-slate-800/90 rounded-xl overflow-hidden py-1">
+                <!-- Center selection highlight bar -->
+                <div class="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 h-9 rounded-lg bg-sky-500/15 border border-sky-500/40 z-10"></div>
+
+                <div class="grid grid-cols-3 gap-1 px-2 font-mono text-xs sm:text-sm relative z-20">
+                    <div id="wheel-day" class="wheel-col" onscroll="onWheelScroll('day')"></div>
+                    <div id="wheel-month" class="wheel-col" onscroll="onWheelScroll('month')"></div>
+                    <div id="wheel-year" class="wheel-col" onscroll="onWheelScroll('year')"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2.5 pt-2 border-t border-slate-800">
+                <button type="button" onclick="setWheelToToday()" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-xs font-bold text-sky-400 uppercase tracking-wider">Today</button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeScrollDatePicker()" class="px-3.5 py-2 rounded-xl border border-slate-800 text-xs sm:text-sm font-bold text-slate-400">Cancel</button>
+                    <button type="button" onclick="confirmScrollDatePicker()" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs sm:text-sm font-black uppercase tracking-wider">Apply</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- PASSWORD LOCK SCREEN OVERLAY -->
     <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 hidden">
@@ -78,7 +130,11 @@
                     <h4 class="text-xs sm:text-sm font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h4>
                     <div>
                         <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Select Future Date</label>
-                        <input type="date" id="calc-input-date" oninput="calculateFromDate()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                        <input type="hidden" id="calc-input-date" onchange="calculateFromDate()">
+                        <button type="button" onclick="openScrollDatePicker('calc-input-date', 'Target Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                            <span id="display-calc-input-date">Tap to scroll date</span>
+                            <i class="fa-regular fa-calendar text-sky-400"></i>
+                        </button>
                     </div>
                     <div class="space-y-2 pt-2.5 border-t border-slate-800 font-mono">
                         <div class="flex justify-between gap-2">
@@ -348,7 +404,11 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Date</label>
-                            <input type="date" id="input-fuel-date" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                            <input type="hidden" id="input-fuel-date" required>
+                            <button type="button" onclick="openScrollDatePicker('input-fuel-date', 'Fuel Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                                <span id="display-input-fuel-date">--</span>
+                                <i class="fa-regular fa-calendar text-sky-400"></i>
+                            </button>
                         </div>
                         <div>
                             <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Cost ($)</label>
@@ -480,7 +540,11 @@
                 </div>
                 <div>
                     <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Service Date</label>
-                    <input type="date" id="complete-date" required class="w-full bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                    <input type="hidden" id="complete-date" required>
+                    <button type="button" onclick="openScrollDatePicker('complete-date', 'Service Date')" class="w-full bg-[#050913] border border-slate-800 hover:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                        <span id="display-complete-date">--</span>
+                        <i class="fa-regular fa-calendar text-emerald-400"></i>
+                    </button>
                 </div>
 
                 <div class="space-y-2 pt-1">
@@ -522,7 +586,11 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Date</label>
-                        <input type="date" id="input-log-date" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                        <input type="hidden" id="input-log-date" required>
+                        <button type="button" onclick="openScrollDatePicker('input-log-date', 'Odometer Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                            <span id="display-input-log-date">--</span>
+                            <i class="fa-regular fa-calendar text-sky-400"></i>
+                        </button>
                     </div>
                     <div>
                         <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Odometer (km)</label>
@@ -566,7 +634,11 @@
                     </div>
                     <div>
                         <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Next Due Date</label>
-                        <input type="date" id="input-time-duedate" required class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                        <input type="hidden" id="input-time-duedate" required>
+                        <button type="button" onclick="openScrollDatePicker('input-time-duedate', 'Next Due Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                            <span id="display-input-time-duedate">--</span>
+                            <i class="fa-regular fa-calendar text-emerald-400"></i>
+                        </button>
                     </div>
                     <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all">Add Time Task</button>
                 </form>
@@ -594,6 +666,164 @@
             '05': 'May', '06': 'June', '07': 'July', '08': 'August',
             '09': 'September', '10': 'October', '11': 'November', '12': 'December'
         };
+
+        const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const ITEM_HEIGHT = 36;
+        let activeDateTargetId = null;
+        let wheelState = { day: 1, month: 1, year: 2026 };
+        let wheelScrollTimers = {};
+
+        function setDateFieldValue(inputId, isoDate) {
+            const inputEl = document.getElementById(inputId);
+            if (!inputEl) return;
+            inputEl.value = isoDate || '';
+            const displayEl = document.getElementById('display-' + inputId);
+            if (displayEl) {
+                displayEl.textContent = isoDate ? formatDateDisplay(isoDate) : 'Tap to scroll date';
+            }
+            inputEl.dispatchEvent(new Event('change'));
+        }
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month, 0).getDate();
+        }
+
+        function buildWheelItems(colId, values, formatter, selectedVal) {
+            const col = document.getElementById(colId);
+            col.innerHTML = `<div class="wheel-pad"></div>` + values.map(v => {
+                const isSelected = v === selectedVal;
+                return `<div data-val="${v}" onclick="selectWheelValue('${colId.replace('wheel-', '')}', ${v})" class="wheel-item ${isSelected ? 'text-white font-black scale-105' : 'text-slate-500 font-semibold'}">${formatter(v)}</div>`;
+            }).join('') + `<div class="wheel-pad"></div>`;
+        }
+
+        function updateWheelHighlight(colId, selectedVal) {
+            const col = document.getElementById(colId);
+            col.querySelectorAll('.wheel-item').forEach(el => {
+                const v = parseInt(el.dataset.val, 10);
+                if (v === selectedVal) {
+                    el.classList.remove('text-slate-500', 'font-semibold');
+                    el.classList.add('text-white', 'font-black', 'scale-105');
+                } else {
+                    el.classList.remove('text-white', 'font-black', 'scale-105');
+                    el.classList.add('text-slate-500', 'font-semibold');
+                }
+            });
+        }
+
+        function scrollWheelToValue(colId, val, instant = false) {
+            const col = document.getElementById(colId);
+            const targetItem = col.querySelector(`.wheel-item[data-val="${val}"]`);
+            if (!targetItem) return;
+            const offset = targetItem.offsetTop - 72;
+            col.scrollTo({ top: Math.max(0, offset), behavior: instant ? 'auto' : 'smooth' });
+        }
+
+        function refreshDayWheel(preserveDay, instant = false) {
+            const maxDays = getDaysInMonth(wheelState.year, wheelState.month);
+            if (preserveDay > maxDays) wheelState.day = maxDays;
+            const days = Array.from({ length: maxDays }, (_, i) => i + 1);
+            buildWheelItems('wheel-day', days, d => String(d).padStart(2, '0'), wheelState.day);
+            scrollWheelToValue('wheel-day', wheelState.day, instant);
+        }
+
+        function openScrollDatePicker(targetInputId, labelText = 'Select Date') {
+            activeDateTargetId = targetInputId;
+            document.getElementById('wheel-picker-title').innerHTML = `<i class="fa-regular fa-calendar-days text-sky-400"></i> ${labelText}`;
+
+            const currentVal = document.getElementById(targetInputId)?.value || getTodayLocalISO();
+            const parts = currentVal.split('-');
+            const nowYear = new Date().getFullYear();
+            const startYear = Math.min(2024, nowYear - 2);
+            const endYear = Math.max(2035, nowYear + 8);
+
+            wheelState.year = Math.min(endYear, Math.max(startYear, parseInt(parts[0], 10) || nowYear));
+            wheelState.month = Math.min(12, Math.max(1, parseInt(parts[1], 10) || (new Date().getMonth() + 1)));
+            wheelState.day = parseInt(parts[2], 10) || new Date().getDate();
+
+            const months = Array.from({ length: 12 }, (_, i) => i + 1);
+            const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
+
+            buildWheelItems('wheel-month', months, m => shortMonths[m - 1], wheelState.month);
+            buildWheelItems('wheel-year', years, y => String(y), wheelState.year);
+            refreshDayWheel(wheelState.day, true);
+
+            document.getElementById('scroll-date-modal').classList.remove('hidden');
+
+            requestAnimationFrame(() => {
+                scrollWheelToValue('wheel-day', wheelState.day, true);
+                scrollWheelToValue('wheel-month', wheelState.month, true);
+                scrollWheelToValue('wheel-year', wheelState.year, true);
+            });
+        }
+
+        function closeScrollDatePicker() {
+            document.getElementById('scroll-date-modal').classList.add('hidden');
+            activeDateTargetId = null;
+        }
+
+        function selectWheelValue(part, val) {
+            if (part === 'day') {
+                wheelState.day = val;
+                updateWheelHighlight('wheel-day', val);
+                scrollWheelToValue('wheel-day', val);
+            } else if (part === 'month') {
+                wheelState.month = val;
+                updateWheelHighlight('wheel-month', val);
+                scrollWheelToValue('wheel-month', val);
+                refreshDayWheel(wheelState.day);
+            } else if (part === 'year') {
+                wheelState.year = val;
+                updateWheelHighlight('wheel-year', val);
+                scrollWheelToValue('wheel-year', val);
+                refreshDayWheel(wheelState.day);
+            }
+        }
+
+        function onWheelScroll(part) {
+            clearTimeout(wheelScrollTimers[part]);
+            wheelScrollTimers[part] = setTimeout(() => {
+                const col = document.getElementById('wheel-' + part);
+                const idx = Math.round(col.scrollTop / ITEM_HEIGHT);
+                const items = col.querySelectorAll('.wheel-item');
+                if (!items.length) return;
+                const clampedIdx = Math.max(0, Math.min(items.length - 1, idx));
+                const val = parseInt(items[clampedIdx].dataset.val, 10);
+
+                if (part === 'day') {
+                    wheelState.day = val;
+                    updateWheelHighlight('wheel-day', val);
+                } else if (part === 'month') {
+                    wheelState.month = val;
+                    updateWheelHighlight('wheel-month', val);
+                    refreshDayWheel(wheelState.day);
+                } else if (part === 'year') {
+                    wheelState.year = val;
+                    updateWheelHighlight('wheel-year', val);
+                    refreshDayWheel(wheelState.day);
+                }
+            }, 80);
+        }
+
+        function setWheelToToday() {
+            const today = getTodayLocalISO().split('-');
+            wheelState.year = parseInt(today[0], 10);
+            wheelState.month = parseInt(today[1], 10);
+            wheelState.day = parseInt(today[2], 10);
+            scrollWheelToValue('wheel-year', wheelState.year);
+            scrollWheelToValue('wheel-month', wheelState.month);
+            updateWheelHighlight('wheel-year', wheelState.year);
+            updateWheelHighlight('wheel-month', wheelState.month);
+            refreshDayWheel(wheelState.day);
+        }
+
+        function confirmScrollDatePicker() {
+            if (!activeDateTargetId) return;
+            const maxDays = getDaysInMonth(wheelState.year, wheelState.month);
+            const day = Math.min(wheelState.day, maxDays);
+            const iso = `${wheelState.year}-${String(wheelState.month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            setDateFieldValue(activeDateTargetId, iso);
+            closeScrollDatePicker();
+        }
 
         function escapeAttr(str) {
             return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -689,7 +919,7 @@
 
         function openFuelModal() {
             document.getElementById('fuel-modal').classList.remove('hidden');
-            document.getElementById('input-fuel-date').value = getTodayLocalISO();
+            setDateFieldValue('input-fuel-date', getTodayLocalISO());
             renderFuelList();
         }
 
@@ -1244,7 +1474,7 @@
             });
 
             document.getElementById('input-fuel-cost').value = '';
-            document.getElementById('input-fuel-date').value = getTodayLocalISO();
+            setDateFieldValue('input-fuel-date', getTodayLocalISO());
 
             renderFuelList();
             pushDataToCloud();
@@ -1534,7 +1764,7 @@
             document.getElementById('complete-target-odo').value = m.targetOdo;
             document.getElementById('complete-notes-key').value = m.notes;
             document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
-            document.getElementById('complete-date').value = m.serviceDate || getTodayLocalISO();
+            setDateFieldValue('complete-date', m.serviceDate || getTodayLocalISO());
 
             const modalTitle = document.getElementById('complete-modal-title');
             if (m.done && (m.details || m.cost > 0)) {
@@ -1659,7 +1889,7 @@
             timeMaint.push({ id: Date.now().toString(), title, dueDate });
             deduplicateLoadedData();
             document.getElementById('input-time-title').value = '';
-            document.getElementById('input-time-duedate').value = '';
+            setDateFieldValue('input-time-duedate', getTodayLocalISO());
 
             renderTimeMaintCard();
             renderSettingsLists();
@@ -1772,9 +2002,11 @@
         window.onload = async () => {
             checkAuth();
             const todayLocal = getTodayLocalISO();
-            document.getElementById('input-log-date').value = todayLocal;
-            document.getElementById('complete-date').value = todayLocal;
-            document.getElementById('input-fuel-date').value = todayLocal;
+            setDateFieldValue('input-log-date', todayLocal);
+            setDateFieldValue('complete-date', todayLocal);
+            setDateFieldValue('input-fuel-date', todayLocal);
+            setDateFieldValue('input-time-duedate', todayLocal);
+            setDateFieldValue('calc-input-date', '');
             await syncDataFromCloud();
         };
     </script>
