@@ -148,6 +148,7 @@
 
     <!-- MAIN DASHBOARD -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-5">
+        <!-- Row 1: Mileage Update (Open) + Incoming Maintenance (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <div class="px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913]">
@@ -193,12 +194,13 @@
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
                     </h2>
-                    <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-incoming" class="p-2.5 sm:p-3 space-y-1 font-mono max-h-80 overflow-y-auto"></div>
+                <div id="content-card-incoming" class="p-2.5 sm:p-3 space-y-1 font-mono max-h-80 overflow-y-auto hidden"></div>
             </div>
         </div>
 
+        <!-- Row 2: Engine Oil Service Schedule (Open) + Other Maintenance Schedule (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-oil-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
@@ -207,13 +209,12 @@
                     </h2>
                     <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200"></i>
                 </button>
-                <div id="content-card-oil-real" class="max-h-80 overflow-y-auto">
+                <div id="content-card-oil-real" class="max-h-80 overflow-y-auto overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-[#050913] z-10">
                             <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
-                                <th class="py-2.5 px-3.5 sm:px-4">Target Mileage</th>
-                                <th class="py-2.5 px-3.5 sm:px-4">Realistic Date</th>
-                                <th class="py-2.5 px-3.5 sm:px-4 text-right">95 km/day Date</th>
+                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Target Mileage</th>
+                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Realistic Date</th>
                             </tr>
                         </thead>
                         <tbody id="oil-realistic-body" class="divide-y divide-slate-800/50 font-mono"></tbody>
@@ -226,17 +227,16 @@
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance Schedule
                     </h2>
-                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-maint-real" class="max-h-80 overflow-y-auto">
+                <div id="content-card-maint-real" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-[#050913] z-10">
                             <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
-                                <th class="py-2.5 px-3 sm:px-4">Target Odo</th>
-                                <th class="py-2.5 px-3 sm:px-4">Realistic</th>
-                                <th class="py-2.5 px-3 sm:px-4">95/day</th>
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Odo</th>
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Realistic</th>
                                 <th class="py-2.5 px-3 sm:px-4">Notes / Purposes</th>
-                                <th class="py-2.5 px-3 sm:px-4 text-right">Action</th>
+                                <th class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
                         <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50"></tbody>
@@ -245,7 +245,29 @@
             </div>
         </div>
 
+        <!-- Row 3: 95 km/day Pace Schedule (New Card, Default Collapsed) + Time-Based Maintenance (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
+            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-95-pace')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+                    <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-gauge-simple-high text-sky-400"></i> 95 km/day Pace Schedule
+                    </h2>
+                    <i id="icon-card-95-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                </button>
+                <div id="content-card-95-pace" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-[#050913] z-10">
+                            <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Odo</th>
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">95 km/day Date</th>
+                                <th class="py-2.5 px-3 sm:px-4">Service / Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pace-95-body" class="divide-y divide-slate-800/50 font-mono"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-time-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -257,7 +279,10 @@
                     <div id="time-maint-list" class="space-y-2"></div>
                 </div>
             </div>
+        </div>
 
+        <!-- Row 4: Realistic Pace — V3 (Collapsed) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
             <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-pace')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
@@ -950,6 +975,8 @@
 
                 let oilRealHtml = '';
                 let oilRealItems = [];
+                let pace95Rows = [];
+
                 for (let i = 1; i <= 20; i++) {
                     const targetOdo = lastOil.odo + (oilInterval * i);
                     if (targetOdo <= latest.odo) continue;
@@ -965,15 +992,22 @@
                         category: 'Engine Oil Service'
                     });
 
+                    pace95Rows.push({
+                        odoVal: targetOdo,
+                        odoText: `${targetOdo.toLocaleString()} km`,
+                        benchDate,
+                        label: 'Engine Oil Service',
+                        isOil: true
+                    });
+
                     const isNext = (oilRealItems.length === 1);
                     const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
                     const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
 
                     oilRealHtml += `
                         <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-3.5 sm:px-4 ${odoColor}">${targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3.5 sm:px-4 ${dateColor}">${realDate}</td>
-                            <td class="py-2.5 px-3.5 sm:px-4 text-right text-sky-400/90">${benchDate}</td>
+                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${dateColor}">${realDate}</td>
                         </tr>
                     `;
                 }
@@ -994,18 +1028,34 @@
                         category: 'Other Maintenance'
                     });
 
+                    pace95Rows.push({
+                        odoVal: m.targetOdo,
+                        odoText: `${m.targetOdo.toLocaleString()} km`,
+                        benchDate,
+                        label: m.notes,
+                        isOil: false
+                    });
+
                     return `
                         <tr class="hover:bg-slate-900/45 transition-colors">
                             <td class="py-2.5 px-3 sm:px-4 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
                             <td class="py-2.5 px-3 sm:px-4 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
-                            <td class="py-2.5 px-3 sm:px-4 font-mono text-sky-400/90 whitespace-nowrap">${benchDate}</td>
-                            <td class="py-2.5 px-3 sm:px-4 text-slate-300 leading-snug">${m.notes}</td>
-                            <td class="py-2.5 px-3 sm:px-4 text-right">
+                            <td class="py-2.5 px-3 sm:px-4 text-slate-300 leading-relaxed whitespace-normal break-words min-w-[160px]">${m.notes}</td>
+                            <td class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap">
                                 <button onclick="openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold">Done</button>
                             </td>
                         </tr>
                     `;
-                }).join('') || '<tr><td colspan="5" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+
+                pace95Rows.sort((a, b) => a.odoVal - b.odoVal);
+                document.getElementById('pace-95-body').innerHTML = pace95Rows.map(row => `
+                    <tr class="hover:bg-slate-900/45 transition-colors">
+                        <td class="py-2.5 px-3 sm:px-4 font-bold ${row.isOil ? 'text-emerald-400' : 'text-amber-400'} whitespace-nowrap">${row.odoText}</td>
+                        <td class="py-2.5 px-3 sm:px-4 text-sky-400 whitespace-nowrap">${row.benchDate}</td>
+                        <td class="py-2.5 px-3 sm:px-4 font-sans text-slate-300 leading-relaxed whitespace-normal break-words min-w-[150px]">${row.label}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="3" class="py-3 px-3 text-slate-500 text-center">No upcoming mileage items.</td></tr>';
 
                 renderTimeMaintCard();
 
@@ -1023,10 +1073,10 @@
                 allIncoming.sort((a, b) => a.dateObj - b.dateObj);
 
                 const incomingHtml = allIncoming.map(item => `
-                    <div class="py-2 px-3 border-b border-slate-800/30 last:border-0 flex items-center justify-between gap-3">
-                        <div class="font-sans font-semibold text-slate-200 leading-snug flex-1 break-words">${item.title}</div>
-                        <div class="flex items-center gap-2.5 sm:gap-3 shrink-0">
-                            ${item.odo ? `<span class="text-[11px] sm:text-xs font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : '<span></span>'}
+                    <div class="py-2 px-3 border-b border-slate-800/30 last:border-0 flex items-start justify-between gap-3">
+                        <div class="font-sans font-semibold text-slate-200 leading-relaxed flex-1 whitespace-normal break-words">${item.title}</div>
+                        <div class="flex items-center gap-2 sm:gap-3 shrink-0 pt-0.5">
+                            ${item.odo ? `<span class="text-[11px] sm:text-xs font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : ''}
                             <div class="text-emerald-400 font-bold font-mono whitespace-nowrap text-right w-24 sm:w-28">${item.dateStr}</div>
                         </div>
                     </div>
@@ -1110,9 +1160,9 @@
                 return;
             }
             timeListDiv.innerHTML = timeMaint.map(t => `
-                <div class="flex justify-between items-center gap-2 py-1.5 border-b border-slate-800/40 last:border-0">
-                    <div class="font-sans font-bold text-slate-200">${t.title}</div>
-                    <div class="text-emerald-400 font-bold whitespace-nowrap">${formatDateDisplay(t.dueDate)}</div>
+                <div class="flex justify-between items-start gap-2.5 py-1.5 border-b border-slate-800/40 last:border-0">
+                    <div class="font-sans font-bold text-slate-200 leading-relaxed whitespace-normal break-words flex-1">${t.title}</div>
+                    <div class="text-emerald-400 font-bold whitespace-nowrap shrink-0">${formatDateDisplay(t.dueDate)}</div>
                 </div>
             `).join('');
         }
@@ -1235,10 +1285,10 @@
                 activeDiv.innerHTML = '<div class="text-slate-500 italic">No active milestones.</div>';
             } else {
                 activeDiv.innerHTML = activeList.map(m => `
-                    <div class="flex items-center justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
-                        <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                            <span class="text-amber-400 font-bold whitespace-nowrap">${m.targetOdo.toLocaleString()} km</span>
-                            <span class="text-slate-300 truncate font-sans">${m.notes}</span>
+                    <div class="flex items-start justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 flex-1 min-w-0">
+                            <span class="text-amber-400 font-bold whitespace-nowrap shrink-0">${m.targetOdo.toLocaleString()} km</span>
+                            <span class="text-slate-300 font-sans leading-relaxed whitespace-normal break-words">${m.notes}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
                             <button onclick="openEditMilestoneModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-lg font-bold"><i class="fa-solid fa-pen"></i></button>
@@ -1253,10 +1303,10 @@
                 activeTimeDiv.innerHTML = '<div class="text-slate-500 italic">No active time-based tasks.</div>';
             } else {
                 activeTimeDiv.innerHTML = timeMaint.map(t => `
-                    <div class="flex items-center justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
-                        <div class="flex items-center gap-2.5 flex-1 min-w-0">
-                            <span class="text-emerald-400 font-bold whitespace-nowrap">${formatDateDisplay(t.dueDate)}</span>
-                            <span class="text-slate-300 truncate font-sans">${t.title}</span>
+                    <div class="flex items-start justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 flex-1 min-w-0">
+                            <span class="text-emerald-400 font-bold whitespace-nowrap shrink-0">${formatDateDisplay(t.dueDate)}</span>
+                            <span class="text-slate-300 font-sans leading-relaxed whitespace-normal break-words">${t.title}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
                             <button onclick="deleteTimeMaint('${t.id}')" class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg font-bold"><i class="fa-solid fa-trash"></i></button>
@@ -1327,9 +1377,9 @@
                                 itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
                             }
                             return `
-                                <div class="flex items-center justify-between py-1.5 px-2.5 bg-[#0a0f1d] rounded border border-slate-900">
-                                    <span class="text-slate-300 font-sans">${itemName}</span>
-                                    <span class="text-amber-400 font-mono font-bold">$${itemPrice}</span>
+                                <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 bg-[#0a0f1d] rounded border border-slate-900">
+                                    <span class="text-slate-300 font-sans whitespace-normal break-words">${itemName}</span>
+                                    <span class="text-amber-400 font-mono font-bold shrink-0">$${itemPrice}</span>
                                 </div>
                             `;
                         }).join('');
@@ -1337,10 +1387,10 @@
 
                     html += `
                         <details class="group/item bg-[#0a0f1d] border border-slate-800/65 rounded-xl overflow-hidden">
-                            <summary class="flex items-center justify-between gap-2 p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
-                                <div class="flex items-center gap-2 min-w-0">
-                                    <span class="text-emerald-400 font-bold whitespace-nowrap"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
-                                    <span class="text-white font-bold font-sans truncate">${m.notes}</span>
+                            <summary class="flex items-start justify-between gap-2 p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 flex-1">
+                                    <span class="text-emerald-400 font-bold whitespace-nowrap shrink-0"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
+                                    <span class="text-white font-bold font-sans leading-relaxed whitespace-normal break-words">${m.notes}</span>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
