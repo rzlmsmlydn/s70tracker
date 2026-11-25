@@ -372,7 +372,8 @@
                             <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
                                 <th class="py-2 px-2.5">Task</th>
                                 <th class="py-2 px-2.5 whitespace-nowrap">Due Date</th>
-                                <th class="py-2 px-2.5 text-right whitespace-nowrap">Days Left</th>
+                                <th class="py-2 px-2.5 whitespace-nowrap">Days Left</th>
+                                <th class="py-2 px-2.5 text-right whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
                         <tbody id="time-maint-list" class="divide-y divide-zinc-900"></tbody>
@@ -581,6 +582,7 @@
             <form onsubmit="handleCompleteSubmit(event)" autocomplete="off" class="space-y-3.5 text-xs sm:text-sm">
                 <input type="hidden" id="complete-target-odo">
                 <input type="hidden" id="complete-notes-key">
+                <input type="hidden" id="complete-time-task-id">
                 <div>
                     <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Service Title / Item</label>
                     <input type="text" id="complete-title" readonly autocomplete="off" class="w-full bg-[#040505] border border-zinc-800 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-300 font-mono">
@@ -893,7 +895,7 @@
 
             const seenMilestones = new Map();
             milestones.forEach(m => {
-                const key = `${m.targetOdo}|${String(m.notes).trim().toLowerCase()}`;
+                const key = `${m.targetOdo}|${String(m.notes).trim().toLowerCase()}|${m.done ? '1' : '0'}|${m.serviceDate || ''}`;
                 if (!seenMilestones.has(key)) {
                     seenMilestones.set(key, m);
                 } else {
@@ -1562,7 +1564,7 @@
         function renderTimeMaintCard() {
             const timeListBody = document.getElementById('time-maint-list');
             if (timeMaint.length === 0) {
-                timeListBody.innerHTML = '<tr><td colspan="3" class="py-3 px-2.5 text-zinc-500 text-center">No time-based tasks.</td></tr>';
+                timeListBody.innerHTML = '<tr><td colspan="4" class="py-3 px-2.5 text-zinc-500 text-center">No time-based tasks.</td></tr>';
                 return;
             }
             const sortedTime = [...timeMaint].sort((a, b) => parseDateGB(a.dueDate) - parseDateGB(b.dueDate));
@@ -1574,10 +1576,33 @@
                     <tr class="hover:bg-zinc-900/45 transition-colors">
                         <td class="py-2 px-2.5 font-sans font-bold text-slate-200 leading-relaxed whitespace-normal break-words">${t.title}</td>
                         <td class="py-2 px-2.5 text-emerald-400 font-bold whitespace-nowrap">${formatDateDisplay(t.dueDate)}</td>
-                        <td class="py-2 px-2.5 text-right whitespace-nowrap ${daysColor}">${daysLeftText}</td>
+                        <td class="py-2 px-2.5 whitespace-nowrap ${daysColor}">${daysLeftText}</td>
+                        <td class="py-2 px-2.5 text-right whitespace-nowrap">
+                            <button onclick="openCompleteTimeMaintModal('${escapeAttr(t.id)}')" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold">Done</button>
+                        </td>
                     </tr>
                 `;
             }).join('');
+        }
+
+        function openCompleteTimeMaintModal(taskId) {
+            const t = timeMaint.find(item => item.id === taskId);
+            if (!t) return;
+            const latestOdo = logs.length > 0 ? logs[logs.length - 1].odo : 0;
+
+            document.getElementById('complete-target-odo').value = latestOdo;
+            document.getElementById('complete-notes-key').value = '';
+            document.getElementById('complete-time-task-id').value = t.id;
+            document.getElementById('complete-title').value = `${t.title} (${latestOdo.toLocaleString()} km)`;
+            setDateFieldValue('complete-date', getTodayLocalISO());
+
+            document.getElementById('complete-modal-title').innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record`;
+
+            const container = document.getElementById('complete-rows-container');
+            container.innerHTML = '';
+            addCompleteRow(t.title, '');
+            updateCompleteTotal();
+            document.getElementById('complete-modal').classList.remove('hidden');
         }
 
         function handleAddFuel(e) {
@@ -1807,8 +1832,8 @@
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
                                     <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[11px] font-bold uppercase">Undo</button>
-                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold uppercase">Edit</button>
+                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}', '${escapeAttr(m.serviceDate || '')}')" title="Undo" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[11px] font-bold uppercase">Undo</button>
+                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}', '${escapeAttr(m.serviceDate || '')}')" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold uppercase">Edit</button>
                                     <i class="fa-solid fa-chevron-down text-zinc-500 text-xs transition-transform group-open/item:rotate-180"></i>
                                 </div>
                             </summary>
@@ -1830,12 +1855,17 @@
             document.getElementById('total-spent-badge').textContent = `$${grandTotalSpent.toFixed(2)}`;
         }
 
-        function undoComplete(targetOdo, notes) {
-            const m = milestones.find(item => item.targetOdo === targetOdo && item.notes === notes);
+        function undoComplete(targetOdo, notes, serviceDate = '') {
+            const m = milestones.find(item =>
+                item.targetOdo === targetOdo &&
+                item.notes === notes &&
+                item.done &&
+                (!serviceDate || (item.serviceDate || '') === serviceDate)
+            ) || milestones.find(item => item.targetOdo === targetOdo && item.notes === notes && item.done);
             if (!m) return;
             if (confirm(`Are you sure you want to undo/revert "${m.notes}"?`)) {
                 if (m.notes === 'Engine Oil Service') {
-                    milestones = milestones.filter(item => !(item.targetOdo === targetOdo && item.notes === notes));
+                    milestones = milestones.filter(item => item !== m);
                     const matchingLog = logs.find(l => l.odo === targetOdo && l.oilService);
                     if (matchingLog) {
                         matchingLog.oilService = false;
@@ -1878,11 +1908,16 @@
             showToast("Milestone updated!");
         }
 
-        function openCompleteModal(targetOdo, notes) {
-            const m = milestones.find(item => item.targetOdo === targetOdo && (!notes || item.notes === notes));
+        function openCompleteModal(targetOdo, notes, serviceDate = '') {
+            const m = milestones.find(item =>
+                item.targetOdo === targetOdo &&
+                (!notes || item.notes === notes) &&
+                (!serviceDate || (item.serviceDate || '') === serviceDate)
+            ) || milestones.find(item => item.targetOdo === targetOdo && (!notes || item.notes === notes));
             if (!m) return;
             document.getElementById('complete-target-odo').value = m.targetOdo;
             document.getElementById('complete-notes-key').value = m.notes;
+            document.getElementById('complete-time-task-id').value = '';
             document.getElementById('complete-title').value = `${m.notes} (${m.targetOdo.toLocaleString()} km)`;
             setDateFieldValue('complete-date', m.serviceDate || getTodayLocalISO());
 
@@ -1934,14 +1969,16 @@
             document.getElementById('complete-total-display').textContent = `$${total.toFixed(2)}`;
         }
 
-        function closeCompleteModal() { document.getElementById('complete-modal').classList.add('hidden'); }
+        function closeCompleteModal() {
+            document.getElementById('complete-time-task-id').value = '';
+            document.getElementById('complete-modal').classList.add('hidden');
+        }
 
         function handleCompleteSubmit(e) {
             e.preventDefault();
             const targetOdo = parseInt(document.getElementById('complete-target-odo').value, 10);
             const notesKey = document.getElementById('complete-notes-key').value;
-            const m = milestones.find(item => item.targetOdo === targetOdo && (!notesKey || item.notes === notesKey));
-            if (!m) return;
+            const timeTaskId = document.getElementById('complete-time-task-id').value;
 
             const nameInputs = document.querySelectorAll('.item-name-input');
             const priceInputs = document.querySelectorAll('.item-price-input');
@@ -1957,10 +1994,28 @@
                 }
             }
 
-            m.serviceDate = document.getElementById('complete-date').value;
-            m.details = detailsLines.join('\n');
-            m.cost = totalCost;
-            m.done = true;
+            const svcDate = document.getElementById('complete-date').value;
+
+            if (timeTaskId) {
+                const task = timeMaint.find(t => t.id === timeTaskId);
+                if (!task) return;
+                milestones.push({
+                    targetOdo: isNaN(targetOdo) ? 0 : targetOdo,
+                    notes: task.title,
+                    details: detailsLines.join('\n'),
+                    cost: totalCost,
+                    done: true,
+                    serviceDate: svcDate
+                });
+                timeMaint = timeMaint.filter(t => t.id !== timeTaskId);
+            } else {
+                const m = milestones.find(item => item.targetOdo === targetOdo && (!notesKey || item.notes === notesKey));
+                if (!m) return;
+                m.serviceDate = svcDate;
+                m.details = detailsLines.join('\n');
+                m.cost = totalCost;
+                m.done = true;
+            }
 
             closeCompleteModal();
             recalculateAll();
