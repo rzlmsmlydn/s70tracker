@@ -147,12 +147,12 @@
         </div>
     </div>
 
-    <!-- CALCULATOR MODAL -->
+    <!-- CALCULATOR MODAL (INCLUDES REALISTIC PACE — V3) -->
     <div id="calculator-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
         <div class="bg-[#0a0c0b] border border-emerald-500/20 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-zinc-800/90 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-purple-400"></i> Date ↔ Mileage Calculator
+                    <i class="fa-solid fa-calculator text-cyan-400"></i> Date ↔ Mileage Calculator
                 </h3>
                 <button onclick="closeCalculatorModal()" class="text-zinc-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
@@ -170,7 +170,7 @@
                     <div class="space-y-2 pt-2.5 border-t border-zinc-800/90 font-mono">
                         <div class="flex justify-between gap-2">
                             <span class="text-zinc-400">Realistic Pace Odo:</span>
-                            <span id="calc-result-odo-realistic" class="font-black text-purple-300 text-right">-- km</span>
+                            <span id="calc-result-odo-realistic" class="font-black text-cyan-300 text-right">-- km</span>
                         </div>
                         <div class="flex justify-between gap-2">
                             <span class="text-zinc-400">95 km/day Odo:</span>
@@ -188,7 +188,7 @@
                     <div class="space-y-2 pt-2.5 border-t border-zinc-800/90 font-mono">
                         <div class="flex justify-between gap-2">
                             <span class="text-zinc-400">Realistic Pace Date:</span>
-                            <span id="calc-result-date-realistic" class="font-black text-purple-300 text-right">--</span>
+                            <span id="calc-result-date-realistic" class="font-black text-cyan-300 text-right">--</span>
                         </div>
                         <div class="flex justify-between gap-2">
                             <span class="text-zinc-400">95 km/day Date:</span>
@@ -197,6 +197,30 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Realistic Pace — V3 Diagnostic Breakdown -->
+            <div class="bg-[#040505] border border-zinc-800/80 p-4 rounded-xl space-y-2 text-xs sm:text-sm">
+                <h4 class="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2 pb-1">
+                    <i class="fa-solid fa-tachometer-alt text-cyan-400"></i> Realistic Pace — V3
+                </h4>
+                <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
+                    <span id="pace-recent-label" class="text-zinc-400">Recent Pace (7–14d)</span>
+                    <span id="pace-recent" class="font-mono font-bold text-white">0.00 km/day</span>
+                </div>
+                <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
+                    <span id="pace-longterm-label" class="text-zinc-400">Long-term Pace</span>
+                    <span id="pace-longterm" class="font-mono font-bold text-white">0.00 km/day</span>
+                </div>
+                <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
+                    <span class="font-bold text-cyan-300">Weighted Realistic (60/40)</span>
+                    <span id="pace-weighted" class="font-mono font-black text-cyan-300">0.00 km/day</span>
+                </div>
+                <div class="flex justify-between gap-2 py-1.5">
+                    <span class="text-zinc-400">Comparison Benchmark</span>
+                    <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                </div>
+            </div>
+
             <div class="flex items-center justify-end pt-2 border-t border-zinc-800/90">
                 <button type="button" onclick="closeCalculatorModal()" class="px-4 py-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
             </div>
@@ -216,7 +240,7 @@
                 <i id="snapshot-icon" class="fa-solid fa-database text-violet-400 text-xs sm:text-sm"></i>
             </button>
             <button onclick="openCalculatorModal()" title="Date ↔ Mileage Calculator" class="bg-[#0b0e0d] hover:bg-zinc-900 border border-emerald-500/20 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-calculator text-purple-400 text-xs sm:text-sm"></i>
+                <i class="fa-solid fa-calculator text-cyan-400 text-xs sm:text-sm"></i>
             </button>
             <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b0e0d] hover:bg-zinc-900 border border-emerald-500/20 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-clipboard-list text-amber-400 text-xs sm:text-sm"></i>
@@ -287,21 +311,22 @@
             </div>
         </div>
 
-        <!-- Row 2: Engine Oil Service Schedule (Open) + Other Maintenance Schedule (Open) -->
+        <!-- Row 2: Engine Oil Service Schedule (Collapsed) + Other Maintenance Schedule (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
             <div class="bg-[#090b0a] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-oil-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service Schedule
                     </h2>
-                    <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-oil-real" class="max-h-80 overflow-y-auto overflow-x-auto">
+                <div id="content-card-oil-real" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-[#050606] z-10">
                             <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
-                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Target Mileage</th>
-                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Realistic Date</th>
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Mileage</th>
+                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Realistic Date</th>
+                                <th class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap">Days Left</th>
                             </tr>
                         </thead>
                         <tbody id="oil-realistic-body" class="divide-y divide-zinc-900 font-mono"></tbody>
@@ -314,9 +339,9 @@
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance Schedule
                     </h2>
-                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-maint-real" class="max-h-80 overflow-y-auto overflow-x-auto">
+                <div id="content-card-maint-real" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
                         <thead class="sticky top-0 bg-[#050606] z-10">
                             <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
@@ -332,7 +357,7 @@
             </div>
         </div>
 
-        <!-- Row 3: Time-Based Maintenance (Collapsed) + Realistic Pace — V3 (Collapsed) -->
+        <!-- Row 3: Time-Based Maintenance (Collapsed) + Combined 95 km/day Schedule Card (Collapsed, 2 Collapsible Sections Inside) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
             <div class="bg-[#090b0a] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
                 <button onclick="toggleCard('card-time-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
@@ -341,79 +366,70 @@
                     </h2>
                     <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-time-maint" class="p-4 sm:p-5 space-y-2.5 font-mono hidden">
-                    <div id="time-maint-list" class="space-y-2"></div>
-                </div>
-            </div>
-
-            <div class="bg-[#090b0a] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-pace')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
-                    <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
-                    </h2>
-                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
-                </button>
-                <div id="content-card-pace" class="p-4 sm:p-5 space-y-2.5 flex-col justify-center hidden">
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
-                        <span id="pace-recent-label" class="text-zinc-400">Recent Pace (7–14d)</span>
-                        <span id="pace-recent" class="font-mono font-bold text-white">0.00 km/day</span>
-                    </div>
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
-                        <span id="pace-longterm-label" class="text-zinc-400">Long-term Pace</span>
-                        <span id="pace-longterm" class="font-mono font-bold text-white">0.00 km/day</span>
-                    </div>
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-zinc-900">
-                        <span class="font-bold text-purple-300">Weighted Realistic (60/40)</span>
-                        <span id="pace-weighted" class="font-mono font-black text-purple-300">0.00 km/day</span>
-                    </div>
-                    <div class="flex justify-between gap-2 py-1.5">
-                        <span class="text-zinc-400">Comparison Benchmark</span>
-                        <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Row 4 (Very Bottom): 95 km/day Oil Change (Collapsed) + 95 km/day Other Maintenance (Collapsed) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            <div class="bg-[#090b0a] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-95-oil')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
-                    <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-oil-can text-emerald-400"></i> 95 km/day Oil Change
-                    </h2>
-                    <i id="icon-card-95-oil" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
-                </button>
-                <div id="content-card-95-oil" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
+                <div id="content-card-time-maint" class="p-3 sm:p-4 font-mono max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050606] z-10">
+                        <thead>
                             <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
-                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Target Mileage</th>
-                                <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">95 km/day Date</th>
+                                <th class="py-2 px-2.5">Task</th>
+                                <th class="py-2 px-2.5 whitespace-nowrap">Due Date</th>
+                                <th class="py-2 px-2.5 text-right whitespace-nowrap">Days Left</th>
                             </tr>
                         </thead>
-                        <tbody id="pace-95-oil-body" class="divide-y divide-zinc-900 font-mono"></tbody>
+                        <tbody id="time-maint-list" class="divide-y divide-zinc-900"></tbody>
                     </table>
                 </div>
             </div>
 
             <div class="bg-[#090b0a] border border-emerald-500/20 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-95-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
+                <button onclick="toggleCard('card-95-combined')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-500/15 bg-[#050606] flex items-center justify-between text-left hover:bg-zinc-900/40 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-gauge-simple-high text-amber-400"></i> 95 km/day Other Maintenance
+                        <i class="fa-solid fa-gauge-simple-high text-sky-400"></i> 95 km/day Schedule
                     </h2>
-                    <i id="icon-card-95-maint" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-95-combined" class="fa-solid fa-chevron-down text-emerald-400/70 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
-                <div id="content-card-95-maint" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
-                    <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050606] z-10">
-                            <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
-                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Odo</th>
-                                <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">95 km/day Date</th>
-                                <th class="py-2.5 px-3 sm:px-4">Notes / Purposes</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pace-95-maint-body" class="divide-y divide-zinc-900 font-mono"></tbody>
-                    </table>
+                <div id="content-card-95-combined" class="p-3 sm:p-4 space-y-3 max-h-96 overflow-y-auto hidden">
+                    <!-- Section A: 95 km/day Oil Change (Collapsible) -->
+                    <div class="bg-[#040505] border border-zinc-800/80 rounded-xl overflow-hidden">
+                        <button onclick="toggleCard('subcard-95-oil')" class="w-full px-3.5 py-2.5 bg-[#070908] hover:bg-zinc-900/50 flex items-center justify-between text-left transition-colors">
+                            <span class="text-xs font-black tracking-wider text-slate-100 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-oil-can text-emerald-400"></i> 95 km/day Oil Change
+                            </span>
+                            <i id="icon-subcard-95-oil" class="fa-solid fa-chevron-down text-zinc-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
+                        </button>
+                        <div id="content-subcard-95-oil" class="max-h-60 overflow-y-auto overflow-x-auto hidden border-t border-zinc-900">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="sticky top-0 bg-[#050606] z-10">
+                                    <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
+                                        <th class="py-2 px-3 whitespace-nowrap">Target Mileage</th>
+                                        <th class="py-2 px-3 whitespace-nowrap">95 km/day Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pace-95-oil-body" class="divide-y divide-zinc-900 font-mono"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Section B: 95 km/day Other Maintenance (Collapsible) -->
+                    <div class="bg-[#040505] border border-zinc-800/80 rounded-xl overflow-hidden">
+                        <button onclick="toggleCard('subcard-95-maint')" class="w-full px-3.5 py-2.5 bg-[#070908] hover:bg-zinc-900/50 flex items-center justify-between text-left transition-colors">
+                            <span class="text-xs font-black tracking-wider text-slate-100 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> 95 km/day Other Maintenance
+                            </span>
+                            <i id="icon-subcard-95-maint" class="fa-solid fa-chevron-down text-zinc-400 text-xs transition-transform duration-200 rotate-[-90deg]"></i>
+                        </button>
+                        <div id="content-subcard-95-maint" class="max-h-60 overflow-y-auto overflow-x-auto hidden border-t border-zinc-900">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="sticky top-0 bg-[#050606] z-10">
+                                    <tr class="border-b border-zinc-800/90 text-[11px] sm:text-xs font-extrabold text-zinc-400 uppercase">
+                                        <th class="py-2 px-3 whitespace-nowrap">Target Odo</th>
+                                        <th class="py-2 px-3 whitespace-nowrap">95 km/day Date</th>
+                                        <th class="py-2 px-3">Notes / Purposes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pace-95-maint-body" class="divide-y divide-zinc-900 font-mono"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1138,6 +1154,16 @@
             return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
+        function formatDaysRemainingFromToday(targetDateObj) {
+            if (!(targetDateObj instanceof Date) || isNaN(targetDateObj.getTime())) return '--';
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const targetStart = new Date(targetDateObj.getFullYear(), targetDateObj.getMonth(), targetDateObj.getDate());
+            const diffDays = Math.round((targetStart - todayStart) / (1000 * 60 * 60 * 24));
+            if (diffDays <= 0) return 'Due';
+            return `${diffDays.toLocaleString()}d`;
+        }
+
         function syncOilLogsToCompletedMilestones() {
             let added = false;
             logs.forEach(l => {
@@ -1363,31 +1389,35 @@
                     if (targetOdo <= latest.odo) continue;
                     const kmLeft = targetOdo - latest.odo;
                     const realDate = addDays(latest.date, kmLeft / globalEffectivePace);
+                    const realDateObj = parseDateGB(realDate);
+                    const daysLeftText = formatDaysRemainingFromToday(realDateObj);
                     const benchDate = addDays(latest.date, kmLeft / BENCHMARK_PACE);
 
                     oilRealItems.push({
                         title: 'Engine Oil Service',
                         odo: `${targetOdo.toLocaleString()} km`,
                         dateStr: realDate,
-                        dateObj: parseDateGB(realDate),
+                        dateObj: realDateObj,
                         category: 'Engine Oil Service'
                     });
 
                     const isNext = (oilRealItems.length === 1);
                     const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
                     const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
+                    const daysColor = daysLeftText === 'Due' ? 'text-amber-400 font-black' : (isNext ? 'text-emerald-400 font-bold' : 'text-zinc-400');
 
                     oilRealHtml += `
                         <tr class="hover:bg-zinc-900/45 transition-colors">
-                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${dateColor}">${realDate}</td>
+                            <td class="py-2.5 px-3 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 sm:px-4 whitespace-nowrap ${dateColor}">${realDate}</td>
+                            <td class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap ${daysColor}">${daysLeftText}</td>
                         </tr>
                     `;
 
                     pace95OilHtml += `
                         <tr class="hover:bg-zinc-900/45 transition-colors">
-                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap text-sky-400">${benchDate}</td>
+                            <td class="py-2.5 px-3 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 whitespace-nowrap text-sky-400">${benchDate}</td>
                         </tr>
                     `;
                 }
@@ -1413,9 +1443,9 @@
 
                     pace95MaintHtml += `
                         <tr class="hover:bg-zinc-900/45 transition-colors">
-                            <td class="py-2.5 px-3 sm:px-4 font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3 sm:px-4 text-sky-400 whitespace-nowrap">${benchDate}</td>
-                            <td class="py-2.5 px-3 sm:px-4 font-sans text-slate-300 leading-relaxed whitespace-normal break-words min-w-[150px]">${m.notes}</td>
+                            <td class="py-2.5 px-3 font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 text-sky-400 whitespace-nowrap">${benchDate}</td>
+                            <td class="py-2.5 px-3 font-sans text-slate-300 leading-relaxed whitespace-normal break-words min-w-[140px]">${m.notes}</td>
                         </tr>
                     `;
 
@@ -1530,17 +1560,24 @@
         }
 
         function renderTimeMaintCard() {
-            const timeListDiv = document.getElementById('time-maint-list');
+            const timeListBody = document.getElementById('time-maint-list');
             if (timeMaint.length === 0) {
-                timeListDiv.innerHTML = '<div class="text-zinc-500">No time-based tasks.</div>';
+                timeListBody.innerHTML = '<tr><td colspan="3" class="py-3 px-2.5 text-zinc-500 text-center">No time-based tasks.</td></tr>';
                 return;
             }
-            timeListDiv.innerHTML = timeMaint.map(t => `
-                <div class="flex justify-between items-start gap-2.5 py-1.5 border-b border-zinc-900 last:border-0">
-                    <div class="font-sans font-bold text-slate-200 leading-relaxed whitespace-normal break-words flex-1">${t.title}</div>
-                    <div class="text-emerald-400 font-bold whitespace-nowrap shrink-0">${formatDateDisplay(t.dueDate)}</div>
-                </div>
-            `).join('');
+            const sortedTime = [...timeMaint].sort((a, b) => parseDateGB(a.dueDate) - parseDateGB(b.dueDate));
+            timeListBody.innerHTML = sortedTime.map(t => {
+                const dueObj = parseDateGB(t.dueDate);
+                const daysLeftText = formatDaysRemainingFromToday(dueObj);
+                const daysColor = daysLeftText === 'Due' ? 'text-amber-400 font-black' : 'text-cyan-300 font-bold';
+                return `
+                    <tr class="hover:bg-zinc-900/45 transition-colors">
+                        <td class="py-2 px-2.5 font-sans font-bold text-slate-200 leading-relaxed whitespace-normal break-words">${t.title}</td>
+                        <td class="py-2 px-2.5 text-emerald-400 font-bold whitespace-nowrap">${formatDateDisplay(t.dueDate)}</td>
+                        <td class="py-2 px-2.5 text-right whitespace-nowrap ${daysColor}">${daysLeftText}</td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         function handleAddFuel(e) {
