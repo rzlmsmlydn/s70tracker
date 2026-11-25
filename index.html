@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100 antialiased">
+<html lang="en" class="h-full bg-[#040706] text-emerald-50/95 antialiased">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,9 +18,9 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        ::-webkit-scrollbar-track { background: #050a08; }
+        ::-webkit-scrollbar-thumb { background: #134e3a; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
 
         /* Scrollable Wheel Date Picker */
         .wheel-col {
@@ -44,23 +44,23 @@
         .wheel-pad { height: 72px; flex-shrink: 0; }
     </style>
 </head>
-<body class="min-h-full bg-slate-950 text-slate-100 flex flex-col text-[13px] sm:text-sm">
+<body class="min-h-full bg-[#040706] text-emerald-50/95 flex flex-col text-[13px] sm:text-sm">
 
     <!-- TOAST NOTIFICATION CONTAINER -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- SCROLLABLE WHEEL DATE PICKER MODAL -->
-    <div id="scroll-date-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[60] flex items-center justify-center hidden p-4">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="scroll-date-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center hidden p-4">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-sm rounded-2xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 id="wheel-picker-title" class="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-regular fa-calendar-days text-sky-400"></i> Scroll to Select Date
+                    <i class="fa-regular fa-calendar-days text-emerald-400"></i> Scroll to Select Date
                 </h3>
-                <button type="button" onclick="closeScrollDatePicker()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button type="button" onclick="closeScrollDatePicker()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
-            <div class="relative bg-[#050913] border border-slate-800/90 rounded-xl overflow-hidden py-1">
-                <div class="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 h-9 rounded-lg bg-sky-500/15 border border-sky-500/40 z-10"></div>
+            <div class="relative bg-[#040806] border border-emerald-900/60 rounded-xl overflow-hidden py-1">
+                <div class="pointer-events-none absolute inset-x-2 top-1/2 -translate-y-1/2 h-9 rounded-lg bg-emerald-500/15 border border-emerald-500/40 z-10"></div>
 
                 <div class="grid grid-cols-3 gap-1 px-2 font-mono text-xs sm:text-sm relative z-20">
                     <div id="wheel-day" class="wheel-col" onscroll="onWheelScroll('day')"></div>
@@ -69,19 +69,19 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between gap-2.5 pt-2 border-t border-slate-800">
-                <button type="button" onclick="setWheelToToday()" class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-xs font-bold text-sky-400 uppercase tracking-wider">Today</button>
+            <div class="flex items-center justify-between gap-2.5 pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="setWheelToToday()" class="px-3 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900/70 text-xs font-bold text-emerald-400 uppercase tracking-wider">Today</button>
                 <div class="flex items-center gap-2">
-                    <button type="button" onclick="closeScrollDatePicker()" class="px-3.5 py-2 rounded-xl border border-slate-800 text-xs sm:text-sm font-bold text-slate-400">Cancel</button>
-                    <button type="button" onclick="confirmScrollDatePicker()" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs sm:text-sm font-black uppercase tracking-wider">Apply</button>
+                    <button type="button" onclick="closeScrollDatePicker()" class="px-3.5 py-2 rounded-xl border border-emerald-900/60 text-xs sm:text-sm font-bold text-emerald-200/60">Cancel</button>
+                    <button type="button" onclick="confirmScrollDatePicker()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-black uppercase tracking-wider">Apply</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- PASSWORD LOCK SCREEN OVERLAY -->
-    <div id="auth-overlay" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
+    <div id="auth-overlay" class="fixed inset-0 bg-[#040706] z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl text-center">
             <div class="flex flex-col items-center gap-2.5">
                 <svg class="w-10 h-10 sm:w-11 sm:h-11 text-white" viewBox="235 0 530 530" fill="currentColor">
                     <path d="M383.5,82.3c71.2-15.2,154.5,16.1,216.2,48.2c10.4,5.4,14.5,11.5,4.4,14.4c-4.1,1.2-4.7,4,0.1,5.4c31.1,9.1,61.3,20.9,89.5,36.1c4.8,2.6,8.7,5,6.3,10.5c-0.7,1.6-0.5,2.5,1.1,3.4c15,8.8,18.2,18.9,11.3,31.1c-11.7,20.8-30.8,41.2-49.8,56.3c-4,3.2-7.8,5.8-11.9,3.8c-4.1-2-3.5-6.4-3.3-11.6c0.3-6.4,0.1-13.5-1.1-18.3c-0.4-1.8-1.2-2.3-3-2.1c-7.9,0.9-16.2,1.8-24.7,2.7c-2.3,0.3-3.1,0.5-5.2,1.5c-22.3,11-49.4,24.7-69.1,37.1c-8,5-9.5,9.6-2.6,16.6c11.4,11.6,24.4,24,35.3,33.9c6.6,6,19.6,12.9,34.8,0.4c3.3-2.7,5.9-1.5,5.1,2.9c-8.7,47.7-35.8,87.8-79.7,105.6c-2.1,0.9-3.4,0.6-5-0.9c-45.6-42.6-114.1-79.9-169.8-32.5c-2.8,2.3-2.6,4-0.2,5.8c122.9,93.9,300.4,39.9,351.3-104.1c0.6-1.8,1.1-2.5,2.7-3.6l33.2-23.4c3.2-2.2,5.3-1,4.6,2.8c-22.4,121.5-128.5,211.1-254,211.2c-125.5,0-231.8-89.6-254.1-211.2c-0.7-3.8,1.5-5,4.6-2.8l33.2,23.4c1.6,1.1,2.1,1.8,2.7,3.6c10.1,28.6,26,55,46.6,77.4c2.3,2.5,4.1,2.7,6.9,0.7c12.5-8.9,27-16.8,42.3-21.3c3.9-1.1,4.7-2.6,1.4-5.4c-11.2-9.5-20.3-22.3-27.7-36.4c-1.7-3.2-4.6-3.7-7.7-1.6l-15.4,10.5c-3.1,2.1-4.8,0.8-5.1-3.1c-0.6-7.6-0.9-15.1-0.9-22.4c0-3.2-1.8-3.8-4.5-2.1l-4.5,2.8c-2.6,1.6-4.1,0.6-3.4-2.5c8.1-36.4,28.5-69.9,58.8-92.8c3.6-2.7,5.8-0.9,3.5,3.1c-16.1,28.2-24.2,61.6-23.8,94.3c0.1,4.6,2.3,5.9,6.2,3.1l18.3-12.9c3.7-2.6,5.8-1.3,5.5,3.3c-1.9,32,12.2,67.3,41,85.2c19.5,12.1,43,19.4,63.3,31.4c11.2,6.6,22.2,13.9,32.7,21.6c2.3,1.7,3.9,1.8,6.2,0.1c16.8-12.5,29.3-28.7,36.8-47.4c1.3-3.2-0.2-5.1-3.6-4.7c-5.9,0.7-12.3-0.7-17.9-3.9c-14.1-8-26.9-20.4-39.1-32.9c-16.5-16.9-16.1-31.3,3.7-43.3c24.2-14.7,51.2-28.1,78.1-40.8c3.5-1.6,7.1-2.5,11.6-3.1c11.6-1.4,23.5-2.6,35.6-3.6c3.9-0.3,6.4,0.8,8.5,4l7.6,11.5c1.8,2.7,3.5,2.7,5.7,0.2c4.4-4.9,8.7-10.2,12.7-15.6c2.5-3.4,2.1-5.8-1.5-8l-11.2-7.1c-3.8-2.4-4-4.7-1.4-8.4c2.1-3,1.3-4.6-2.1-6.2c-53.4-24.8-113.1-38.7-175.4-39.6c-4.5-0.1-6.5-1.9-6.6-6.3c-0.3-13.5,14.8-19.6,35.6-19.4c12.6,0.1,26.1,1.6,39.4,3.8c3.6,0.6,6.8-0.2,9.7-2.2c2.8-1.9,2.5-3.4-0.6-4.9c-40.8-19.1-85.8-30.7-132.4-32.7c-5.1-0.2-6.5,2.1-3.3,6.1l13.2,16.4c3,3.7,1.8,6.2-3,6.3l-114.3,2.3c-3.8,0.1-5.6,1.3-7.5,4.6c-11.2,19.4-19.8,40.4-25.5,62.5c-0.8,3.2-2.1,4.6-4.8,6.4l-26.2,17.8c-3.6,2.4-5.7,1.1-5-3.2C269.7,100.3,375,11.5,499.6,11.5c124.7,0,230,88.8,252.2,207c0.8,4.3-1.3,5.6-5,3.2l-26.2-17.8c-2.7-1.8-4-3.3-4.8-6.4C690.5,99.6,601.5,28,499.6,28c-60.9,0-116.5,24.6-157,64.4c-3.8,3.7-2.8,6.3,2.5,6.5l35.4,1.3c3.9,0.1,5.2-1.7,2.7-4.7l-4.5-5.5C375.8,86.4,378.1,83.5,383.5,82.3z'/></svg>
@@ -89,41 +89,41 @@
             </div>
             <form onsubmit="handleUnlock(event)" autocomplete="off" class="space-y-3 text-left">
                 <div>
-                    <input type="password" id="input-password" autocomplete="new-password" required placeholder="Enter password" class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                    <input type="password" id="input-password" autocomplete="new-password" required placeholder="Enter password" class="w-full bg-[#040806] border border-emerald-900/70 focus:border-emerald-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none font-mono">
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Unlock Dashboard</button>
+                <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Unlock Dashboard</button>
             </form>
         </div>
     </div>
 
     <!-- SHEET SNAPSHOTS & BACKUP MANAGER MODAL -->
-    <div id="backup-manager-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-lg rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="backup-manager-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-lg rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-database text-violet-400"></i> Sheet Backups
+                    <i class="fa-solid fa-database text-emerald-400"></i> Sheet Backups
                 </h3>
-                <button onclick="closeBackupManagerModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeBackupManagerModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <!-- Create New Snapshot Section -->
-            <div class="bg-[#050913] border border-slate-800/80 p-4 rounded-xl space-y-3">
+            <div class="bg-[#040806] border border-emerald-900/60 p-4 rounded-xl space-y-3">
                 <div class="flex items-start justify-between gap-3">
                     <div>
-                        <h4 class="text-xs sm:text-sm font-black uppercase text-violet-400 tracking-wider">Create New Backup Tab</h4>
-                        <p class="text-[11px] sm:text-xs text-slate-400 mt-1">Saves a dated snapshot tab inside <span class="font-mono text-slate-300">PROTON S70 LOG</span> without affecting your active <span class="font-mono text-slate-300">Logs</span> tab.</p>
+                        <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-400 tracking-wider">Create New Backup Tab</h4>
+                        <p class="text-[11px] sm:text-xs text-emerald-100/60 mt-1">Saves a dated snapshot tab inside <span class="font-mono text-emerald-200">PROTON S70 LOG</span> without affecting your active <span class="font-mono text-emerald-200">Logs</span> tab.</p>
                     </div>
                 </div>
                 <div id="snapshot-step-1">
-                    <button type="button" onclick="showSnapshotConfirmStep(true)" class="w-full py-2.5 bg-violet-500 hover:bg-violet-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <button type="button" onclick="showSnapshotConfirmStep(true)" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
                         <i class="fa-solid fa-file-circle-plus"></i> Backup to New Sheet
                     </button>
                 </div>
-                <div id="snapshot-step-2" class="hidden space-y-2.5 pt-2 border-t border-slate-800">
-                    <p class="text-xs text-amber-300 font-semibold">Confirm creating a new backup sheet now?</p>
+                <div id="snapshot-step-2" class="hidden space-y-2.5 pt-2 border-t border-emerald-900/60">
+                    <p class="text-xs text-teal-300 font-semibold">Confirm creating a new backup sheet now?</p>
                     <div class="flex items-center justify-end gap-2">
-                        <button type="button" onclick="showSnapshotConfirmStep(false)" class="px-3.5 py-2 rounded-xl border border-slate-800 text-xs font-bold text-slate-400 hover:text-white">Cancel</button>
-                        <button type="button" onclick="createSnapshotSheet()" class="px-4 py-2 rounded-xl bg-violet-500 hover:bg-violet-400 text-slate-950 font-black text-xs uppercase tracking-wider">Yes, Create Sheet</button>
+                        <button type="button" onclick="showSnapshotConfirmStep(false)" class="px-3.5 py-2 rounded-xl border border-emerald-900/60 text-xs font-bold text-emerald-200/60 hover:text-white">Cancel</button>
+                        <button type="button" onclick="createSnapshotSheet()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider">Yes, Create Sheet</button>
                     </div>
                 </div>
             </div>
@@ -131,80 +131,80 @@
             <!-- Saved Backup Sheets List -->
             <div class="space-y-2.5">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-xs sm:text-sm font-black uppercase text-slate-200 tracking-wider">Existing Backup Tabs</h4>
-                    <button type="button" onclick="loadBackupSheets()" class="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1">
+                    <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-50 tracking-wider">Existing Backup Tabs</h4>
+                    <button type="button" onclick="loadBackupSheets()" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
                         <i class="fa-solid fa-rotate-right"></i> Refresh
                     </button>
                 </div>
                 <div id="backup-sheets-list" class="space-y-2 max-h-60 overflow-y-auto pr-1 font-mono">
-                    <div class="text-slate-500 text-xs py-3 text-center">Loading backup tabs...</div>
+                    <div class="text-emerald-200/50 text-xs py-3 text-center">Loading backup tabs...</div>
                 </div>
             </div>
 
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeBackupManagerModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeBackupManagerModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
 
     <!-- CALCULATOR MODAL -->
-    <div id="calculator-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="calculator-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-purple-400"></i> Date ↔ Mileage Calculator
+                    <i class="fa-solid fa-calculator text-emerald-400"></i> Date ↔ Mileage Calculator
                 </h3>
-                <button onclick="closeCalculatorModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeCalculatorModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
-                <div class="bg-[#050913] border border-slate-800/80 p-4 rounded-xl space-y-3">
-                    <h4 class="text-xs sm:text-sm font-black text-sky-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h4>
+                <div class="bg-[#040806] border border-emerald-900/60 p-4 rounded-xl space-y-3">
+                    <h4 class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-wider"><i class="fa-regular fa-calendar-days"></i> Enter Target Date</h4>
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Select Future Date</label>
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Select Future Date</label>
                         <input type="hidden" id="calc-input-date" onchange="calculateFromDate()">
-                        <button type="button" onclick="openScrollDatePicker('calc-input-date', 'Target Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                        <button type="button" onclick="openScrollDatePicker('calc-input-date', 'Target Date')" class="w-full bg-[#070d0a] border border-emerald-900/60 hover:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
                             <span id="display-calc-input-date">Tap to scroll date</span>
-                            <i class="fa-regular fa-calendar text-sky-400"></i>
+                            <i class="fa-regular fa-calendar text-emerald-400"></i>
                         </button>
                     </div>
-                    <div class="space-y-2 pt-2.5 border-t border-slate-800 font-mono">
+                    <div class="space-y-2 pt-2.5 border-t border-emerald-900/60 font-mono">
                         <div class="flex justify-between gap-2">
-                            <span class="text-slate-400">Realistic Pace Odo:</span>
-                            <span id="calc-result-odo-realistic" class="font-black text-purple-300 text-right">-- km</span>
+                            <span class="text-emerald-200/60">Realistic Pace Odo:</span>
+                            <span id="calc-result-odo-realistic" class="font-black text-emerald-300 text-right">-- km</span>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <span class="text-slate-400">95 km/day Odo:</span>
-                            <span id="calc-result-odo-benchmark" class="font-bold text-sky-400 text-right">-- km</span>
+                            <span class="text-emerald-200/60">95 km/day Odo:</span>
+                            <span id="calc-result-odo-benchmark" class="font-bold text-teal-400 text-right">-- km</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-[#050913] border border-slate-800/80 p-4 rounded-xl space-y-3">
-                    <h4 class="text-xs sm:text-sm font-black text-amber-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h4>
+                <div class="bg-[#040806] border border-emerald-900/60 p-4 rounded-xl space-y-3">
+                    <h4 class="text-xs sm:text-sm font-black text-teal-400 uppercase tracking-wider"><i class="fa-solid fa-gauge-high"></i> Enter Target Odometer</h4>
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Target Odometer (km)</label>
-                        <input type="number" id="calc-input-odo" autocomplete="off" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Target Odometer (km)</label>
+                        <input type="number" id="calc-input-odo" autocomplete="off" placeholder="e.g. 55000" oninput="calculateFromOdo()" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
                     </div>
-                    <div class="space-y-2 pt-2.5 border-t border-slate-800 font-mono">
+                    <div class="space-y-2 pt-2.5 border-t border-emerald-900/60 font-mono">
                         <div class="flex justify-between gap-2">
-                            <span class="text-slate-400">Realistic Pace Date:</span>
-                            <span id="calc-result-date-realistic" class="font-black text-purple-300 text-right">--</span>
+                            <span class="text-emerald-200/60">Realistic Pace Date:</span>
+                            <span id="calc-result-date-realistic" class="font-black text-emerald-300 text-right">--</span>
                         </div>
                         <div class="flex justify-between gap-2">
-                            <span class="text-slate-400">95 km/day Date:</span>
-                            <span id="calc-result-date-benchmark" class="font-bold text-sky-400 text-right">--</span>
+                            <span class="text-emerald-200/60">95 km/day Date:</span>
+                            <span id="calc-result-date-benchmark" class="font-bold text-teal-400 text-right">--</span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeCalculatorModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeCalculatorModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
 
     <!-- APP HEADER (ALL BUTTONS GROUPED TOGETHER ON RIGHT) -->
-    <header class="min-h-14 sm:h-16 border-b border-slate-900 bg-[#090d16] px-3 sm:px-6 py-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sticky top-0 z-30">
+    <header class="min-h-14 sm:h-16 border-b border-emerald-950/90 bg-[#060a08] px-3 sm:px-6 py-2 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2 sticky top-0 z-30">
         <div class="flex items-center gap-2 sm:gap-2.5">
             <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white shrink-0" viewBox="235 0 530 530" fill="currentColor">
                 <path d="M383.5,82.3c71.2-15.2,154.5,16.1,216.2,48.2c10.4,5.4,14.5,11.5,4.4,14.4c-4.1,1.2-4.7,4,0.1,5.4c31.1,9.1,61.3,20.9,89.5,36.1c4.8,2.6,8.7,5,6.3,10.5c-0.7,1.6-0.5,2.5,1.1,3.4c15,8.8,18.2,18.9,11.3,31.1c-11.7,20.8-30.8,41.2-49.8,56.3c-4,3.2-7.8,5.8-11.9,3.8c-4.1-2-3.5-6.4-3.3-11.6c0.3-6.4,0.1-13.5-1.1-18.3c-0.4-1.8-1.2-2.3-3-2.1c-7.9,0.9-16.2,1.8-24.7,2.7c-2.3,0.3-3.1,0.5-5.2,1.5c-22.3,11-49.4,24.7-69.1,37.1c-8,5-9.5,9.6-2.6,16.6c11.4,11.6,24.4,24,35.3,33.9c6.6,6,19.6,12.9,34.8,0.4c3.3-2.7,5.9-1.5,5.1,2.9c-8.7,47.7-35.8,87.8-79.7,105.6c-2.1,0.9-3.4,0.6-5-0.9c-45.6-42.6-114.1-79.9-169.8-32.5c-2.8,2.3-2.6,4-0.2,5.8c122.9,93.9,300.4,39.9,351.3-104.1c0.6-1.8,1.1-2.5,2.7-3.6l33.2-23.4c3.2-2.2,5.3-1,4.6,2.8c-22.4,121.5-128.5,211.1-254,211.2c-125.5,0-231.8-89.6-254.1-211.2c-0.7-3.8,1.5-5,4.6-2.8l33.2,23.4c1.6,1.1,2.1,1.8,2.7,3.6c10.1,28.6,26,55,46.6,77.4c2.3,2.5,4.1,2.7,6.9,0.7c12.5-8.9,27-16.8,42.3-21.3c3.9-1.1,4.7-2.6,1.4-5.4c-11.2-9.5-20.3-22.3-27.7-36.4c-1.7-3.2-4.6-3.7-7.7-1.6l-15.4,10.5c-3.1,2.1-4.8,0.8-5.1-3.1c-0.6-7.6-0.9-15.1-0.9-22.4c0-3.2-1.8-3.8-4.5-2.1l-4.5,2.8c-2.6,1.6-4.1,0.6-3.4-2.5c8.1-36.4,28.5-69.9,58.8-92.8c3.6-2.7,5.8-0.9,3.5,3.1c-16.1,28.2-24.2,61.6-23.8,94.3c0.1,4.6,2.3,5.9,6.2,3.1l18.3-12.9c3.7-2.6,5.8-1.3,5.5,3.3c-1.9,32,12.2,67.3,41,85.2c19.5,12.1,43,19.4,63.3,31.4c11.2,6.6,22.2,13.9,32.7,21.6c2.3,1.7,3.9,1.8,6.2,0.1c16.8-12.5,29.3-28.7,36.8-47.4c1.3-3.2-0.2-5.1-3.6-4.7c-5.9,0.7-12.3-0.7-17.9-3.9c-14.1-8-26.9-20.4-39.1-32.9c-16.5-16.9-16.1-31.3,3.7-43.3c24.2-14.7,51.2-28.1,78.1-40.8c3.5-1.6,7.1-2.5,11.6-3.1c11.6-1.4,23.5-2.6,35.6-3.6c3.9-0.3,6.4,0.8,8.5,4l7.6,11.5c1.8,2.7,3.5,2.7,5.7,0.2c4.4-4.9,8.7-10.2,12.7-15.6c2.5-3.4,2.1-5.8-1.5-8l-11.2-7.1c-3.8-2.4-4-4.7-1.4-8.4c2.1-3,1.3-4.6-2.1-6.2c-53.4-24.8-113.1-38.7-175.4-39.6c-4.5-0.1-6.5-1.9-6.6-6.3c-0.3-13.5,14.8-19.6,35.6-19.4c12.6,0.1,26.1,1.6,39.4,3.8c3.6,0.6,6.8-0.2,9.7-2.2c2.8-1.9,2.5-3.4-0.6-4.9c-40.8-19.1-85.8-30.7-132.4-32.7c-5.1-0.2-6.5,2.1-3.3,6.1l13.2,16.4c3,3.7,1.8,6.2-3,6.3l-114.3,2.3c-3.8,0.1-5.6,1.3-7.5,4.6c-11.2,19.4-19.8,40.4-25.5,62.5c-0.8,3.2-2.1,4.6-4.8,6.4l-26.2,17.8c-3.6,2.4-5.7,1.1-5-3.2C269.7,100.3,375,11.5,499.6,11.5c124.7,0,230,88.8,252.2,207c0.8,4.3-1.3,5.6-5,3.2l-26.2-17.8c-2.7-1.8-4-3.3-4.8-6.4C690.5,99.6,601.5,28,499.6,28c-60.9,0-116.5,24.6-157,64.4c-3.8,3.7-2.8,6.3,2.5,6.5l35.4,1.3c3.9,0.1,5.2-1.7,2.7-4.7l-4.5-5.5C375.8,86.4,378.1,83.5,383.5,82.3z'/></svg>
@@ -212,22 +212,22 @@
         </div>
 
         <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            <button onclick="openBackupManagerModal()" title="Sheet Backups" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
-                <i id="snapshot-icon" class="fa-solid fa-database text-violet-400 text-xs sm:text-sm"></i>
+            <button onclick="openBackupManagerModal()" title="Sheet Backups" class="bg-[#09120e] hover:bg-emerald-950/90 border border-emerald-900/60 text-emerald-200 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
+                <i id="snapshot-icon" class="fa-solid fa-database text-emerald-400 text-xs sm:text-sm"></i>
             </button>
-            <button onclick="openCalculatorModal()" title="Date ↔ Mileage Calculator" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-calculator text-purple-400 text-xs sm:text-sm"></i>
+            <button onclick="openCalculatorModal()" title="Date ↔ Mileage Calculator" class="bg-[#09120e] hover:bg-emerald-950/90 border border-emerald-900/60 text-emerald-200 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
+                <i class="fa-solid fa-calculator text-teal-400 text-xs sm:text-sm"></i>
             </button>
-            <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-clipboard-list text-amber-400 text-xs sm:text-sm"></i>
+            <button onclick="openSettingsModal()" title="Maintenance Hub & History" class="bg-[#09120e] hover:bg-emerald-950/90 border border-emerald-900/60 text-emerald-200 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
+                <i class="fa-solid fa-clipboard-list text-emerald-300 text-xs sm:text-sm"></i>
             </button>
-            <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
+            <button onclick="openCompletedModal()" title="Completed Maintenance Log" class="bg-[#09120e] hover:bg-emerald-950/90 border border-emerald-900/60 text-emerald-200 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
                 <i class="fa-solid fa-circle-check text-emerald-400 text-xs sm:text-sm"></i>
             </button>
-            <button onclick="openFuelModal()" title="Fuel Database" class="bg-[#0b101d] hover:bg-slate-800 border border-slate-800 text-slate-300 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
-                <i class="fa-solid fa-gas-pump text-sky-400 text-xs sm:text-sm"></i>
+            <button onclick="openFuelModal()" title="Fuel Database" class="bg-[#09120e] hover:bg-emerald-950/90 border border-emerald-900/60 text-emerald-200 p-2 sm:px-3 sm:py-2 rounded-xl transition-all flex items-center justify-center">
+                <i class="fa-solid fa-gas-pump text-teal-300 text-xs sm:text-sm"></i>
             </button>
-            <button onclick="openLogModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs sm:text-[13px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-md transition-all uppercase tracking-wider flex items-center gap-1.5">
+            <button onclick="openLogModal()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-[13px] px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl shadow-md shadow-emerald-950/80 transition-all uppercase tracking-wider flex items-center gap-1.5">
                 <i class="fa-solid fa-plus"></i> Log
             </button>
         </div>
@@ -237,51 +237,51 @@
     <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-4 sm:space-y-5">
         <!-- Row 1: Mileage Update (Open) + Incoming Maintenance (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <div class="px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913]">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <div class="px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806]">
                     <div class="flex items-center gap-2 text-xs sm:text-sm font-black tracking-wider text-white uppercase">
-                        <i class="fa-solid fa-gauge text-sky-400"></i> Mileage Update
+                        <i class="fa-solid fa-gauge text-emerald-400"></i> Mileage Update
                     </div>
                 </div>
 
-                <div class="divide-y divide-slate-800/60 flex-1 flex flex-col justify-between">
+                <div class="divide-y divide-emerald-950/90 flex-1 flex flex-col justify-between">
                     <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-2">
-                        <span class="text-slate-400 font-medium">Date</span>
-                        <span id="row-date" class="font-mono font-bold text-slate-200">--</span>
+                        <span class="text-emerald-200/60 font-medium">Date</span>
+                        <span id="row-date" class="font-mono font-bold text-emerald-50">--</span>
                     </div>
                     <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-2">
-                        <span class="text-slate-400 font-medium">Current Odometer</span>
+                        <span class="text-emerald-200/60 font-medium">Current Odometer</span>
                         <div class="flex items-center gap-2 font-mono">
                             <span id="row-current-odo" class="font-black text-white">0 km</span>
                             <span id="row-daily-delta" class="text-xs font-bold text-emerald-400">(+0 km)</span>
                         </div>
                     </div>
                     <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-2">
-                        <span class="text-slate-400 font-medium">Latest Oil Service</span>
-                        <span id="row-last-oil" class="font-mono text-slate-300 text-right">--</span>
+                        <span class="text-emerald-200/60 font-medium">Latest Oil Service</span>
+                        <span id="row-last-oil" class="font-mono text-emerald-100/80 text-right">--</span>
                     </div>
                     <div class="px-4 sm:px-5 py-3 flex items-center justify-between gap-2">
-                        <span class="text-slate-400 font-medium">Oil Used</span>
-                        <span id="row-oil-used" class="font-mono text-slate-300 text-right">--</span>
+                        <span class="text-emerald-200/60 font-medium">Oil Used</span>
+                        <span id="row-oil-used" class="font-mono text-emerald-100/80 text-right">--</span>
                     </div>
-                    <div class="px-4 sm:px-5 py-3.5 space-y-2.5 bg-[#060a15]/50">
+                    <div class="px-4 sm:px-5 py-3.5 space-y-2.5 bg-[#050a08]/70">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-slate-300 font-bold">Remaining to Oil Service</span>
-                            <span id="row-oil-remaining" class="font-mono font-black text-amber-400 text-sm sm:text-base">--</span>
+                            <span class="text-emerald-100 font-bold">Remaining to Oil Service</span>
+                            <span id="row-oil-remaining" class="font-mono font-black text-emerald-400 text-sm sm:text-base">--</span>
                         </div>
-                        <div class="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-slate-800">
-                            <div id="kpi-oil-bar" class="bg-amber-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        <div class="w-full bg-[#030605] rounded-full h-2.5 overflow-hidden border border-emerald-900/60">
+                            <div id="kpi-oil-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-incoming')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-incoming')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-calendar-star text-emerald-400"></i> Incoming Maintenance
                     </h2>
-                    <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-incoming" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
                 <div id="content-card-incoming" class="p-2.5 sm:p-3 space-y-1 font-mono max-h-80 overflow-y-auto hidden"></div>
             </div>
@@ -289,44 +289,44 @@
 
         <!-- Row 2: Engine Oil Service Schedule (Open) + Other Maintenance Schedule (Open) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-oil-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-oil-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-wrench text-sky-400"></i> Engine Oil Service Schedule
+                        <i class="fa-solid fa-wrench text-emerald-400"></i> Engine Oil Service Schedule
                     </h2>
-                    <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-oil-real" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200"></i>
                 </button>
                 <div id="content-card-oil-real" class="max-h-80 overflow-y-auto overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050913] z-10">
-                            <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
+                        <thead class="sticky top-0 bg-[#040806] z-10">
+                            <tr class="border-b border-emerald-900/55 text-[11px] sm:text-xs font-extrabold text-emerald-200/60 uppercase">
                                 <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Target Mileage</th>
                                 <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Realistic Date</th>
                             </tr>
                         </thead>
-                        <tbody id="oil-realistic-body" class="divide-y divide-slate-800/50 font-mono"></tbody>
+                        <tbody id="oil-realistic-body" class="divide-y divide-emerald-950/80 font-mono"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-maint-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-maint-real')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-screwdriver-wrench text-amber-400"></i> Other Maintenance Schedule
+                        <i class="fa-solid fa-screwdriver-wrench text-teal-400"></i> Other Maintenance Schedule
                     </h2>
-                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200"></i>
+                    <i id="icon-card-maint-real" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200"></i>
                 </button>
                 <div id="content-card-maint-real" class="max-h-80 overflow-y-auto overflow-x-auto">
                     <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050913] z-10">
-                            <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
+                        <thead class="sticky top-0 bg-[#040806] z-10">
+                            <tr class="border-b border-emerald-900/55 text-[11px] sm:text-xs font-extrabold text-emerald-200/60 uppercase">
                                 <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Odo</th>
                                 <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Realistic</th>
                                 <th class="py-2.5 px-3 sm:px-4">Notes / Purposes</th>
                                 <th class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="milestones-realistic-body" class="divide-y divide-slate-800/50"></tbody>
+                        <tbody id="milestones-realistic-body" class="divide-y divide-emerald-950/80"></tbody>
                     </table>
                 </div>
             </div>
@@ -334,41 +334,41 @@
 
         <!-- Row 3: Time-Based Maintenance (Collapsed) + Realistic Pace — V3 (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-time-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-time-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-clock text-emerald-400"></i> Time-Based Maintenance
                     </h2>
-                    <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-time-maint" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
                 <div id="content-card-time-maint" class="p-4 sm:p-5 space-y-2.5 font-mono hidden">
                     <div id="time-maint-list" class="space-y-2"></div>
                 </div>
             </div>
 
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-pace')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-pace')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-tachometer-alt text-purple-400"></i> Realistic Pace — V3
+                        <i class="fa-solid fa-tachometer-alt text-teal-400"></i> Realistic Pace — V3
                     </h2>
-                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-pace" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
                 <div id="content-card-pace" class="p-4 sm:p-5 space-y-2.5 flex-col justify-center hidden">
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-slate-800/40">
-                        <span id="pace-recent-label" class="text-slate-400">Recent Pace (7–14d)</span>
+                    <div class="flex justify-between gap-2 py-1.5 border-b border-emerald-950/80">
+                        <span id="pace-recent-label" class="text-emerald-200/60">Recent Pace (7–14d)</span>
                         <span id="pace-recent" class="font-mono font-bold text-white">0.00 km/day</span>
                     </div>
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-slate-800/40">
-                        <span id="pace-longterm-label" class="text-slate-400">Long-term Pace</span>
+                    <div class="flex justify-between gap-2 py-1.5 border-b border-emerald-950/80">
+                        <span id="pace-longterm-label" class="text-emerald-200/60">Long-term Pace</span>
                         <span id="pace-longterm" class="font-mono font-bold text-white">0.00 km/day</span>
                     </div>
-                    <div class="flex justify-between gap-2 py-1.5 border-b border-slate-800/40">
-                        <span class="font-bold text-purple-300">Weighted Realistic (60/40)</span>
-                        <span id="pace-weighted" class="font-mono font-black text-purple-300">0.00 km/day</span>
+                    <div class="flex justify-between gap-2 py-1.5 border-b border-emerald-950/80">
+                        <span class="font-bold text-emerald-300">Weighted Realistic (60/40)</span>
+                        <span id="pace-weighted" class="font-mono font-black text-emerald-300">0.00 km/day</span>
                     </div>
                     <div class="flex justify-between gap-2 py-1.5">
-                        <span class="text-slate-400">Comparison Benchmark</span>
-                        <span class="font-mono font-bold text-sky-400">95.00 km/day</span>
+                        <span class="text-emerald-200/60">Comparison Benchmark</span>
+                        <span class="font-mono font-bold text-teal-400">95.00 km/day</span>
                     </div>
                 </div>
             </div>
@@ -376,43 +376,43 @@
 
         <!-- Row 4 (Very Bottom): 95 km/day Oil Change (Collapsed) + 95 km/day Other Maintenance (Collapsed) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-95-oil')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-95-oil')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
                         <i class="fa-solid fa-oil-can text-emerald-400"></i> 95 km/day Oil Change
                     </h2>
-                    <i id="icon-card-95-oil" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-95-oil" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
                 <div id="content-card-95-oil" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050913] z-10">
-                            <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
+                        <thead class="sticky top-0 bg-[#040806] z-10">
+                            <tr class="border-b border-emerald-900/55 text-[11px] sm:text-xs font-extrabold text-emerald-200/60 uppercase">
                                 <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">Target Mileage</th>
                                 <th class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap">95 km/day Date</th>
                             </tr>
                         </thead>
-                        <tbody id="pace-95-oil-body" class="divide-y divide-slate-800/50 font-mono"></tbody>
+                        <tbody id="pace-95-oil-body" class="divide-y divide-emerald-950/80 font-mono"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="bg-[#080d1a] border border-slate-800/80 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
-                <button onclick="toggleCard('card-95-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-slate-800/80 bg-[#050913] flex items-center justify-between text-left hover:bg-slate-900/40 transition-colors">
+            <div class="bg-[#070d0a] border border-emerald-900/55 rounded-2xl overflow-hidden shadow-md flex flex-col h-full">
+                <button onclick="toggleCard('card-95-maint')" class="w-full px-4 sm:px-5 py-3.5 border-b border-emerald-900/50 bg-[#040806] flex items-center justify-between text-left hover:bg-emerald-950/35 transition-colors">
                     <h2 class="text-xs sm:text-sm font-black tracking-wider text-white uppercase flex items-center gap-2">
-                        <i class="fa-solid fa-gauge-simple-high text-amber-400"></i> 95 km/day Other Maintenance
+                        <i class="fa-solid fa-gauge-simple-high text-teal-400"></i> 95 km/day Other Maintenance
                     </h2>
-                    <i id="icon-card-95-maint" class="fa-solid fa-chevron-down text-slate-400 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
+                    <i id="icon-card-95-maint" class="fa-solid fa-chevron-down text-emerald-300/60 text-xs sm:text-sm transition-transform duration-200 rotate-[-90deg]"></i>
                 </button>
                 <div id="content-card-95-maint" class="max-h-80 overflow-y-auto overflow-x-auto hidden">
                     <table class="w-full text-left border-collapse">
-                        <thead class="sticky top-0 bg-[#050913] z-10">
-                            <tr class="border-b border-slate-800/80 text-[11px] sm:text-xs font-extrabold text-slate-400 uppercase">
+                        <thead class="sticky top-0 bg-[#040806] z-10">
+                            <tr class="border-b border-emerald-900/55 text-[11px] sm:text-xs font-extrabold text-emerald-200/60 uppercase">
                                 <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">Target Odo</th>
                                 <th class="py-2.5 px-3 sm:px-4 whitespace-nowrap">95 km/day Date</th>
                                 <th class="py-2.5 px-3 sm:px-4">Notes / Purposes</th>
                             </tr>
                         </thead>
-                        <tbody id="pace-95-maint-body" class="divide-y divide-slate-800/50 font-mono"></tbody>
+                        <tbody id="pace-95-maint-body" class="divide-y divide-emerald-950/80 font-mono"></tbody>
                     </table>
                 </div>
             </div>
@@ -420,159 +420,159 @@
     </main>
 
     <!-- FUEL DATABASE MODAL -->
-    <div id="fuel-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="fuel-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-gas-pump text-sky-400"></i> Fuel Database
+                    <i class="fa-solid fa-gas-pump text-emerald-400"></i> Fuel Database
                 </h3>
-                <button onclick="closeFuelModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeFuelModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-4 rounded-xl">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Fuel Fill</h4>
+            <div class="space-y-3 bg-[#040806] border border-emerald-900/60 p-4 rounded-xl">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Fuel Fill</h4>
                 <form onsubmit="handleAddFuel(event)" autocomplete="off" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Date</label>
+                            <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Date</label>
                             <input type="hidden" id="input-fuel-date" required>
-                            <button type="button" onclick="openScrollDatePicker('input-fuel-date', 'Fuel Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                            <button type="button" onclick="openScrollDatePicker('input-fuel-date', 'Fuel Date')" class="w-full bg-[#070d0a] border border-emerald-900/60 hover:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
                                 <span id="display-input-fuel-date">--</span>
-                                <i class="fa-regular fa-calendar text-sky-400"></i>
+                                <i class="fa-regular fa-calendar text-emerald-400"></i>
                             </button>
                         </div>
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Cost ($)</label>
-                            <input type="number" step="0.01" id="input-fuel-cost" autocomplete="off" required placeholder="0.00" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
+                            <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Cost ($)</label>
+                            <input type="number" step="0.01" id="input-fuel-cost" autocomplete="off" required placeholder="0.00" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono">
                         </div>
                     </div>
                     <div>
-                        <button type="submit" class="w-full py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Add Fuel Record</button>
+                        <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Add Fuel Record</button>
                     </div>
                 </form>
             </div>
 
-            <div class="flex items-center justify-between bg-[#050913] border border-slate-800/80 p-4 rounded-xl font-mono">
-                <span class="text-slate-300 font-bold uppercase text-xs sm:text-sm">Total Fuel Expenses</span>
-                <span id="total-fuel-spent-badge" class="text-sky-400 font-black text-sm sm:text-base">$0.00</span>
+            <div class="flex items-center justify-between bg-[#040806] border border-emerald-900/60 p-4 rounded-xl font-mono">
+                <span class="text-emerald-100 font-bold uppercase text-xs sm:text-sm">Total Fuel Expenses</span>
+                <span id="total-fuel-spent-badge" class="text-emerald-400 font-black text-sm sm:text-base">$0.00</span>
             </div>
 
             <div class="space-y-3 max-h-72 overflow-y-auto pr-1" id="fuel-records-list"></div>
 
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeFuelModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeFuelModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
 
     <!-- MAINTENANCE HUB MODAL -->
-    <div id="settings-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="settings-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-clipboard-list text-amber-400"></i> Maintenance Hub
+                    <i class="fa-solid fa-clipboard-list text-emerald-400"></i> Maintenance Hub
                 </h3>
-                <button onclick="closeSettingsModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeSettingsModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div class="space-y-2.5 bg-[#050913] border border-slate-800/80 p-4 rounded-xl">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
+            <div class="space-y-2.5 bg-[#040806] border border-emerald-900/60 p-4 rounded-xl">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-sliders"></i> Global Engine Oil Interval</h4>
                 <div class="flex gap-2.5">
-                    <input type="number" id="input-oil-interval" autocomplete="off" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono font-bold">
-                    <button onclick="saveOilInterval()" class="px-4 sm:px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shrink-0">Update</button>
+                    <input type="number" id="input-oil-interval" autocomplete="off" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono font-bold">
+                    <button onclick="saveOilInterval()" class="px-4 sm:px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shrink-0">Update</button>
                 </div>
             </div>
 
             <div class="space-y-3">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-list-check text-sky-400"></i> Active Upcoming Maintenance</h4>
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-50 tracking-wider"><i class="fa-solid fa-list-check text-emerald-400"></i> Active Upcoming Maintenance</h4>
                 <div id="settings-active-milestones" class="space-y-2.5 max-h-60 sm:max-h-72 overflow-y-auto pr-1"></div>
             </div>
 
-            <div class="space-y-3 pt-3 border-t border-slate-800">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-slate-200 tracking-wider"><i class="fa-solid fa-clock text-emerald-400"></i> Active Time-Based Tasks</h4>
+            <div class="space-y-3 pt-3 border-t border-emerald-900/60">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-50 tracking-wider"><i class="fa-solid fa-clock text-teal-400"></i> Active Time-Based Tasks</h4>
                 <div id="settings-active-time" class="space-y-2.5 max-h-52 sm:max-h-60 overflow-y-auto pr-1"></div>
             </div>
 
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
 
     <!-- COMPLETED MAINTENANCE LOG MODAL (YEAR ONLY & DEFAULT COLLAPSED) -->
-    <div id="completed-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="completed-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-2xl rounded-2xl p-4 sm:p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-emerald-400"></i> Completed Maintenance Log
                 </h3>
-                <button onclick="closeCompletedModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closeCompletedModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
-            <div class="flex items-center justify-between bg-[#050913] border border-slate-800/80 p-4 rounded-xl font-mono">
-                <span class="text-slate-300 font-bold uppercase text-xs sm:text-sm">Total Expenses</span>
-                <span id="total-spent-badge" class="text-amber-400 font-black text-sm sm:text-base">$0.00</span>
+            <div class="flex items-center justify-between bg-[#040806] border border-emerald-900/60 p-4 rounded-xl font-mono">
+                <span class="text-emerald-100 font-bold uppercase text-xs sm:text-sm">Total Expenses</span>
+                <span id="total-spent-badge" class="text-emerald-400 font-black text-sm sm:text-base">$0.00</span>
             </div>
 
             <div class="space-y-3">
                 <div id="settings-completed-milestones" class="space-y-2.5 max-h-[60vh] overflow-y-auto pr-1"></div>
             </div>
 
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeCompletedModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeCompletedModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
 
     <!-- EDIT MILESTONE MODAL -->
-    <div id="edit-milestone-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-md rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="edit-milestone-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-md rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-pen text-sky-400"></i> Edit Milestone
+                    <i class="fa-solid fa-pen text-emerald-400"></i> Edit Milestone
                 </h3>
-                <button onclick="closeEditMilestoneModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="closeEditMilestoneModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
             <form onsubmit="handleEditMilestoneSubmit(event)" autocomplete="off" class="space-y-3.5 text-xs sm:text-sm">
                 <input type="hidden" id="edit-original-odo">
                 <input type="hidden" id="edit-original-notes">
                 <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Target Odometer (km)</label>
-                    <input type="number" id="edit-milestone-odo" autocomplete="off" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none">
+                    <label class="block text-[11px] sm:text-xs font-bold text-emerald-100/80 uppercase mb-1.5">Target Odometer (km)</label>
+                    <input type="number" id="edit-milestone-odo" autocomplete="off" required class="w-full bg-[#040806] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Service Title</label>
-                    <input type="text" id="edit-milestone-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required class="w-full bg-[#050913] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
+                    <label class="block text-[11px] sm:text-xs font-bold text-emerald-100/80 uppercase mb-1.5">Service Title</label>
+                    <input type="text" id="edit-milestone-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required class="w-full bg-[#040806] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
                 </div>
-                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeEditMilestoneModal()" class="px-3.5 py-2 rounded-xl border border-slate-800 text-xs sm:text-sm text-slate-400 font-bold">Cancel</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 text-xs sm:text-sm font-black uppercase">Save Changes</button>
+                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-emerald-900/60">
+                    <button type="button" onclick="closeEditMilestoneModal()" class="px-3.5 py-2 rounded-xl border border-emerald-900/60 text-xs sm:text-sm text-emerald-200/60 font-bold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-black uppercase">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- STRUCTURED POPUP MODAL FOR COMPLETING / EDITING MAINTENANCE -->
-    <div id="complete-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="complete-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-xl rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 id="complete-modal-title" class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record
                 </h3>
-                <button onclick="closeCompleteModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="closeCompleteModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
             <form onsubmit="handleCompleteSubmit(event)" autocomplete="off" class="space-y-3.5 text-xs sm:text-sm">
                 <input type="hidden" id="complete-target-odo">
                 <input type="hidden" id="complete-notes-key">
                 <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Service Title / Item</label>
-                    <input type="text" id="complete-title" readonly autocomplete="off" class="w-full bg-[#050913] border border-slate-800 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-slate-300 font-mono">
+                    <label class="block text-[11px] sm:text-xs font-bold text-emerald-100/80 uppercase mb-1.5">Service Title / Item</label>
+                    <input type="text" id="complete-title" readonly autocomplete="off" class="w-full bg-[#040806] border border-emerald-900/60 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-emerald-100/80 font-mono">
                 </div>
                 <div>
-                    <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase mb-1.5">Service Date</label>
+                    <label class="block text-[11px] sm:text-xs font-bold text-emerald-100/80 uppercase mb-1.5">Service Date</label>
                     <input type="hidden" id="complete-date" required>
-                    <button type="button" onclick="openScrollDatePicker('complete-date', 'Service Date')" class="w-full bg-[#050913] border border-slate-800 hover:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                    <button type="button" onclick="openScrollDatePicker('complete-date', 'Service Date')" class="w-full bg-[#040806] border border-emerald-900/60 hover:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
                         <span id="display-complete-date">--</span>
                         <i class="fa-regular fa-calendar text-emerald-400"></i>
                     </button>
@@ -580,7 +580,7 @@
 
                 <div class="space-y-2 pt-1">
                     <div class="flex items-center justify-between">
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-300 uppercase">Itemized Breakdown & Prices</label>
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-100/80 uppercase">Itemized Breakdown & Prices</label>
                         <button type="button" onclick="addCompleteRow()" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold rounded-lg border border-emerald-500/30 text-xs">
                             <i class="fa-solid fa-plus"></i> Add Item Row
                         </button>
@@ -588,13 +588,13 @@
                     <div id="complete-rows-container" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
                 </div>
 
-                <div class="flex items-center justify-between bg-[#050913] border border-slate-800 p-3.5 rounded-xl font-mono">
-                    <span class="text-slate-300 font-bold uppercase">Calculated Total Price ($)</span>
-                    <span id="complete-total-display" class="text-amber-400 font-black text-sm sm:text-base">$0.00</span>
+                <div class="flex items-center justify-between bg-[#040806] border border-emerald-900/60 p-3.5 rounded-xl font-mono">
+                    <span class="text-emerald-100 font-bold uppercase">Calculated Total Price ($)</span>
+                    <span id="complete-total-display" class="text-emerald-400 font-black text-sm sm:text-base">$0.00</span>
                 </div>
 
-                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-800">
-                    <button type="button" onclick="closeCompleteModal()" class="px-3.5 py-2 rounded-xl border border-slate-800 text-xs sm:text-sm font-bold text-slate-400">Cancel</button>
+                <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-emerald-900/60">
+                    <button type="button" onclick="closeCompleteModal()" class="px-3.5 py-2 rounded-xl border border-emerald-900/60 text-xs sm:text-sm font-bold text-emerald-200/60">Cancel</button>
                     <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-black uppercase tracking-wider">Save & Archive</button>
                 </div>
             </form>
@@ -602,81 +602,81 @@
     </div>
 
     <!-- LOG MILEAGE & MAINTENANCE MODAL -->
-    <div id="log-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
-        <div class="bg-[#0a0f1d] border border-slate-800 w-full max-w-lg rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+    <div id="log-modal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center hidden p-3 sm:p-6 overflow-y-auto">
+        <div class="bg-[#09110d] border border-emerald-900/70 w-full max-w-lg rounded-2xl p-4 sm:p-6 space-y-4 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-emerald-900/60 pb-3">
                 <h3 class="text-sm sm:text-base font-black text-white uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-gauge text-sky-400"></i> Log Odometer & Maintenance
+                    <i class="fa-solid fa-gauge text-emerald-400"></i> Log Odometer & Maintenance
                 </h3>
-                <button onclick="closeLogModal()" class="text-slate-500 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
+                <button onclick="closeLogModal()" class="text-emerald-200/50 hover:text-white"><i class="fa-solid fa-xmark text-base"></i></button>
             </div>
 
             <!-- 1. Log Odometer Form -->
-            <form onsubmit="handleLogSubmit(event)" autocomplete="off" class="space-y-3 bg-[#050913] border border-slate-800/80 p-4 rounded-xl">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-sky-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Log Odometer Reading</h4>
+            <form onsubmit="handleLogSubmit(event)" autocomplete="off" class="space-y-3 bg-[#040806] border border-emerald-900/60 p-4 rounded-xl">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-gauge"></i> Log Odometer Reading</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Date</label>
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Date</label>
                         <input type="hidden" id="input-log-date" required>
-                        <button type="button" onclick="openScrollDatePicker('input-log-date', 'Odometer Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                        <button type="button" onclick="openScrollDatePicker('input-log-date', 'Odometer Date')" class="w-full bg-[#070d0a] border border-emerald-900/60 hover:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
                             <span id="display-input-log-date">--</span>
-                            <i class="fa-regular fa-calendar text-sky-400"></i>
+                            <i class="fa-regular fa-calendar text-emerald-400"></i>
                         </button>
                     </div>
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Odometer (km)</label>
-                        <input type="number" id="input-log-odo" autocomplete="off" required placeholder="e.g. 46870" class="w-full bg-[#080d1a] border border-slate-800 focus:border-sky-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono font-bold">
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Odometer (km)</label>
+                        <input type="number" id="input-log-odo" autocomplete="off" required placeholder="e.g. 46870" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none font-mono font-bold">
                     </div>
                 </div>
-                <div class="flex items-center gap-2.5 bg-[#080d1a] border border-slate-800/80 p-3 rounded-xl">
-                    <input type="checkbox" id="input-log-oil" class="w-4 h-4 rounded accent-sky-500 cursor-pointer">
-                    <label for="input-log-oil" class="text-xs sm:text-sm font-bold text-slate-200 cursor-pointer select-none">
+                <div class="flex items-center gap-2.5 bg-[#070d0a] border border-emerald-900/60 p-3 rounded-xl">
+                    <input type="checkbox" id="input-log-oil" class="w-4 h-4 rounded accent-emerald-500 cursor-pointer">
+                    <label for="input-log-oil" class="text-xs sm:text-sm font-bold text-emerald-50 cursor-pointer select-none">
                         Engine Oil Changed?
                     </label>
                 </div>
-                <button type="submit" class="w-full py-2.5 bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Save Odometer</button>
+                <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all shadow-md">Save Odometer</button>
             </form>
 
             <!-- 2. Add New Maintenance Record -->
-            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-4 rounded-xl">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-amber-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Record</h4>
+            <div class="space-y-3 bg-[#040806] border border-emerald-900/60 p-4 rounded-xl">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-teal-400 tracking-wider"><i class="fa-solid fa-plus-circle"></i> Add New Maintenance Record</h4>
                 <form onsubmit="handleAddMilestone(event)" autocomplete="off" class="space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Target Odometer (km)</label>
-                            <input type="number" id="input-new-odo" autocomplete="off" required placeholder="e.g. 60000" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none">
+                            <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Target Odometer (km)</label>
+                            <input type="number" id="input-new-odo" autocomplete="off" required placeholder="e.g. 60000" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono focus:outline-none">
                         </div>
                         <div>
-                            <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Service Title / Category</label>
-                            <input type="text" id="input-new-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required placeholder="e.g. Brake Service" class="w-full bg-[#080d1a] border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
+                            <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Service Title / Category</label>
+                            <input type="text" id="input-new-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required placeholder="e.g. Brake Service" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
                         </div>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all">Add Milestone</button>
+                    <button type="submit" class="w-full py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all">Add Milestone</button>
                 </form>
             </div>
 
             <!-- 3. Add Time-Based Maintenance -->
-            <div class="space-y-3 bg-[#050913] border border-slate-800/80 p-4 rounded-xl">
-                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-400 tracking-wider"><i class="fa-solid fa-clock"></i> Add Time-Based Maintenance</h4>
+            <div class="space-y-3 bg-[#040806] border border-emerald-900/60 p-4 rounded-xl">
+                <h4 class="text-xs sm:text-sm font-black uppercase text-emerald-300 tracking-wider"><i class="fa-solid fa-clock"></i> Add Time-Based Maintenance</h4>
                 <form onsubmit="handleAddTimeMaint(event)" autocomplete="off" class="space-y-3">
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Task Name</label>
-                        <input type="text" id="input-time-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required placeholder="e.g. Cabin Filter (6 Months)" class="w-full bg-[#080d1a] border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Task Name</label>
+                        <input type="text" id="input-time-title" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" required placeholder="e.g. Cabin Filter (6 Months)" class="w-full bg-[#070d0a] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-[11px] sm:text-xs font-bold text-slate-400 uppercase mb-1.5">Next Due Date</label>
+                        <label class="block text-[11px] sm:text-xs font-bold text-emerald-200/60 uppercase mb-1.5">Next Due Date</label>
                         <input type="hidden" id="input-time-duedate" required>
-                        <button type="button" onclick="openScrollDatePicker('input-time-duedate', 'Next Due Date')" class="w-full bg-[#080d1a] border border-slate-800 hover:border-emerald-500 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
+                        <button type="button" onclick="openScrollDatePicker('input-time-duedate', 'Next Due Date')" class="w-full bg-[#070d0a] border border-emerald-900/60 hover:border-emerald-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono flex items-center justify-between transition-colors">
                             <span id="display-input-time-duedate">--</span>
                             <i class="fa-regular fa-calendar text-emerald-400"></i>
                         </button>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm uppercase rounded-xl transition-all">Add Time Task</button>
+                    <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs sm:text-sm uppercase rounded-xl transition-all">Add Time Task</button>
                 </form>
             </div>
 
-            <div class="flex items-center justify-end pt-2 border-t border-slate-800">
-                <button type="button" onclick="closeLogModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Close</button>
+            <div class="flex items-center justify-end pt-2 border-t border-emerald-900/60">
+                <button type="button" onclick="closeLogModal()" class="px-4 py-2 rounded-xl bg-emerald-950/90 hover:bg-emerald-900/80 border border-emerald-800/60 text-xs sm:text-sm font-bold text-emerald-100 uppercase tracking-wider">Close</button>
             </div>
         </div>
     </div>
@@ -724,7 +724,7 @@
             const col = document.getElementById(colId);
             col.innerHTML = `<div class="wheel-pad"></div>` + values.map(v => {
                 const isSelected = v === selectedVal;
-                return `<div data-val="${v}" onclick="selectWheelValue('${colId.replace('wheel-', '')}', ${v})" class="wheel-item ${isSelected ? 'text-white font-black scale-105' : 'text-slate-500 font-semibold'}">${formatter(v)}</div>`;
+                return `<div data-val="${v}" onclick="selectWheelValue('${colId.replace('wheel-', '')}', ${v})" class="wheel-item ${isSelected ? 'text-white font-black scale-105' : 'text-emerald-200/40 font-semibold'}">${formatter(v)}</div>`;
             }).join('') + `<div class="wheel-pad"></div>`;
         }
 
@@ -733,11 +733,11 @@
             col.querySelectorAll('.wheel-item').forEach(el => {
                 const v = parseInt(el.dataset.val, 10);
                 if (v === selectedVal) {
-                    el.classList.remove('text-slate-500', 'font-semibold');
+                    el.classList.remove('text-emerald-200/40', 'font-semibold');
                     el.classList.add('text-white', 'font-black', 'scale-105');
                 } else {
                     el.classList.remove('text-white', 'font-black', 'scale-105');
-                    el.classList.add('text-slate-500', 'font-semibold');
+                    el.classList.add('text-emerald-200/40', 'font-semibold');
                 }
             });
         }
@@ -762,7 +762,7 @@
         function openScrollDatePicker(targetInputId, labelText = 'Select Date') {
             activeDateTargetId = targetInputId;
             isOpeningPicker = true;
-            document.getElementById('wheel-picker-title').innerHTML = `<i class="fa-regular fa-calendar-days text-sky-400"></i> ${labelText}`;
+            document.getElementById('wheel-picker-title').innerHTML = `<i class="fa-regular fa-calendar-days text-emerald-400"></i> ${labelText}`;
 
             const currentVal = document.getElementById(targetInputId)?.value || getTodayLocalISO();
             const parts = currentVal.split('-');
@@ -916,7 +916,7 @@
             const borderColor = isError ? 'border-rose-500/50 text-rose-300' : 'border-emerald-500/50 text-emerald-300';
             const icon = isError ? 'fa-circle-exclamation text-rose-400' : 'fa-circle-check text-emerald-400';
 
-            toast.className = `bg-[#0a0f1d] border ${borderColor} px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition-all duration-300 translate-y-2 opacity-0`;
+            toast.className = `bg-[#09110d] border ${borderColor} px-4 py-2.5 rounded-xl shadow-2xl text-xs sm:text-sm font-bold flex items-center gap-2.5 transition-all duration-300 translate-y-2 opacity-0`;
             toast.innerHTML = `<i class="fa-solid ${icon}"></i><span>${message}</span>`;
             
             container.appendChild(toast);
@@ -1019,7 +1019,7 @@
         async function createSnapshotSheet() {
             showSnapshotConfirmStep(false);
             const snapIcon = document.getElementById('snapshot-icon');
-            snapIcon.classList.add('fa-spin', 'text-amber-400');
+            snapIcon.classList.add('fa-spin', 'text-teal-300');
             try {
                 const payloadRows = buildPayloadRows();
                 const res = await fetch(SCRIPT_URL, {
@@ -1028,42 +1028,42 @@
                 });
                 const result = await res.json().catch(() => ({}));
 
-                snapIcon.classList.remove('fa-spin', 'text-amber-400');
-                snapIcon.classList.add('text-emerald-400');
+                snapIcon.classList.remove('fa-spin', 'text-teal-300');
+                snapIcon.classList.add('text-emerald-300');
                 showToast(result.sheetName ? `Created "${result.sheetName}"!` : "Backup sheet created!");
                 await loadBackupSheets();
                 setTimeout(() => {
-                    snapIcon.classList.remove('text-emerald-400');
-                    snapIcon.classList.add('text-violet-400');
+                    snapIcon.classList.remove('text-emerald-300');
+                    snapIcon.classList.add('text-emerald-400');
                 }, 2000);
             } catch (err) {
                 console.error("Snapshot creation failed:", err);
-                snapIcon.classList.remove('fa-spin', 'text-amber-400');
+                snapIcon.classList.remove('fa-spin', 'text-teal-300');
                 snapIcon.classList.add('text-rose-400');
                 showToast("New sheet backup failed. Check Apps Script.", true);
                 setTimeout(() => {
                     snapIcon.classList.remove('text-rose-400');
-                    snapIcon.classList.add('text-violet-400');
+                    snapIcon.classList.add('text-emerald-400');
                 }, 2500);
             }
         }
 
         async function loadBackupSheets() {
             const listEl = document.getElementById('backup-sheets-list');
-            listEl.innerHTML = '<div class="text-slate-500 text-xs py-3 text-center">Loading backup tabs...</div>';
+            listEl.innerHTML = '<div class="text-emerald-200/50 text-xs py-3 text-center">Loading backup tabs...</div>';
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=listBackups`);
                 const data = await res.json();
                 const backups = Array.isArray(data.backups) ? data.backups : [];
 
                 if (backups.length === 0) {
-                    listEl.innerHTML = '<div class="text-slate-500 text-xs py-3 text-center">No backup sheets found yet.</div>';
+                    listEl.innerHTML = '<div class="text-emerald-200/50 text-xs py-3 text-center">No backup sheets found yet.</div>';
                     return;
                 }
 
                 listEl.innerHTML = backups.map(name => `
-                    <div class="flex items-center justify-between gap-2 bg-[#050913] border border-slate-800/70 px-3.5 py-2.5 rounded-xl">
-                        <span class="text-xs sm:text-sm text-slate-200 truncate"><i class="fa-regular fa-file-excel text-violet-400 mr-1.5"></i>${escapeAttr(name)}</span>
+                    <div class="flex items-center justify-between gap-2 bg-[#040806] border border-emerald-900/60 px-3.5 py-2.5 rounded-xl">
+                        <span class="text-xs sm:text-sm text-emerald-50 truncate"><i class="fa-regular fa-file-excel text-emerald-400 mr-1.5"></i>${escapeAttr(name)}</span>
                         <button type="button" onclick="deleteBackupSheet('${escapeAttr(name)}')" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg text-xs font-bold shrink-0">
                             <i class="fa-solid fa-trash"></i>
                         </button>
@@ -1220,7 +1220,7 @@
                 
                 if (logs.length === 0) {
                     document.getElementById('row-date').textContent = 'No Sheet Data';
-                    document.getElementById('content-card-incoming').innerHTML = '<div class="text-slate-500 p-3">Google Sheet is empty or unlinked.</div>';
+                    document.getElementById('content-card-incoming').innerHTML = '<div class="text-emerald-200/50 p-3">Google Sheet is empty or unlinked.</div>';
                     return;
                 }
 
@@ -1374,20 +1374,20 @@
                     });
 
                     const isNext = (oilRealItems.length === 1);
-                    const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-slate-200 font-bold';
-                    const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-slate-200';
+                    const odoColor = isNext ? 'text-emerald-400 font-black' : 'text-emerald-50 font-bold';
+                    const dateColor = isNext ? 'text-emerald-300 font-bold' : 'text-emerald-100/90';
 
                     oilRealHtml += `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
+                        <tr class="hover:bg-emerald-950/35 transition-colors">
                             <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
                             <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${dateColor}">${realDate}</td>
                         </tr>
                     `;
 
                     pace95OilHtml += `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
+                        <tr class="hover:bg-emerald-950/35 transition-colors">
                             <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap ${odoColor}">${targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap text-sky-400">${benchDate}</td>
+                            <td class="py-2.5 px-3.5 sm:px-4 whitespace-nowrap text-teal-400">${benchDate}</td>
                         </tr>
                     `;
                 }
@@ -1412,26 +1412,26 @@
                     });
 
                     pace95MaintHtml += `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-3 sm:px-4 font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3 sm:px-4 text-sky-400 whitespace-nowrap">${benchDate}</td>
-                            <td class="py-2.5 px-3 sm:px-4 font-sans text-slate-300 leading-relaxed whitespace-normal break-words min-w-[150px]">${m.notes}</td>
+                        <tr class="hover:bg-emerald-950/35 transition-colors">
+                            <td class="py-2.5 px-3 sm:px-4 font-bold text-teal-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 sm:px-4 text-emerald-300 whitespace-nowrap">${benchDate}</td>
+                            <td class="py-2.5 px-3 sm:px-4 font-sans text-emerald-100/80 leading-relaxed whitespace-normal break-words min-w-[150px]">${m.notes}</td>
                         </tr>
                     `;
 
                     return `
-                        <tr class="hover:bg-slate-900/45 transition-colors">
-                            <td class="py-2.5 px-3 sm:px-4 font-mono font-bold text-amber-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
-                            <td class="py-2.5 px-3 sm:px-4 font-mono text-slate-200 whitespace-nowrap">${realDate}</td>
-                            <td class="py-2.5 px-3 sm:px-4 text-slate-300 leading-relaxed whitespace-normal break-words min-w-[160px]">${m.notes}</td>
+                        <tr class="hover:bg-emerald-950/35 transition-colors">
+                            <td class="py-2.5 px-3 sm:px-4 font-mono font-bold text-teal-400 whitespace-nowrap">${m.targetOdo.toLocaleString()} km</td>
+                            <td class="py-2.5 px-3 sm:px-4 font-mono text-emerald-50 whitespace-nowrap">${realDate}</td>
+                            <td class="py-2.5 px-3 sm:px-4 text-emerald-100/80 leading-relaxed whitespace-normal break-words min-w-[160px]">${m.notes}</td>
                             <td class="py-2.5 px-3 sm:px-4 text-right whitespace-nowrap">
-                                <button onclick="openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold">Done</button>
+                                <button onclick="openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 rounded bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/35 text-emerald-300 text-xs font-bold">Done</button>
                             </td>
                         </tr>
                     `;
-                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+                }).join('') || '<tr><td colspan="4" class="py-3 px-3 text-emerald-200/50 text-center">No active milestones.</td></tr>';
 
-                document.getElementById('pace-95-maint-body').innerHTML = pace95MaintHtml || '<tr><td colspan="3" class="py-3 px-3 text-slate-500 text-center">No active milestones.</td></tr>';
+                document.getElementById('pace-95-maint-body').innerHTML = pace95MaintHtml || '<tr><td colspan="3" class="py-3 px-3 text-emerald-200/50 text-center">No active milestones.</td></tr>';
 
                 renderTimeMaintCard();
 
@@ -1449,16 +1449,16 @@
                 allIncoming.sort((a, b) => a.dateObj - b.dateObj);
 
                 const incomingHtml = allIncoming.map(item => `
-                    <div class="py-2 px-3 border-b border-slate-800/30 last:border-0 flex items-start justify-between gap-3">
-                        <div class="font-sans font-semibold text-slate-200 leading-relaxed flex-1 whitespace-normal break-words">${item.title}</div>
+                    <div class="py-2 px-3 border-b border-emerald-950/80 last:border-0 flex items-start justify-between gap-3">
+                        <div class="font-sans font-semibold text-emerald-50 leading-relaxed flex-1 whitespace-normal break-words">${item.title}</div>
                         <div class="flex items-center gap-2 sm:gap-3 shrink-0 pt-0.5">
-                            ${item.odo ? `<span class="text-[11px] sm:text-xs font-mono text-amber-400 bg-amber-400/10 border border-amber-400/20 px-2 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : ''}
+                            ${item.odo ? `<span class="text-[11px] sm:text-xs font-mono text-teal-300 bg-teal-500/10 border border-teal-500/25 px-2 py-0.5 rounded whitespace-nowrap">${item.odo}</span>` : ''}
                             <div class="text-emerald-400 font-bold font-mono whitespace-nowrap text-right w-24 sm:w-28">${item.dateStr}</div>
                         </div>
                     </div>
                 `).join('');
 
-                document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-slate-500 p-3">No upcoming maintenance.</div>';
+                document.getElementById('content-card-incoming').innerHTML = incomingHtml || '<div class="text-emerald-200/50 p-3">No upcoming maintenance.</div>';
 
                 renderSettingsLists();
                 renderCompletedList();
@@ -1532,12 +1532,12 @@
         function renderTimeMaintCard() {
             const timeListDiv = document.getElementById('time-maint-list');
             if (timeMaint.length === 0) {
-                timeListDiv.innerHTML = '<div class="text-slate-500">No time-based tasks.</div>';
+                timeListDiv.innerHTML = '<div class="text-emerald-200/50">No time-based tasks.</div>';
                 return;
             }
             timeListDiv.innerHTML = timeMaint.map(t => `
-                <div class="flex justify-between items-start gap-2.5 py-1.5 border-b border-slate-800/40 last:border-0">
-                    <div class="font-sans font-bold text-slate-200 leading-relaxed whitespace-normal break-words flex-1">${t.title}</div>
+                <div class="flex justify-between items-start gap-2.5 py-1.5 border-b border-emerald-950/80 last:border-0">
+                    <div class="font-sans font-bold text-emerald-50 leading-relaxed whitespace-normal break-words flex-1">${t.title}</div>
                     <div class="text-emerald-400 font-bold whitespace-nowrap shrink-0">${formatDateDisplay(t.dueDate)}</div>
                 </div>
             `).join('');
@@ -1577,7 +1577,7 @@
             let totalFuelCost = 0;
 
             if (sortedFuel.length === 0) {
-                container.innerHTML = '<div class="text-slate-500 italic text-center py-4">No fuel records added yet.</div>';
+                container.innerHTML = '<div class="text-emerald-200/50 italic text-center py-4">No fuel records added yet.</div>';
                 document.getElementById('total-fuel-spent-badge').textContent = '$0.00';
                 return;
             }
@@ -1600,15 +1600,15 @@
                 Object.values(grouped[year]).forEach(mArr => mArr.forEach(item => yearTotal += item.cost));
 
                 html += `
-                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono">
-                        <summary class="flex items-center justify-between p-3 sm:p-3.5 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none">
-                            <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-sky-400"></i> ${year}</span>
+                    <details class="bg-[#040806] border border-emerald-900/60 rounded-xl overflow-hidden font-mono">
+                        <summary class="flex items-center justify-between p-3 sm:p-3.5 bg-[#060c09] cursor-pointer hover:bg-emerald-950/50 select-none list-none">
+                            <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-emerald-400"></i> ${year}</span>
                             <div class="flex items-center gap-3">
-                                <span class="text-amber-400 font-bold">$${yearTotal.toFixed(2)}</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform"></i>
+                                <span class="text-emerald-400 font-bold">$${yearTotal.toFixed(2)}</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-200/50 text-xs transition-transform"></i>
                             </div>
                         </summary>
-                        <div class="p-2.5 space-y-2 border-t border-slate-800/60">
+                        <div class="p-2.5 space-y-2 border-t border-emerald-900/50">
                 `;
 
                 const months = Object.keys(grouped[year]).sort((a, b) => b.localeCompare(a));
@@ -1619,23 +1619,23 @@
                     mArr.forEach(item => monthTotal += item.cost);
 
                     html += `
-                        <details class="bg-[#080d1a] border border-slate-800/60 rounded-lg overflow-hidden">
-                            <summary class="flex items-center justify-between p-2.5 sm:p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
-                                <span class="font-bold text-slate-300">${monthName}</span>
+                        <details class="bg-[#070d0a] border border-emerald-900/50 rounded-lg overflow-hidden">
+                            <summary class="flex items-center justify-between p-2.5 sm:p-3 cursor-pointer hover:bg-emerald-950/35 select-none list-none">
+                                <span class="font-bold text-emerald-100/80">${monthName}</span>
                                 <div class="flex items-center gap-2.5">
-                                    <span class="text-amber-400">$${monthTotal.toFixed(2)}</span>
-                                    <i class="fa-solid fa-chevron-down text-slate-500 text-[10px]"></i>
+                                    <span class="text-emerald-400">$${monthTotal.toFixed(2)}</span>
+                                    <i class="fa-solid fa-chevron-down text-emerald-200/50 text-[10px]"></i>
                                 </div>
                             </summary>
-                            <div class="p-2 space-y-1.5 border-t border-slate-800/40 bg-[#050913]">
+                            <div class="p-2 space-y-1.5 border-t border-emerald-950/80 bg-[#040806]">
                     `;
 
                     mArr.forEach(f => {
                         html += `
-                            <div class="flex items-center justify-between gap-2 p-2.5 bg-[#0a0f1d] rounded-lg border border-slate-900">
-                                <span class="text-slate-300"><i class="fa-regular fa-calendar text-sky-400 text-xs"></i> ${formatDateDisplay(f.date)}</span>
+                            <div class="flex items-center justify-between gap-2 p-2.5 bg-[#09110d] rounded-lg border border-emerald-950">
+                                <span class="text-emerald-100/80"><i class="fa-regular fa-calendar text-emerald-400 text-xs"></i> ${formatDateDisplay(f.date)}</span>
                                 <div class="flex items-center gap-3">
-                                    <span class="text-amber-400 font-black">$${f.cost.toFixed(2)}</span>
+                                    <span class="text-emerald-400 font-black">$${f.cost.toFixed(2)}</span>
                                     <button onclick="deleteFuelRecord('${f.id}')" class="text-rose-400 hover:text-rose-300 px-1.5 py-1"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
@@ -1658,16 +1658,16 @@
             const activeDiv = document.getElementById('settings-active-milestones');
             const activeList = milestones.filter(m => !m.done);
             if (activeList.length === 0) {
-                activeDiv.innerHTML = '<div class="text-slate-500 italic">No active milestones.</div>';
+                activeDiv.innerHTML = '<div class="text-emerald-200/50 italic">No active milestones.</div>';
             } else {
                 activeDiv.innerHTML = activeList.map(m => `
-                    <div class="flex items-start justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
+                    <div class="flex items-start justify-between gap-2.5 bg-[#040806] border border-emerald-900/55 p-3 rounded-xl font-mono">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 flex-1 min-w-0">
-                            <span class="text-amber-400 font-bold whitespace-nowrap shrink-0">${m.targetOdo.toLocaleString()} km</span>
-                            <span class="text-slate-300 font-sans leading-relaxed whitespace-normal break-words">${m.notes}</span>
+                            <span class="text-teal-400 font-bold whitespace-nowrap shrink-0">${m.targetOdo.toLocaleString()} km</span>
+                            <span class="text-emerald-100/80 font-sans leading-relaxed whitespace-normal break-words">${m.notes}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
-                            <button onclick="openEditMilestoneModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded-lg font-bold"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="openEditMilestoneModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 rounded-lg font-bold"><i class="fa-solid fa-pen"></i></button>
                             <button onclick="deleteMilestone(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg font-bold"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -1676,13 +1676,13 @@
 
             const activeTimeDiv = document.getElementById('settings-active-time');
             if (timeMaint.length === 0) {
-                activeTimeDiv.innerHTML = '<div class="text-slate-500 italic">No active time-based tasks.</div>';
+                activeTimeDiv.innerHTML = '<div class="text-emerald-200/50 italic">No active time-based tasks.</div>';
             } else {
                 activeTimeDiv.innerHTML = timeMaint.map(t => `
-                    <div class="flex items-start justify-between gap-2.5 bg-[#050913] border border-slate-800/60 p-3 rounded-xl font-mono">
+                    <div class="flex items-start justify-between gap-2.5 bg-[#040806] border border-emerald-900/55 p-3 rounded-xl font-mono">
                         <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5 flex-1 min-w-0">
                             <span class="text-emerald-400 font-bold whitespace-nowrap shrink-0">${formatDateDisplay(t.dueDate)}</span>
-                            <span class="text-slate-300 font-sans leading-relaxed whitespace-normal break-words">${t.title}</span>
+                            <span class="text-emerald-100/80 font-sans leading-relaxed whitespace-normal break-words">${t.title}</span>
                         </div>
                         <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
                             <button onclick="deleteTimeMaint('${t.id}')" class="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 rounded-lg font-bold"><i class="fa-solid fa-trash"></i></button>
@@ -1703,7 +1703,7 @@
             let grandTotalSpent = 0;
 
             if (completedList.length === 0) {
-                completedDiv.innerHTML = '<div class="text-slate-500 italic text-center py-4">No completed maintenance items yet.</div>';
+                completedDiv.innerHTML = '<div class="text-emerald-200/50 italic text-center py-4">No completed maintenance items yet.</div>';
                 document.getElementById('total-spent-badge').textContent = '$0.00';
                 return;
             }
@@ -1726,15 +1726,15 @@
                 grouped[year].forEach(m => yearTotal += (parseFloat(m.cost) || 0));
 
                 html += `
-                    <details class="bg-[#050913] border border-slate-800/80 rounded-xl overflow-hidden font-mono">
-                        <summary class="flex items-center justify-between p-3 sm:p-3.5 bg-[#070c1a] cursor-pointer hover:bg-slate-900/60 select-none list-none">
+                    <details class="bg-[#040806] border border-emerald-900/60 rounded-xl overflow-hidden font-mono">
+                        <summary class="flex items-center justify-between p-3 sm:p-3.5 bg-[#060c09] cursor-pointer hover:bg-emerald-950/50 select-none list-none">
                             <span class="font-black text-white uppercase"><i class="fa-regular fa-calendar text-emerald-400"></i> ${year}</span>
                             <div class="flex items-center gap-3">
-                                <span class="text-amber-400 font-bold">$${yearTotal.toFixed(2)}</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform"></i>
+                                <span class="text-emerald-400 font-bold">$${yearTotal.toFixed(2)}</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-200/50 text-xs transition-transform"></i>
                             </div>
                         </summary>
-                        <div class="p-2.5 space-y-2 border-t border-slate-800/60 bg-[#050913]">
+                        <div class="p-2.5 space-y-2 border-t border-emerald-900/50 bg-[#040806]">
                 `;
 
                 grouped[year].forEach(m => {
@@ -1753,33 +1753,33 @@
                                 itemPrice = parseFloat(cleanLine.substring(lastDashIdx + 4)).toFixed(2);
                             }
                             return `
-                                <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 bg-[#0a0f1d] rounded border border-slate-900">
-                                    <span class="text-slate-300 font-sans whitespace-normal break-words">${itemName}</span>
-                                    <span class="text-amber-400 font-mono font-bold shrink-0">$${itemPrice}</span>
+                                <div class="flex items-center justify-between gap-2 py-1.5 px-2.5 bg-[#09110d] rounded border border-emerald-950">
+                                    <span class="text-emerald-100/80 font-sans whitespace-normal break-words">${itemName}</span>
+                                    <span class="text-emerald-400 font-mono font-bold shrink-0">$${itemPrice}</span>
                                 </div>
                             `;
                         }).join('');
                     }
 
                     html += `
-                        <details class="group/item bg-[#0a0f1d] border border-slate-800/65 rounded-xl overflow-hidden">
-                            <summary class="flex items-start justify-between gap-2 p-3 cursor-pointer hover:bg-slate-900/40 select-none list-none">
+                        <details class="group/item bg-[#09110d] border border-emerald-900/55 rounded-xl overflow-hidden">
+                            <summary class="flex items-start justify-between gap-2 p-3 cursor-pointer hover:bg-emerald-950/35 select-none list-none">
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 min-w-0 flex-1">
                                     <span class="text-emerald-400 font-bold whitespace-nowrap shrink-0"><i class="fa-solid fa-check-circle"></i> ${m.targetOdo.toLocaleString()} km</span>
                                     <span class="text-white font-bold font-sans leading-relaxed whitespace-normal break-words">${m.notes}</span>
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <span class="text-amber-400 font-black">$${costVal.toFixed(2)}</span>
-                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded text-[11px] font-bold uppercase">Undo</button>
-                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 rounded text-[11px] font-bold uppercase">Edit</button>
-                                    <i class="fa-solid fa-chevron-down text-slate-500 text-xs transition-transform group-open/item:rotate-180"></i>
+                                    <span class="text-emerald-400 font-black">$${costVal.toFixed(2)}</span>
+                                    <button onclick="event.stopPropagation(); undoComplete(${m.targetOdo}, '${escapeAttr(m.notes)}')" title="Undo" class="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 rounded text-[11px] font-bold uppercase">Undo</button>
+                                    <button onclick="event.stopPropagation(); openCompleteModal(${m.targetOdo}, '${escapeAttr(m.notes)}')" class="px-2.5 py-1 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 rounded text-[11px] font-bold uppercase">Edit</button>
+                                    <i class="fa-solid fa-chevron-down text-emerald-200/50 text-xs transition-transform group-open/item:rotate-180"></i>
                                 </div>
                             </summary>
-                            <div class="p-3 pt-1 space-y-2 border-t border-slate-800/45 mt-1 font-mono">
-                                ${m.serviceDate ? `<div class="text-xs text-slate-400 pt-1"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
+                            <div class="p-3 pt-1 space-y-2 border-t border-emerald-950/80 mt-1 font-mono">
+                                ${m.serviceDate ? `<div class="text-xs text-emerald-200/60 pt-1"><i class="fa-regular fa-calendar"></i> Service Date: ${formatDateDisplay(m.serviceDate)}</div>` : ''}
                                 <div class="space-y-1.5 pt-1">
-                                    <div class="text-[11px] font-bold uppercase text-slate-400 tracking-wider">Breakdown</div>
-                                    ${itemsHtml || '<div class="text-xs text-slate-500 italic">No itemized details recorded.</div>'}
+                                    <div class="text-[11px] font-bold uppercase text-emerald-200/60 tracking-wider">Breakdown</div>
+                                    ${itemsHtml || '<div class="text-xs text-emerald-200/50 italic">No itemized details recorded.</div>'}
                                 </div>
                             </div>
                         </details>
@@ -1851,7 +1851,7 @@
 
             const modalTitle = document.getElementById('complete-modal-title');
             if (m.done && (m.details || m.cost > 0)) {
-                modalTitle.innerHTML = `<i class="fa-solid fa-pen text-sky-400"></i> Edit Service Record`;
+                modalTitle.innerHTML = `<i class="fa-solid fa-pen text-emerald-400"></i> Edit Service Record`;
             } else {
                 modalTitle.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> Complete Service Record`;
             }
@@ -1883,8 +1883,8 @@
             const rowDiv = document.createElement('div');
             rowDiv.className = 'flex items-center gap-2';
             rowDiv.innerHTML = `
-                <input type="text" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. Motul 8100 X-Cess 5L" value="${escapeAttr(name)}" class="flex-1 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white focus:outline-none font-mono text-xs sm:text-sm item-name-input" oninput="updateCompleteTotal()">
-                <input type="number" step="0.01" autocomplete="off" placeholder="Price ($)" value="${price}" class="w-28 sm:w-32 bg-[#050913] border border-slate-800 focus:border-emerald-500 rounded-xl px-3.5 py-2 text-white focus:outline-none font-mono text-xs sm:text-sm item-price-input" oninput="updateCompleteTotal()">
+                <input type="text" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="e.g. Motul 8100 X-Cess 5L" value="${escapeAttr(name)}" class="flex-1 bg-[#040806] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-white focus:outline-none font-mono text-xs sm:text-sm item-name-input" oninput="updateCompleteTotal()">
+                <input type="number" step="0.01" autocomplete="off" placeholder="Price ($)" value="${price}" class="w-28 sm:w-32 bg-[#040806] border border-emerald-900/60 focus:border-emerald-400 rounded-xl px-3.5 py-2 text-white focus:outline-none font-mono text-xs sm:text-sm item-price-input" oninput="updateCompleteTotal()">
                 <button type="button" onclick="this.parentElement.remove(); updateCompleteTotal();" class="text-rose-400 hover:text-rose-300 px-2 py-2"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(rowDiv);
